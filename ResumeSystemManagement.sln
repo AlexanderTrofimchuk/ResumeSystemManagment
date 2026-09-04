@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E4E50329-662A-4254-ACDA-01C686A21A39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeSystemManagement.Core", "src\ResumeSystemManagement.Core\ResumeSystemManagement.Core.csproj", "{4D752B7D-DE63-4C0F-863C-9E0B35059FF8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeSystemManagement.Infrastructure", "src\ResumeSystemManagement.Infrastructure\ResumeSystemManagement.Infrastructure.csproj", "{CBC46736-0185-4309-B4B1-EF5E19070235}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeSystemManagement.Application", "src\ResumeSystemManagement.Application\ResumeSystemManagement.Application.csproj", "{C38EAA06-1C16-495D-B6A2-61D2C78E1FBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResumeSystemManagement.Web", "src\ResumeSystemManagement.Web\ResumeSystemManagement.Web.csproj", "{AD9C0B30-B199-4790-AB5A-CA11370A2A6F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F851C2B7-88ED-4277-8407-779C1E43FD8C}"
+	ProjectSection(SolutionItems) = preProject
+		compose.yaml = compose.yaml
+		.gitignore = .gitignore
+		.gitattributes = .gitattributes
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4D752B7D-DE63-4C0F-863C-9E0B35059FF8} = {E4E50329-662A-4254-ACDA-01C686A21A39}
+		{CBC46736-0185-4309-B4B1-EF5E19070235} = {E4E50329-662A-4254-ACDA-01C686A21A39}
+		{C38EAA06-1C16-495D-B6A2-61D2C78E1FBB} = {E4E50329-662A-4254-ACDA-01C686A21A39}
+		{AD9C0B30-B199-4790-AB5A-CA11370A2A6F} = {E4E50329-662A-4254-ACDA-01C686A21A39}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4D752B7D-DE63-4C0F-863C-9E0B35059FF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D752B7D-DE63-4C0F-863C-9E0B35059FF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D752B7D-DE63-4C0F-863C-9E0B35059FF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D752B7D-DE63-4C0F-863C-9E0B35059FF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBC46736-0185-4309-B4B1-EF5E19070235}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBC46736-0185-4309-B4B1-EF5E19070235}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBC46736-0185-4309-B4B1-EF5E19070235}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBC46736-0185-4309-B4B1-EF5E19070235}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C38EAA06-1C16-495D-B6A2-61D2C78E1FBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C38EAA06-1C16-495D-B6A2-61D2C78E1FBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C38EAA06-1C16-495D-B6A2-61D2C78E1FBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C38EAA06-1C16-495D-B6A2-61D2C78E1FBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD9C0B30-B199-4790-AB5A-CA11370A2A6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD9C0B30-B199-4790-AB5A-CA11370A2A6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD9C0B30-B199-4790-AB5A-CA11370A2A6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD9C0B30-B199-4790-AB5A-CA11370A2A6F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,11 @@
+*.env
+.idea/
+obj/
+bin/
+appsettings.Development.json
+Migrations/
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes

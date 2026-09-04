@@ -1,0 +1,7 @@
+﻿services:
+  app:
+    image: resume_system_management.web
+    build:
+      context: .
+      dockerfile: src/ResumeSystemManagement.Web/Dockerfile
+
