@@ -1,0 +1,68 @@
+.split-wrapper {
+    min-height: 100vh;
+}
+
+.split-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.input-group .btn {
+    display: flex;
+    align-items: center;
+}
+
+@media (max-width: 767.98px) {
+    .login-right,
+    .reg-right {
+        display: none !important;
+    }
+
+    .login-left,
+    .reg-left {
+        min-height: 100vh;
+        padding-top: clamp(4rem, 10vh, 5.5rem);
+    }
+
+    .login-form-box,
+    .reg-form-box {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 359.98px) {
+    .login-left,
+    .reg-left {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1199.98px) {
+    .login-right,
+    .reg-right {
+        flex: 0 0 42%;
+        max-width: 42%;
+    }
+
+    .login-left,
+    .reg-left {
+        flex: 0 0 58%;
+        max-width: 58%;
+    }
+
+    .login-form-box,
+    .reg-form-box {
+        max-width: 380px;
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1919.98px) {
+    .login-right, .login-left,
+    .reg-right,   .reg-left {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}

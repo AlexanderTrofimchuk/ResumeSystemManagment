@@ -4,4 +4,18 @@
     build:
       context: .
       dockerfile: src/ResumeSystemManagement.Web/Dockerfile
+  
+  db:
+    image: postgres:17-alpine
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_storage:/var/lib/postgresql/data
+    restart: unless-stopped
 
+volumes:
+  db_storage:

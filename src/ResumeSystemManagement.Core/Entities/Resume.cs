@@ -10,7 +10,6 @@ public class Resume
     public ResumeStatus Status { get; set; } = ResumeStatus.NotPublish;
     
     public Position Position { get; set; } = null!;
-    public List<RecruterLike> RecruterLikes { get; } = new();
     public List<ChatHistory> Histories { get; } = new();
-    public List<RecruterLike> Likes { get; } = new();
+    public List<RecruiterLike> Likes { get; } = new();
 }

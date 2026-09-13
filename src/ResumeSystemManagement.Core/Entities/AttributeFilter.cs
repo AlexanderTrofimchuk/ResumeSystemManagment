@@ -10,5 +10,5 @@ public class AttributeFilter
 
     public Position Position { get; set; } = null!;
     public AttributeLibrary Attribute { get; set; } = null!;
-    public List<ResumeAttributeValue> ResumeAttributeValues { get; } = new();
+    public List<CandidateAttributeValue> ResumeAttributeValues { get; } = new();
 }

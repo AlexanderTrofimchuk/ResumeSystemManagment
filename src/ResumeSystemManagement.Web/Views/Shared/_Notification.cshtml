@@ -1,0 +1,33 @@
+﻿@{
+    var messages = System.Text.Json.JsonSerializer.Deserialize<List<string>>(
+        TempData["ToastMessages"] as string ?? "[]"
+    );
+}
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    @for(int i = 0; i < messages!.Count; i++)
+    {
+        <div id="mainToast-@i" class="toast align-items-center border-0 text-white bg-@TempData["ToastType"]" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">
+                    @messages[i]
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    }
+</div>
+
+@if (messages.Count != 0)
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll(".toast").forEach((el, i) => {
+                let toast = new bootstrap.Toast(el, { delay: 3000 + i * 1000 });
+                toast.show();
+                el.addEventListener('hidden.bs.toast', () => {
+                    el.remove()
+                })
+            })
+        });
+    </script>
+}
