@@ -3,7 +3,6 @@
 obj/
 bin/
 appsettings.Development.json
-Migrations/
 .DS_Store
 .DS_Store?
 ._*
