@@ -54,6 +54,7 @@ public static class InfrastructureServiceExtensions
     
     public static async Task InitializeDbAndRoles(this IServiceProvider serviceProvider)
     {
+        Console.WriteLine("Initializing database and roles...");
         var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
         await dbContext.Database.MigrateAsync();
         await serviceProvider.SeedRoles();
