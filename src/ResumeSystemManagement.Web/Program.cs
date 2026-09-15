@@ -1,4 +1,5 @@
 using dotenv.net;
+using Microsoft.AspNetCore.HttpOverrides;
 using ResumeSystemManagement.Application;
 using ResumeSystemManagement.Infrastructure;
 
@@ -12,7 +13,15 @@ builder.Services.AddInfrastructureServices();
 builder.Services.AddApplication();
 builder.Services.AddControllersWithViews();
 
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+});
+
 var app = builder.Build();
+
+app.UseForwardedHeaders();
 
 if (app.Environment.IsDevelopment())
 {
