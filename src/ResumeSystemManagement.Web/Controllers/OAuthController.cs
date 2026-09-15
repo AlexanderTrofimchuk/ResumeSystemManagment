@@ -28,7 +28,7 @@ public class OAuthController(IExternalLoginService loginService, IExternalAuthPr
     [HttpGet]
     public IActionResult FacebookLogin()
     {
-        var properties = externalProvider.ConfigureGoogleLogin(Url.Action("FacebookCallback"));
+        var properties = externalProvider.ConfigureFacebookLogin(Url.Action("FacebookCallback"));
         return Challenge(properties, "Facebook");
     }
     

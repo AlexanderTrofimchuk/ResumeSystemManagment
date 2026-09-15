@@ -18,14 +18,14 @@ public class CredentialLogin(IAuthService authService, IUserRepository userRepos
 
     public async Task Logout()
     {
-        await authService.Logout();
+        await AuthService.Logout();
     }
 
     private async Task<Result<User>> ValidateCredentials(string email, string password)
     {
-        var user = await userRepository.GetUserByEmail(email, password);
+        var user = await UserRepository.GetUserByEmail(email, password);
         if (user is null) return Result.Fail("User not Found");
-        if (!await userRepository.CheckPassword(user.Id, password))
+        if (!await UserRepository.CheckPassword(user.Id, password))
             return Result.Fail("Password Incorrect");
         return Result.Ok(user);
     }

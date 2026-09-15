@@ -1,9 +1,6 @@
 using dotenv.net;
 using ResumeSystemManagement.Application;
 using ResumeSystemManagement.Infrastructure;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using ResumeSystemManagement.Infrastructure.Context;
 
 DotEnv.Load(
     new DotEnvOptions(envFilePaths:[Path.GetFullPath(Path.Combine("..","..",".env"))]));

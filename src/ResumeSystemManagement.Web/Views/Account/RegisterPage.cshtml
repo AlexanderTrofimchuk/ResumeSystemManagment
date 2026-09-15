@@ -9,9 +9,9 @@
 
 <div class="container-fluid p-0 robot-mono-font">
     <div class="d-flex flex-column justify-content-center align-items-center position-relative login-center">
-            <div class="reg-form-box">
-                <h2 class="mb-4 reg-heading">Sign up</h2>
-                <form asp-antiforgery="true" asp-action="RegisterUser" method="post" class="reg-form" novalidate>
+            <div class="reg-form-box shadow p-4 mb-5 bg-body-tertiary rounded">
+                <h2 class="mb-4 reg-heading text-center">Sign up</h2>
+                <form asp-antiforgery="true" asp-action="RegisterUser" method="post" class="reg-form px-5" novalidate>
                     <div class="mb-3">
                         <label asp-for="FullName" class="form-label"><b>Full name</b></label>
                         <input asp-for="FullName"
@@ -20,11 +20,11 @@
                                placeholder="Enter fullname">
                         <span asp-validation-for="FullName" class="text-danger" style="font-size: 0.875em;"></span>
                     </div>
-                    <div class="mb-3">
-                        <label asp-for="Email" class="form-label"><b>Email address</b></label>
+                    <div class="mb-2">
+                        <label asp-for="Email" class="form-label mb-1"><b>Email address</b></label>
                         <input asp-for="Email"
                                type="text"
-                               class="form-control border-black reg-input"
+                               class="form-control form-control-sm border-black reg-input"
                                placeholder="Enter email">
                         <span asp-validation-for="Email" class="text-danger" style="font-size: 0.875em;"></span>
                     </div>
@@ -70,11 +70,11 @@
                         </button>
                     </div>
                 </form>
+                <p class="reg-footer-text mt-3 mb-0">
+                    Already have an account?
+                    <a asp-action="LoginPage" asp-controller="Account">Sign in</a>
+                </p>
             </div>
-            <p class="reg-footer-text mb-0">
-                Already have an account?
-                <a asp-action="LoginPage" asp-controller="Account">Sign in</a>
-            </p>
         </div>
 </div>
 

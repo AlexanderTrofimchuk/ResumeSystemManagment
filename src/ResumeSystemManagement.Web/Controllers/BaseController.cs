@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
-using ResumeSystemManagement.Web.ViewModels;
 using ResumeSystemManagement.Web.ViewModels.Enums;
 
 namespace ResumeSystemManagement.Web.Controllers;

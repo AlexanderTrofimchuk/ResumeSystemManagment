@@ -18,7 +18,6 @@ public class AuthService(IHttpContextAccessor accessor): IAuthService
     {
         await accessor.HttpContext!.SignOutAsync(IdentityConstants.ApplicationScheme);
         await accessor.HttpContext!.SignOutAsync(IdentityConstants.ExternalScheme);
-        await accessor.HttpContext!.SignOutAsync(IdentityConstants.TwoFactorUserIdScheme);
     }
 
     private static ClaimsPrincipal CreateClaimsPrincipal(string id, string email, string role)
