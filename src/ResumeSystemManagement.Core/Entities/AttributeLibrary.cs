@@ -13,5 +13,5 @@ public class AttributeLibrary
     public AttributeType AttributeType { get; set; } = null!;
     public List<AttributeValueForList> AttributeValueForLists { get; } = new();
     public List<AttributeFilter> AttributeFilters { get; } = new();
-    public List<ResumeAttributeValue> ResumeAttributeValues { get; } = new();
+    public List<CandidateAttributeValue> CandidateAttributeValues { get; } = new();
 }

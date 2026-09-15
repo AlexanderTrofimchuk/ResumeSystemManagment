@@ -1,0 +1,181 @@
+﻿@model ResumeSystemManagement.Web.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+@section Styles
+{
+    <link rel="stylesheet" href="~/css/responsive.login.css" asp-append-version="true"/>
+}
+
+<div class="container-fluid p-0 robot-mono-font">
+  <div class="d-flex flex-column justify-content-center align-items-center position-relative login-center">
+    <div class="login-form-box shadow p-4 mb-5 bg-body-tertiary rounded">
+      <h2 class="mb-4 login-heading text-center">Sign in</h2>
+      <form
+        asp-antiforgery="true"
+        asp-action="LoginUser"
+        asp-controller="Account"
+        class="login-form px-5"
+        novalidate
+      >
+        <div class="mb-2">
+          <label asp-for="Email" class="form-label mb-1"><b>Email address</b></label>
+          <input
+            asp-for="Email"
+            class="form-control form-control-sm border-black login-input"
+            type="text"
+            placeholder="Enter email"
+          />
+          <span
+            asp-validation-for="Email"
+            class="text-danger"
+            style="font-size: 0.8em"
+          ></span>
+        </div>
+
+        <div class="mb-3">
+          <label asp-for="Password" class="form-label mb-1"><b>Password</b></label>
+          <div class="input-group">
+            <input
+              asp-for="Password"
+              class="form-control form-control-sm border-black login-input"
+              type="password"
+              minlength="1"
+              maxlength="8"
+              placeholder="Enter password"
+            />
+            <button
+              class="btn btn-outline-secondary btn-sm"
+              type="button"
+              id="togglePassword"
+            >
+              <i class="bi bi-eye" id="toggleIcon"></i>
+            </button>
+          </div>
+          <span
+            asp-validation-for="Password"
+            class="text-danger"
+            style="font-size: 0.8em"
+          ></span>
+        </div>
+
+        <a
+          href="#"
+          data-bs-toggle="modal"
+          data-bs-target="#forgotPasswordModal"
+          class="text-primary text-decoration-none d-block mt-2 mb-3 login-forgot"
+        >
+          Forgot Password?
+        </a>
+
+        <div class="d-grid gap-2">
+          <button
+            type="submit"
+            class="btn btn-primary btn-sm robot-mono-font login-btn-submit"
+          >
+            Sign in
+          </button>
+          <button
+            class="btn btn-outline-primary btn-sm login-btn-submit"
+            type="button"
+            asp-controller="OAuth"
+            asp-action="GoogleLogin"
+          >
+            <i class="bi bi-google"></i> Sign in with Google
+          </button>
+          <button
+            class="btn btn-outline-primary btn-sm login-btn-submit"
+            type="button"
+            asp-controller="OAuth"
+            asp-action="FacebookLogin"
+          >
+              <i class="bi bi-facebook"></i> Sign in with Facebook
+          </button>
+        </div>
+      </form>
+
+      <p class="login-footer-text mt-3 mb-0 text-center">
+          Don't have an account?
+          <a asp-action="RegisterPage" asp-controller="Account">Sign up</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1"
+     aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content robot-mono-font">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="forgotPasswordModalLabel">Reset Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form asp-action="UpdatePassword" asp-controller="Login" novalidate>
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label"><b>Email address</b></label>
+                        <input asp-for="Email"
+                               name="Email"
+                               type="text"
+                               class="form-control border-black"
+                               placeholder="Enter your email"
+                               required>
+                        <span asp-validation-for="Email" class="text-danger" style="font-size: 0.875em;"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label"><b>New Password</b></label>
+                        <div class="input-group">
+                            <input asp-for="Password"
+                                   type="password"
+                                   class="form-control border-black"
+                                   minlength="1"
+                                   maxlength="8"
+                                   placeholder="Enter new password"
+                                   required>
+                            <button class="btn btn-outline-secondary"
+                                    type="button"
+                                    id="toggleChangePassword">
+                                <i class="bi bi-eye" id="toggleChangePasswordIcon"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger" style="font-size: 0.875em;"></span>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Reset Password</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script type="module">
+        import('/js/site.js').then(m => {
+            m.changePasswordIcon('Password', 'toggleIcon', 'togglePassword');
+            m.changePasswordIcon('ConfirmPassword', 'iconConfirmPassword', 'toggleConfirmPassword');
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+            crossorigin="anonymous"
+            integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"
+            crossorigin="anonymous"
+            integrity="sha512-rstIgDs0xPgmG6RX1Aba4KV5cWJbAMcvRCVmglpam9SoHZiUCyQVDdH2LPlxoHtrv17XWblE/V/PP+Tr04hbtA==">
+    </script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"
+        crossorigin="anonymous"
+        integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==">
+    </script>
+}

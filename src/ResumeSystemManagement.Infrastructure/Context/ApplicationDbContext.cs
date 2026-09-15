@@ -7,7 +7,7 @@ using ResumeSystemManagement.Infrastructure.IdentityEntities;
 
 namespace ResumeSystemManagement.Infrastructure.Context;
 
-public class ApplicationDbContext(IConfiguration config):IdentityDbContext<User, IdentityRole,string>
+public class ApplicationDbContext(IConfiguration config):IdentityDbContext<AppUser, IdentityRole,string>
 {
     private readonly IConfiguration _config = config;
 
@@ -21,8 +21,8 @@ public class ApplicationDbContext(IConfiguration config):IdentityDbContext<User,
     public virtual DbSet<Resume> Resumes { get; set; }
     public virtual DbSet<Position> Positions { get; set;}
     public virtual DbSet<UserProject> UserProjects { get; set; }
-    public virtual DbSet<ResumeAttributeValue> ResumeAttributeValues { get; set; }
-    public virtual DbSet<RecruterLike> RecruterLikes { get; set; }
+    public virtual DbSet<CandidateAttributeValue> ResumeAttributeValues { get; set; }
+    public virtual DbSet<RecruiterLike> RecruiterLikes { get; set; }
     public virtual DbSet<ChatHistory> Histories { get; set; }
     public virtual DbSet<AttributeValueForList> AttributeValueForLists { get; set; }
     public virtual DbSet<AttributeType> AttributeTypes { get; set; }
@@ -34,43 +34,57 @@ public class ApplicationDbContext(IConfiguration config):IdentityDbContext<User,
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<User>(entity =>
+        builder.Entity<AppUser>(entity =>
         {
             entity.HasMany(p => p.Resumes)
                 .WithOne()
                 .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
 
             entity.HasMany(p => p.Projects)
                 .WithOne()
-                .HasForeignKey(d => d.UserId);
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
 
-            entity.HasMany(p => p.RecruterLikes)
+            entity.HasMany(p => p.RecruiterLikes)
                 .WithOne()
-                .HasForeignKey(d => d.RecruterId)
+                .HasForeignKey(d => d.RecruiterId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
 
             entity.HasMany(p => p.ChatHistories)
                 .WithOne()
                 .HasForeignKey(d => d.SentBy)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+            
+            entity.HasMany(p => p.CandidateAttributeValues)
+                .WithOne()
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
         });
         
         builder.Entity<Resume>(entity =>
         {
-            entity.HasMany(p => p.RecruterLikes)
+            entity.HasMany(p => p.Likes)
                 .WithOne(d => d.Resume)
                 .HasForeignKey(d => d.ResumeId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
 
             entity.HasMany(p => p.Histories)
                 .WithOne(d => d.Resume)
                 .HasForeignKey(d => d.ResumeId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
 
             entity.HasMany(p => p.Likes)
                 .WithOne(d => d.Resume)
                 .HasForeignKey(d => d.ResumeId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
         });
 
@@ -79,11 +93,13 @@ public class ApplicationDbContext(IConfiguration config):IdentityDbContext<User,
             entity.HasMany(p => p.Resumes)
                 .WithOne(d => d.Position)
                 .HasForeignKey(d => d.PositionId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
 
             entity.HasMany(p => p.AttributeFilters)
                 .WithOne(d => d.Position)
-                .HasForeignKey(d => d.Position)
+                .HasForeignKey(d => d.PositionId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
         });
 
@@ -92,16 +108,19 @@ public class ApplicationDbContext(IConfiguration config):IdentityDbContext<User,
             entity.HasMany(p => p.AttributeValueForLists)
                 .WithOne(d => d.Attribute)
                 .HasForeignKey(d => d.AttributeId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
 
             entity.HasMany(p => p.AttributeFilters)
                 .WithOne(d => d.Attribute)
                 .HasForeignKey(d => d.AttributeId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
             
-            entity.HasMany(p => p.ResumeAttributeValues)
+            entity.HasMany(p => p.CandidateAttributeValues)
                 .WithOne(d => d.Attribute)
                 .HasForeignKey(d => d.AttributeId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
         });
 
@@ -110,6 +129,7 @@ public class ApplicationDbContext(IConfiguration config):IdentityDbContext<User,
             entity.HasMany(p => p.AttributeLibraries)
                 .WithOne(d => d.AttributeCategory)
                 .HasForeignKey(d => d.CategoryId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
         });
 
@@ -118,6 +138,7 @@ public class ApplicationDbContext(IConfiguration config):IdentityDbContext<User,
             entity.HasMany(p => p.AttributeLibraries)
                 .WithOne(d => d.AttributeType)
                 .HasForeignKey(d => d.TypeId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
         });
     }

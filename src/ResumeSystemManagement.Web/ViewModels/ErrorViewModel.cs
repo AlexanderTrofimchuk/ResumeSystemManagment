@@ -1,4 +1,4 @@
-namespace ResumeSystemManagement.Web.Models;
+namespace ResumeSystemManagement.Web.ViewModels;
 
 public class ErrorViewModel
 {

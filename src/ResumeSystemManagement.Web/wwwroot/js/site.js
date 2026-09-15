@@ -1,4 +1,14 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿export function changePasswordIcon(idInput, idIcon, idButton) {
+    const button = document.getElementById(idButton);
+    if (!button) return;
 
-// Write your JavaScript code.
+    button.addEventListener('click', function () {
+        const input = document.getElementById(idInput);
+        const icon = document.getElementById(idIcon);
+        const isPassword = input.type === 'password';
+
+        input.type = isPassword ? 'text' : 'password';
+        icon.classList.toggle('bi-eye');
+        icon.classList.toggle('bi-eye-slash');
+    });
+}

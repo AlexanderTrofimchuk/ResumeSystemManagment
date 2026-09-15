@@ -18,4 +18,17 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="dotenv.net" Version="4.0.2" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.20">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+        
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\pictures\" />
+    </ItemGroup>
+
 </Project>
