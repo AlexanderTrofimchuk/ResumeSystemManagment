@@ -1,0 +1,107 @@
+﻿@model ResumeSystemManagement.Application.DTOs.Attributes.EditAttributeDTo
+
+@{
+    ViewData["Title"] = "Создать атрибут";
+}
+
+<div class="modal fade" id="editAttributeModal" tabindex="-1"
+     aria-labelledby="createAttributeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header border-bottom px-4 py-3">
+                <h5 class="modal-title fw-semibold" id="createAttributeModalLabel">
+                    Редактирование атрибута
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+           
+            <form asp-action="EditAttribute" method="post" novalidate id="createAttributeForm">
+                <div class="modal-body px-4 py-4">
+                    <input asp-for="Id" type="hidden" />
+                    <input type="hidden" asp-for="IsBuiltIn" />
+                    
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger py-2 small mb-3" role="alert"></div>
+
+                    <div class="row g-3 mb-3">
+                        <!-- Категория -->
+                        <div class="col-sm-6">
+                            <label asp-for="CategoryId" class="form-label fw-medium">
+                                Категория <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="CategoryId"
+                                    asp-items="ViewBag.Categories"
+                                    class="form-select">
+                                <option value="">— выберите —</option>
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Тип -->
+                        <div class="col-sm-6">
+                            <label asp-for="TypeId" class="form-label fw-medium">
+                                Тип <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="TypeId"
+                                    asp-items="ViewBag.Types"
+                                    class="form-select">
+                                <option value="">— выберите —</option>
+                            </select>
+                            <span asp-validation-for="TypeId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Название -->
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label fw-medium">
+                            Название <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="Title"
+                               class="form-control"
+                               placeholder="Введите название атрибута"
+                               autocomplete="off" />
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Описание -->
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label fw-medium">Описание</label>
+                        <textarea asp-for="Description"
+                                  class="form-control"
+                                  rows="3"
+                                  placeholder="Краткое описание (необязательно)"></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+
+
+                    <div class="mb-1">
+                        <div class="form-check form-switch">
+                            <input asp-for="IsBuiltIn"
+                                   class="form-check-input"
+                                   type="checkbox"
+                                   id="isBuiltInSwitch" 
+                                   aria-checked="False" disabled/>
+                            <label class="form-check-label" for="isBuiltInSwitch">
+                                Встроенный атрибут
+                            </label>
+                        </div>
+                        <div class="form-text ms-4 ps-2">
+                            Системный атрибут — пользователи не смогут его удалить.
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer border-top px-4 py-3">
+                    <button type="button" class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-check-lg me-1"></i> Редактировать
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>

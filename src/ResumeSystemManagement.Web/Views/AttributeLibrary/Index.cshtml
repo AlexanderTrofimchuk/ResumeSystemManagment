@@ -1,0 +1,223 @@
+﻿@model ResumeSystemManagement.Application.DTOs.Attributes.AttributeDetails
+@{
+    ViewData["Title"] = "Attribute Library";
+}
+
+<div class="container mx-auto justify-content-center align-items-center mt-2 robot-mono-font um-container">
+    
+    <div class="toolbar d-flex align-items-center gap-2 p-2 mb-3 border rounded bg-light shadow-sm um-toolbar">
+        
+        <form asp-controller="AttributeLibrary"
+              asp-action="SearchAttribute"
+              method="get"
+              class="d-flex gap-2 flex-grow-1">
+
+            <input type="text"
+                   name="name"
+                   class="form-control form-control-sm"
+                   placeholder="Search by title, type or category..."
+                   aria-label="Search attributes"
+                   value="@Context.Request.Query["name"]">
+
+            <button type="submit"
+                    class="btn btn-outline-secondary btn-sm flex-shrink-0"
+                    title="Search">
+                <i class="bi bi-search"></i>
+            </button>
+
+        </form>
+        
+        <button
+            id="btnCreate"
+            class="btn btn-outline-primary btn-sm"
+            title="Create attribute"
+            data-bs-toggle="modal"
+            data-bs-target="#createAttributeModal">
+            <span class="btn-text"><i class="bi bi-plus-square-fill"></i></span>
+        </button>
+
+        <button
+                id="btnEdit"
+                class="btn btn-outline-secondary btn-sm"
+                disabled
+                title="Edit attribute">
+            <i class="bi bi-pencil-fill"></i>
+        </button>
+
+        <button asp-action="DeleteAttributes"
+                type="submit"
+                form="mainForm"
+                id="btnDelete"
+                class="btn btn-success btn-sm"
+                disabled
+                title="Delete attribute/attributes">
+            <i class="bi bi-dash-square-fill"></i>
+        </button>
+
+    </div>
+    
+    <form method="post" id="mainForm">
+        <div class="um-table-wrapper">
+            <div class="um-scroll-area">
+                <table class="table table-striped-columns um-table text-center">
+                    <thead>
+                    <tr>
+                        <th scope="col">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="selectAll"
+                                   id="selectAll"
+                                   aria-label="Select All">
+                        </th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Type Name</th>
+                        <th scope="col">Category Name</th>
+                        <th scope="col">Is Built in</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="attributeTableBody">
+                    @if (Model.Attributes.Count > 0)
+                    {
+                        @foreach (var item in Model.Attributes)
+                        {
+                            <tr class="attribute-row">
+                                <td>
+                                    <input value="@item.Id"
+                                           name="SelectIds"
+                                           id="checkbox-@item.Id"
+                                           type="checkbox"
+                                           class="form-check-input row-checkbox">
+                                </td>
+
+                                <td class="attribute-title">@item.Title</td>
+                                <td>@item.Description</td>
+                                <td class="attribute-type">@item.TypeName</td>
+                                <td class="attribute-category">@item.CategoryName</td>
+
+                                <td>
+                                    <input checked="@item.IsBuiltIn"
+                                           id="isBuiltIn-@item.Id"
+                                           type="checkbox"
+                                           class="form-check-input"
+                                           disabled>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                <p class="h3 my-3">There are no attributes</p>
+                            </td>
+                        </tr>
+                    }
+
+                    <tr id="noSearchResults" style="display: none;">
+                        <td colspan="6" class="text-center">
+                            <p class="h3 my-3">No attributes found</p>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+</div>
+
+<partial name="_CreateForm" model="Model.CreateAttributeDto"/>
+
+<div id="editModalContainer">
+    
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+
+    <script>
+    const selectAll     = document.getElementById('selectAll');
+    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+
+    const toolbarBtns = [
+        document.getElementById('btnEdit'),
+        document.getElementById('btnDelete'),
+    ];
+    
+    function updateToolbar() {
+        const checked = Array.from(rowCheckboxes).filter(cb => cb.checked);
+        const any = checked.length > 0;
+
+        toolbarBtns.forEach(btn => {
+            if (btn) btn.disabled = !any;
+        });
+        
+        const editBtn = document.getElementById('btnEdit');
+
+        if (editBtn) {
+            editBtn.disabled = checked.length !== 1;
+        }
+    }
+
+    selectAll.addEventListener('change', function () {
+        rowCheckboxes.forEach(cb => {
+            if (!cb.closest('tr').hidden) {
+                cb.checked = this.checked;
+                cb.closest('tr').classList.toggle('table-active', this.checked);
+            }
+        });
+
+        updateToolbar();
+    });
+
+    rowCheckboxes.forEach(cb => {
+        cb.addEventListener('change', function () {
+            this.closest('tr').classList.toggle('table-active', this.checked);
+
+            const visibleCheckboxes = Array.from(rowCheckboxes)
+                .filter(c => !c.closest('tr').hidden);
+
+            selectAll.checked =
+                visibleCheckboxes.length > 0 &&
+                visibleCheckboxes.every(c => c.checked);
+
+            updateToolbar();
+        });
+    });
+    
+    (function () {
+        const form = document.getElementById('createAttributeForm');
+
+        if (!form) return;
+
+        const summary = form.querySelector('[data-valmsg-summary]');
+
+        if (summary && summary.querySelectorAll('li').length > 0) {
+            bootstrap.Modal.getOrCreateInstance(
+                document.getElementById('createAttributeModal')
+            ).show();
+        }
+    })();
+
+    document.getElementById('btnEdit').addEventListener('click', async () => {
+        const id = document.querySelector('.row-checkbox:checked').value;
+        const response = await fetch(`/AttributeLibrary/EditAttributeForm?id=${id}`);
+
+        if (!response.ok) return console.error('Failed to load edit form');
+
+        document.getElementById('editModalContainer').innerHTML = await response.text();
+        bootstrap.Modal.getOrCreateInstance(
+            document.getElementById('editAttributeModal')
+        ).show();
+    });
+    
+    window.addEventListener('pageshow', e => {
+        if (e.persisted) {
+            rowCheckboxes.forEach(cb => cb.checked = false);
+            updateToolbar();
+        }
+    });
+    </script>
+}

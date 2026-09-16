@@ -2,8 +2,8 @@
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
 using ResumeSystemManagement.Core.Entities;
-using ResumeSystemManagement.Core.Interfaces;
-using ResumeSystemManagement.Core.StaticDatas;
+using ResumeSystemManagement.Core.Interfaces.Repositories.UserRepository;
+using ResumeSystemManagement.Core.ReadModels;
 using ResumeSystemManagement.Infrastructure.Context;
 using ResumeSystemManagement.Infrastructure.IdentityEntities;
 using ResumeSystemManagement.Infrastructure.Mappers;

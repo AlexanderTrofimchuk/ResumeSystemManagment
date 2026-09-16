@@ -1,4 +1,4 @@
-﻿namespace ResumeSystemManagement.Application.Interfaces;
+﻿namespace ResumeSystemManagement.Application.Interfaces.Auth;
 
 public interface IUserContext
 {

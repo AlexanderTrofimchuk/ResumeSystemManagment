@@ -4,5 +4,5 @@ public enum ControllerName
 {
     Home,
     Account,
-    Register,
+    AttributeLibrary
 }

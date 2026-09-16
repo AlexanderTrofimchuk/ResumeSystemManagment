@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using ResumeSystemManagement.Application.Interfaces;
+using ResumeSystemManagement.Application.Interfaces.Auth;
 using ResumeSystemManagement.Infrastructure.Extensions;
 
 namespace ResumeSystemManagement.Infrastructure.Service;

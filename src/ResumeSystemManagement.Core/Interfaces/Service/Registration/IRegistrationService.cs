@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 
-namespace ResumeSystemManagement.Core.Interfaces;
+namespace ResumeSystemManagement.Core.Interfaces.Service.Registration;
 
 public interface IRegistrationService
 {
