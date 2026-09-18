@@ -1,6 +1,7 @@
 ﻿using FluentResults;
-using ResumeSystemManagement.Application.Interfaces;
-using ResumeSystemManagement.Core.Interfaces;
+using ResumeSystemManagement.Application.Interfaces.Auth;
+using ResumeSystemManagement.Core.Interfaces.Repositories.UserRepository;
+using ResumeSystemManagement.Core.Interfaces.Service.Registration;
 
 namespace ResumeSystemManagement.Application.Service.Registration;
 

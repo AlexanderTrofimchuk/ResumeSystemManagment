@@ -14,10 +14,14 @@ public class BaseController: Controller
         return RedirectToAction(action.ToString(), controller.ToString(),  router);
     }
 
-    public IActionResult ReturnCurrentException(List<string> messages, ActionName action, object model)
+    public IActionResult ReturnCurrentException(List<string> messages, ActionName action, object? model = null)
     {
         TempData["ToastMessages"] = JsonSerializer.Serialize(messages);
         TempData["ToastType"] = nameof(MessageColor.Danger).ToLower();
+        
+        if (model is null)
+            return RedirectToAction(action.ToString());
+        
         return View(action.ToString(), model);
     }
 }

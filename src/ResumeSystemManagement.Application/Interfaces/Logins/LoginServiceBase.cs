@@ -1,8 +1,9 @@
 ﻿using FluentResults;
+using ResumeSystemManagement.Application.Interfaces.Auth;
 using ResumeSystemManagement.Core.Entities;
-using ResumeSystemManagement.Core.Interfaces;
+using ResumeSystemManagement.Core.Interfaces.Repositories.UserRepository;
 
-namespace ResumeSystemManagement.Application.Interfaces;
+namespace ResumeSystemManagement.Application.Interfaces.Logins;
 
 public abstract class LoginServiceBase(IAuthService authService, IUserRepository userRepository)
 {

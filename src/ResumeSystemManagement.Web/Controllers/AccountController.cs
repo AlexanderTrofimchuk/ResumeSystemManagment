@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ResumeSystemManagement.Core.Interfaces;
+using ResumeSystemManagement.Core.Interfaces.Service.Login;
+using ResumeSystemManagement.Core.Interfaces.Service.Registration;
 using ResumeSystemManagement.Web.ViewModels;
 using ResumeSystemManagement.Web.ViewModels.Enums;
 

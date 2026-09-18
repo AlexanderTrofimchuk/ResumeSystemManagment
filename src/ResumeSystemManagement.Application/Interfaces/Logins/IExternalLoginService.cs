@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using FluentResults;
 
-namespace ResumeSystemManagement.Application.Interfaces;
+namespace ResumeSystemManagement.Application.Interfaces.Logins;
 
 public interface IExternalLoginService
 {

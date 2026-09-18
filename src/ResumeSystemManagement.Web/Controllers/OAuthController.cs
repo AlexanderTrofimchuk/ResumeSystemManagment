@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using FluentResults;
 using Microsoft.AspNetCore.Mvc;
-using ResumeSystemManagement.Application.Interfaces;
+using ResumeSystemManagement.Application.Interfaces.Logins;
 using ResumeSystemManagement.Infrastructure.Interfaces;
 using ResumeSystemManagement.Web.ViewModels.Enums;
 

@@ -4,6 +4,10 @@
     build:
       context: .
       dockerfile: src/ResumeSystemManagement.Web/Dockerfile
+    env_file:
+      - path: ./.env
+    ports:
+      - "80:8080"
   
   db:
     image: postgres:17-alpine

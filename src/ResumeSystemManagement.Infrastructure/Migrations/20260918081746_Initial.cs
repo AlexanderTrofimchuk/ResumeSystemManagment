@@ -87,7 +87,7 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                     Title = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Permissions = table.Column<int>(type: "integer", nullable: false),
-                    Version = table.Column<byte[]>(type: "bytea", nullable: false),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: false),
                     CreateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ClosedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
@@ -235,7 +235,8 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                     CategoryId = table.Column<int>(type: "integer", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    IsBuiltIn = table.Column<bool>(type: "boolean", nullable: false)
+                    IsBuiltIn = table.Column<bool>(type: "boolean", nullable: false),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -304,6 +305,30 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_AttributeFilters_Positions_PositionId",
                         column: x => x.PositionId,
+                        principalTable: "Positions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AttributeLibraryPosition",
+                columns: table => new
+                {
+                    AttributeLibrariesId = table.Column<int>(type: "integer", nullable: false),
+                    PositionsId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AttributeLibraryPosition", x => new { x.AttributeLibrariesId, x.PositionsId });
+                    table.ForeignKey(
+                        name: "FK_AttributeLibraryPosition_AttributeLibraries_AttributeLibrar~",
+                        column: x => x.AttributeLibrariesId,
+                        principalTable: "AttributeLibraries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AttributeLibraryPosition_Positions_PositionsId",
+                        column: x => x.PositionsId,
                         principalTable: "Positions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -385,7 +410,7 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ResumeAttributeValues",
+                name: "CandidateAttributeValue",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -398,26 +423,26 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ResumeAttributeValues", x => x.Id);
+                    table.PrimaryKey("PK_CandidateAttributeValue", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ResumeAttributeValues_AspNetUsers_UserId",
+                        name: "FK_CandidateAttributeValue_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ResumeAttributeValues_AttributeFilters_AttributeFilterId",
+                        name: "FK_CandidateAttributeValue_AttributeFilters_AttributeFilterId",
                         column: x => x.AttributeFilterId,
                         principalTable: "AttributeFilters",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_ResumeAttributeValues_AttributeLibraries_AttributeId",
+                        name: "FK_CandidateAttributeValue_AttributeLibraries_AttributeId",
                         column: x => x.AttributeId,
                         principalTable: "AttributeLibraries",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ResumeAttributeValues_Resumes_ResumeId",
+                        name: "FK_CandidateAttributeValue_Resumes_ResumeId",
                         column: x => x.ResumeId,
                         principalTable: "Resumes",
                         principalColumn: "Id",
@@ -482,9 +507,34 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 column: "TypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AttributeLibraryPosition_PositionsId",
+                table: "AttributeLibraryPosition",
+                column: "PositionsId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AttributeValueForLists_AttributeId",
                 table: "AttributeValueForLists",
                 column: "AttributeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CandidateAttributeValue_AttributeFilterId",
+                table: "CandidateAttributeValue",
+                column: "AttributeFilterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CandidateAttributeValue_AttributeId",
+                table: "CandidateAttributeValue",
+                column: "AttributeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CandidateAttributeValue_ResumeId",
+                table: "CandidateAttributeValue",
+                column: "ResumeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CandidateAttributeValue_UserId",
+                table: "CandidateAttributeValue",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Histories_ResumeId",
@@ -505,26 +555,6 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 name: "IX_RecruiterLikes_ResumeId",
                 table: "RecruiterLikes",
                 column: "ResumeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ResumeAttributeValues_AttributeFilterId",
-                table: "ResumeAttributeValues",
-                column: "AttributeFilterId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ResumeAttributeValues_AttributeId",
-                table: "ResumeAttributeValues",
-                column: "AttributeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ResumeAttributeValues_ResumeId",
-                table: "ResumeAttributeValues",
-                column: "ResumeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ResumeAttributeValues_UserId",
-                table: "ResumeAttributeValues",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Resumes_PositionId",
@@ -561,16 +591,19 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "AttributeLibraryPosition");
+
+            migrationBuilder.DropTable(
                 name: "AttributeValueForLists");
+
+            migrationBuilder.DropTable(
+                name: "CandidateAttributeValue");
 
             migrationBuilder.DropTable(
                 name: "Histories");
 
             migrationBuilder.DropTable(
                 name: "RecruiterLikes");
-
-            migrationBuilder.DropTable(
-                name: "ResumeAttributeValues");
 
             migrationBuilder.DropTable(
                 name: "UserProjects");

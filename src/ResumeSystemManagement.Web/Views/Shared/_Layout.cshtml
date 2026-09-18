@@ -1,4 +1,4 @@
-﻿@using ResumeSystemManagement.Core.StaticDatas
+﻿@using ResumeSystemManagement.Core.ReadModels
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
@@ -36,6 +36,9 @@
                     </li>
                     @if (User.IsInRole(RoleNames.Recruiter))
                     {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-action="Index" asp-controller="AttributeLibrary">Attribute Library</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark">CVs</a>
                         </li>
@@ -83,6 +86,7 @@
         integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==">
     </script> 
 <script src="~/js/site.js" asp-append-version="true"></script>
+<script src="~/js/editAttribute.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

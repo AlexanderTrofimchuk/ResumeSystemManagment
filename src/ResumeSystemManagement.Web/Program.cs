@@ -23,7 +23,7 @@ var app = builder.Build();
 
 app.UseForwardedHeaders();
 
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
 

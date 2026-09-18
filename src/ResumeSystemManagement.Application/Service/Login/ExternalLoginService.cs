@@ -1,9 +1,10 @@
 ﻿using System.Security.Claims;
 using FluentResults;
 using FluentResults.Extensions;
-using ResumeSystemManagement.Application.Interfaces;
+using ResumeSystemManagement.Application.Interfaces.Auth;
+using ResumeSystemManagement.Application.Interfaces.Logins;
 using ResumeSystemManagement.Core.Entities;
-using ResumeSystemManagement.Core.Interfaces;
+using ResumeSystemManagement.Core.Interfaces.Repositories.UserRepository;
 
 namespace ResumeSystemManagement.Application.Service.Login;
 

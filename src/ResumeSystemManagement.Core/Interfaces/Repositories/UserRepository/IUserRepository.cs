@@ -2,7 +2,7 @@
 using FluentResults;
 using ResumeSystemManagement.Core.Entities;
 
-namespace ResumeSystemManagement.Core.Interfaces;
+namespace ResumeSystemManagement.Core.Interfaces.Repositories.UserRepository;
 
 public interface IUserRepository
 {

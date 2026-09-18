@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using ResumeSystemManagement.Application.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using ResumeSystemManagement.Application.Interfaces.Auth;
 
 namespace ResumeSystemManagement.Infrastructure.Service;
 
