@@ -1,22 +1,24 @@
-﻿@model ResumeSystemManagement.Application.DTOs.Attributes.AttributeDetails
+﻿@using Microsoft.AspNetCore.Http.Features
+@using ResumeSystemManagement.Core.ReadModels
+@model ResumeSystemManagement.Application.DTOs.Position.PositionDetails
 @{
-    ViewData["Title"] = "Attribute Library";
+    ViewData["Title"] = "Position Library";
 }
 
 <div class="container mx-auto justify-content-center align-items-center mt-2 robot-mono-font um-container">
-    
+
     <div class="toolbar d-flex align-items-center gap-2 p-2 mb-3 border rounded bg-light shadow-sm um-toolbar">
-        
-        <form asp-controller="AttributeLibrary"
-              asp-action="SearchAttribute"
+
+        <form asp-controller="PositionLibrary"
+              asp-action="SearchPosition"
               method="get"
               class="d-flex gap-2 flex-grow-1">
 
             <input type="text"
                    name="name"
                    class="form-control form-control-sm"
-                   placeholder="Search by title, type or category..."
-                   aria-label="Search attributes"
+                   placeholder="Search by title or description..."
+                   aria-label="Search positions"
                    value="@Context.Request.Query["name"]">
 
             <button type="submit"
@@ -27,35 +29,48 @@
 
         </form>
         
-        <button
-            id="btnCreate"
-            class="btn btn-outline-primary btn-sm"
-            title="Create attribute"
-            data-bs-toggle="modal"
-            data-bs-target="#createAttributeModal">
-            <span class="btn-text"><i class="bi bi-plus-square-fill"></i></span>
-        </button>
-
-        <button
+        @if (User.IsInRole(RoleNames.Recruiter))
+        {
+            <button
+                id="btnCreate"
+                class="btn btn-outline-primary btn-sm"
+                title="Create position"
+                data-bs-toggle="modal"
+                data-bs-target="#createPositionModal">
+                <span class="btn-text"><i class="bi bi-plus-square-fill"></i></span>
+            </button>
+            
+            <button asp-action="DuplicatePosition"
+                    type="submit"
+                    form="mainForm"
+                    id="btnDuplicate"
+                    class="btn btn-outline-warning btn-sm"
+                    disabled
+                    title="Duplicate position">
+                <i class="bi bi-copy"></i>
+            </button>
+            
+            <button
                 id="btnEdit"
                 class="btn btn-outline-secondary btn-sm"
                 disabled
-                title="Edit attribute">
-            <i class="bi bi-pencil-fill"></i>
-        </button>
+                title="Edit position">
+                <i class="bi bi-pencil-fill"></i>
+            </button>
 
-        <button asp-action="DeleteAttributes"
-                type="submit"
-                form="mainForm"
-                id="btnDelete"
-                class="btn btn-danger btn-sm"
-                disabled
-                title="Delete attribute/attributes">
-            <i class="bi bi-dash-square-fill"></i>
-        </button>
+            <button asp-action="DeletePositions"
+                    type="submit"
+                    form="mainForm"
+                    id="btnDelete"
+                    class="btn btn-outline-danger btn-sm"
+                    disabled
+                    title="Delete position/positions">
+                <i class="bi bi-dash-square-fill"></i>
+            </button>
+        }
 
     </div>
-    
+
     <form method="post" id="mainForm">
         <div class="um-table-wrapper">
             <div class="um-scroll-area">
@@ -71,18 +86,17 @@
                         </th>
                         <th scope="col">Title</th>
                         <th scope="col">Description</th>
-                        <th scope="col">Type Name</th>
-                        <th scope="col">Category Name</th>
-                        <th scope="col">Is Built in</th>
+                        <th scope="col">Permissions</th>
+                        <th scope="col">Created On</th>
                     </tr>
                     </thead>
 
-                    <tbody id="attributeTableBody">
-                    @if (Model.Attributes.Count > 0)
+                    <tbody id="positionTableBody">
+                    @if (Model.Positions.Count > 0)
                     {
-                        @foreach (var item in Model.Attributes)
+                        @foreach (var item in Model.Positions)
                         {
-                            <tr class="attribute-row">
+                            <tr class="position-row">
                                 <td>
                                     <input value="@item.Id"
                                            name="SelectIds"
@@ -91,33 +105,25 @@
                                            class="form-check-input row-checkbox">
                                 </td>
 
-                                <td class="attribute-title">@item.Title</td>
+                                <td class="position-title">@item.Title</td>
                                 <td>@item.Description</td>
-                                <td class="attribute-type">@item.TypeName</td>
-                                <td class="attribute-category">@item.CategoryName</td>
-
-                                <td>
-                                    <input checked="@item.IsBuiltIn"
-                                           id="isBuiltIn-@item.Id"
-                                           type="checkbox"
-                                           class="form-check-input"
-                                           disabled>
-                                </td>
+                                <td class="position-permissions">@item.Permissions</td>
+                                <td>@item.CreatedOn.ToString("yyyy-MM-dd")</td>
                             </tr>
                         }
                     }
                     else
                     {
                         <tr>
-                            <td colspan="6" class="text-center">
-                                <p class="h3 my-3">There are no attributes</p>
+                            <td colspan="5" class="text-center">
+                                <p class="h3 my-3">There are no positions</p>
                             </td>
                         </tr>
                     }
 
                     <tr id="noSearchResults" style="display: none;">
-                        <td colspan="6" class="text-center">
-                            <p class="h3 my-3">No attributes found</p>
+                        <td colspan="5" class="text-center">
+                            <p class="h3 my-3">No positions found</p>
                         </td>
                     </tr>
 
@@ -128,22 +134,23 @@
     </form>
 </div>
 
-@await Html.PartialAsync("_CreateAttribute",Model.CreateAttributeDto)
+@await Html.PartialAsync("_CreatePosition", Model.CreatePositionDto)
 
 <div id="editModalContainer"></div>
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    
+
     <script>
     const selectAll     = document.getElementById('selectAll');
     const rowCheckboxes = document.querySelectorAll('.row-checkbox');
 
     const toolbarBtns = [
         document.getElementById('btnEdit'),
+        document.getElementById('btnDuplicate'),
         document.getElementById('btnDelete'),
     ];
-    
+
     function updateToolbar() {
         const checked = Array.from(rowCheckboxes).filter(cb => cb.checked);
         const any = checked.length > 0;
@@ -151,11 +158,12 @@
         toolbarBtns.forEach(btn => {
             if (btn) btn.disabled = !any;
         });
-        
-        const editBtn = document.getElementById('btnEdit');
 
-        if (editBtn) {
+        const editBtn = document.getElementById('btnEdit');
+        const duplicateBtn = document.getElementById('btnDuplicate');
+        if (editBtn && duplicateBtn) {
             editBtn.disabled = checked.length !== 1;
+            duplicateBtn.disabled = checked.length !== 1;
         }
     }
 
@@ -184,40 +192,41 @@
             updateToolbar();
         });
     });
-    
-    (function () {
-        const form = document.getElementById('createAttributeForm');
-
-        if (!form) return;
-
-        const summary = form.querySelector('[data-valmsg-summary]');
-
-        if (summary && summary.querySelectorAll('li').length > 0) {
-            bootstrap.Modal.getOrCreateInstance(
-                document.getElementById('createAttributeModal')
-            ).show();
-        }
-    })();
 
     document.getElementById('btnEdit').addEventListener('click', async () => {
         const id = document.querySelector('.row-checkbox:checked').value;
-        const response = await fetch(`/AttributeLibrary/EditAttributeForm?id=${id}`);
+        const response = await fetch(`/PositionLibrary/EditPositionForm?id=${id}`);
 
         if (!response.ok) return console.error('Failed to load edit form');
 
         document.getElementById('editModalContainer').innerHTML = await response.text();
-        initEditForm();
-        
+
         bootstrap.Modal.getOrCreateInstance(
-            document.getElementById('editAttributeModal')
+            document.getElementById('editPositionModal')
         ).show();
     });
-    
+
     window.addEventListener('pageshow', e => {
         if (e.persisted) {
             rowCheckboxes.forEach(cb => cb.checked = false);
             updateToolbar();
         }
+    });
+
+    document.getElementById('btnEdit').addEventListener('click', async () => {
+        const id = document.querySelector('.row-checkbox:checked').value;
+        const response = await fetch(`/Position/EditPositionForm?id=${id}`);
+
+        if (!response.ok) return console.error('Failed to load edit form');
+
+        document.getElementById('editModalContainer').innerHTML = await response.text();
+
+        const form = document.getElementById('editPositionForm');
+        $.validator.unobtrusive.parse(form);
+
+        bootstrap.Modal.getOrCreateInstance(
+            document.getElementById('editPositionModal')
+        ).show();
     });
     </script>
 }

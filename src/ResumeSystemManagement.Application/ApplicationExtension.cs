@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ResumeSystemManagement.Application.Interfaces.Attributes;
 using ResumeSystemManagement.Application.Interfaces.Logins;
+using ResumeSystemManagement.Application.Interfaces.Position;
 using ResumeSystemManagement.Application.Service.Attributes;
 using ResumeSystemManagement.Application.Service.Login;
+using ResumeSystemManagement.Application.Service.Position;
 using ResumeSystemManagement.Application.Service.Registration;
 using ResumeSystemManagement.Core.Interfaces.Service.Login;
 using ResumeSystemManagement.Core.Interfaces.Service.Registration;
@@ -19,6 +21,7 @@ public static class ApplicationExtension
         services.AddScoped<IAttributeLibraryService, AttributeLibraryService>();
         services.AddScoped<IAttributeTypeService, AttributeTypeService>();
         services.AddScoped<IAttributeCategoryService, AttributeCategoryService>();
+        services.AddScoped<IPositionService, PositionService>();
         
         return services;
     }

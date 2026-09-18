@@ -62,7 +62,7 @@ public class AttributeLibraryController(
             return ReturnCurrentException(attribute.Errors.Select(e => e.Message).ToList(),
                 ActionName.Index);
         await PopulateDropdowns();
-        return PartialView("_EditForm", attribute.Value);
+        return PartialView("_EditAttribute", attribute.Value);
     }
 
     [Authorize(Roles = RoleNames.Recruiter)]

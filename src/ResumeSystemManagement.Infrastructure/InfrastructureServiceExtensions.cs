@@ -4,12 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ResumeSystemManagement.Application.Interfaces.Auth;
 using ResumeSystemManagement.Core.Interfaces.Repositories.AttributeRepository;
+using ResumeSystemManagement.Core.Interfaces.Repositories.PositionRepository;
 using ResumeSystemManagement.Core.Interfaces.Repositories.UserRepository;
 using ResumeSystemManagement.Core.ReadModels;
 using ResumeSystemManagement.Infrastructure.Context;
 using ResumeSystemManagement.Infrastructure.IdentityEntities;
 using ResumeSystemManagement.Infrastructure.Interfaces;
 using ResumeSystemManagement.Infrastructure.Repositories.Attributes;
+using ResumeSystemManagement.Infrastructure.Repositories.Positions;
 using ResumeSystemManagement.Infrastructure.Repositories.User;
 using ResumeSystemManagement.Infrastructure.Service;
 
@@ -51,6 +53,7 @@ public static class InfrastructureServiceExtensions
         services.AddScoped<IAttributeLibraryRepository, AttributeLibraryRepository>();
         services.AddScoped<IAttributeCategoryRepository, AttributeCategoryRepository>();
         services.AddScoped<IAttributeTypeRepository, AttributeTypeRepository>();
+        services.AddScoped<IPositionRepository,PositionRepository>();
         services.AddScoped<IUserContext, UserContext>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IExternalAuthProvider, ExternalAuthProvider>();
