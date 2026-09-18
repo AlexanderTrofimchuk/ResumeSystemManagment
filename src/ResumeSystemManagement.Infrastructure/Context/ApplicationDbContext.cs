@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using ResumeSystemManagement.Core.Entities;
 using ResumeSystemManagement.Infrastructure.IdentityEntities;
 
@@ -15,8 +16,13 @@ public class ApplicationDbContext(IConfiguration config):IdentityDbContext<AppUs
     {
         optionsBuilder
             .UseNpgsql(_config.GetConnectionString("DefaultConnection"), o => 
-                o.MigrationsHistoryTable("__MigrationsHistory", "public"));
+                o.MigrationsHistoryTable("__MigrationsHistory", "public"))
+            .UseLoggerFactory(CreateLoggerFactory())
+            .EnableSensitiveDataLogging();
     }
+    
+    private static ILoggerFactory CreateLoggerFactory() =>
+        LoggerFactory.Create(builder => { builder.AddConsole(); });
     
     public virtual DbSet<Resume> Resumes { get; set; }
     public virtual DbSet<Position> Positions { get; set;}
@@ -28,6 +34,7 @@ public class ApplicationDbContext(IConfiguration config):IdentityDbContext<AppUs
     public virtual DbSet<AttributeType> AttributeTypes { get; set; }
     public virtual DbSet<AttributeLibrary> AttributeLibraries { get; set; }
     public virtual DbSet<AttributeFilter> AttributeFilters { get; set; }
+    public virtual DbSet<CandidateAttributeValue> CandidateAttributeValues { get; set; }
     public virtual DbSet<AttributeCategory> AttributeCategories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -90,6 +97,12 @@ public class ApplicationDbContext(IConfiguration config):IdentityDbContext<AppUs
 
         builder.Entity<Position>(entity =>
         {
+            entity.Property(e => e.Version)
+                .IsRowVersion();
+
+            entity.HasMany(e => e.AttributeLibraries)
+                .WithMany(e => e.Positions);
+            
             entity.HasMany(p => p.Resumes)
                 .WithOne(d => d.Position)
                 .HasForeignKey(d => d.PositionId)
@@ -105,6 +118,9 @@ public class ApplicationDbContext(IConfiguration config):IdentityDbContext<AppUs
 
         builder.Entity<AttributeLibrary>(entity =>
         {
+            entity.Property(e => e.Version)
+                .IsRowVersion();
+            
             entity.HasMany(p => p.AttributeValueForLists)
                 .WithOne(d => d.Attribute)
                 .HasForeignKey(d => d.AttributeId)

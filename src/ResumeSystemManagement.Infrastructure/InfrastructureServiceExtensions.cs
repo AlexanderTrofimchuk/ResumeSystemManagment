@@ -9,7 +9,8 @@ using ResumeSystemManagement.Core.ReadModels;
 using ResumeSystemManagement.Infrastructure.Context;
 using ResumeSystemManagement.Infrastructure.IdentityEntities;
 using ResumeSystemManagement.Infrastructure.Interfaces;
-using ResumeSystemManagement.Infrastructure.Repositories;
+using ResumeSystemManagement.Infrastructure.Repositories.Attributes;
+using ResumeSystemManagement.Infrastructure.Repositories.User;
 using ResumeSystemManagement.Infrastructure.Service;
 
 namespace ResumeSystemManagement.Infrastructure;

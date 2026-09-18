@@ -6,4 +6,5 @@ public record EditAttributeDTo(
     int CategoryId,
     string Title,
     string Description,
-    bool IsBuiltIn);
+    bool IsBuiltIn,
+    List<DropDownOption>? DropdownOptions = null);

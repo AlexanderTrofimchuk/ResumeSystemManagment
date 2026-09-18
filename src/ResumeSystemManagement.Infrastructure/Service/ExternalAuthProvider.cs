@@ -23,12 +23,12 @@ public class ExternalAuthProvider(SignInManager<AppUser> signManager, IHttpConte
         return result.Succeeded ? result.Principal : null;
     }
     
-    public AuthenticationProperties ConfigureGoogleLogin(string callbackUrl)
+    public AuthenticationProperties ConfigureGoogleLogin(string? callbackUrl)
     {
        return signManager.ConfigureExternalAuthenticationProperties("Google", callbackUrl);
     }
 
-    public AuthenticationProperties ConfigureFacebookLogin(string callbackUrl)
+    public AuthenticationProperties ConfigureFacebookLogin(string? callbackUrl)
     {
         return signManager.ConfigureExternalAuthenticationProperties("Facebook", callbackUrl);
     }

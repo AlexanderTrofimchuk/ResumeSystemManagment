@@ -22,6 +22,21 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("AttributeLibraryPosition", b =>
+                {
+                    b.Property<int>("AttributeLibrariesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PositionsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("AttributeLibrariesId", "PositionsId");
+
+                    b.HasIndex("PositionsId");
+
+                    b.ToTable("AttributeLibraryPosition");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -227,6 +242,12 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                     b.Property<int>("TypeId")
                         .HasColumnType("integer");
 
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
@@ -310,7 +331,7 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ResumeAttributeValues");
+                    b.ToTable("CandidateAttributeValue");
                 });
 
             modelBuilder.Entity("ResumeSystemManagement.Core.Entities.ChatHistory", b =>
@@ -373,9 +394,11 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<byte[]>("Version")
-                        .IsRequired()
-                        .HasColumnType("bytea");
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.HasKey("Id");
 
@@ -531,6 +554,21 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("AttributeLibraryPosition", b =>
+                {
+                    b.HasOne("ResumeSystemManagement.Core.Entities.AttributeLibrary", null)
+                        .WithMany()
+                        .HasForeignKey("AttributeLibrariesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResumeSystemManagement.Core.Entities.Position", null)
+                        .WithMany()
+                        .HasForeignKey("PositionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

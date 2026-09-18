@@ -3,7 +3,7 @@ using ResumeSystemManagement.Core.Entities;
 using ResumeSystemManagement.Core.Interfaces.Repositories.AttributeRepository;
 using ResumeSystemManagement.Infrastructure.Context;
 
-namespace ResumeSystemManagement.Infrastructure.Repositories;
+namespace ResumeSystemManagement.Infrastructure.Repositories.Attributes;
 
 public class AttributeCategoryRepository(ApplicationDbContext context) : IAttributeCategoryRepository
 {

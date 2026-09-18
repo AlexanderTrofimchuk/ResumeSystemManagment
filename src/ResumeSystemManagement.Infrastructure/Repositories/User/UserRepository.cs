@@ -1,21 +1,20 @@
 ﻿using System.Security.Claims;
 using FluentResults;
 using Microsoft.AspNetCore.Identity;
-using ResumeSystemManagement.Core.Entities;
 using ResumeSystemManagement.Core.Interfaces.Repositories.UserRepository;
 using ResumeSystemManagement.Core.ReadModels;
 using ResumeSystemManagement.Infrastructure.Context;
 using ResumeSystemManagement.Infrastructure.IdentityEntities;
 using ResumeSystemManagement.Infrastructure.Mappers;
 
-namespace ResumeSystemManagement.Infrastructure.Repositories;
+namespace ResumeSystemManagement.Infrastructure.Repositories.User;
 
 public class UserRepository(UserManager<AppUser> userManager, ApplicationDbContext context) : IUserRepository
 {
     private readonly UserManager<AppUser> _userManager = userManager;
     private readonly ApplicationDbContext _context = context;
     
-    public async Task<User?> GetUserById(string id)
+    public async Task<Core.Entities.User?> GetUserById(string id)
     {
         var user = await _userManager.FindByIdAsync(id);
         if (user == null) return null;
@@ -30,7 +29,7 @@ public class UserRepository(UserManager<AppUser> userManager, ApplicationDbConte
         return user;
     }
 
-    public async Task<User?> GetUserByEmail(string email)
+    public async Task<Core.Entities.User?> GetUserByEmail(string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null) return null;
@@ -38,12 +37,12 @@ public class UserRepository(UserManager<AppUser> userManager, ApplicationDbConte
         return user.ToUser(role);
     }
     
-    public async Task<User?> GetUserByEmail(string email, string password)
+    public async Task<Core.Entities.User?> GetUserByEmail(string email, string password)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user?.UserName == null || user.Email == null) return null;
         var roles = await _userManager.GetRolesAsync(user);
-        return new User{Id = user.Id, UserName = user.UserName,Email = user.Email, Role = roles.ToList()[0]};
+        return new Core.Entities.User{Id = user.Id, UserName = user.UserName,Email = user.Email, Role = roles.ToList()[0]};
     }
     
     private async Task<AppUser?> GetAppUserByEmail(string email)
@@ -59,17 +58,17 @@ public class UserRepository(UserManager<AppUser> userManager, ApplicationDbConte
         return await _userManager.CheckPasswordAsync(user, password);
     }
 
-    public async Task<Result<User>> CreateCandidate(string userName, string email, string password)
+    public async Task<Result<Core.Entities.User>> CreateCandidate(string userName, string email, string password)
     {
         return await CreateUserWithRole(() => CreateUser(userName, email, password), RoleNames.Candidate);
     }
 
-    public async Task<Result<User>> CreateExternalUser(string email, ClaimsPrincipal userPrincipal, string provider)
+    public async Task<Result<Core.Entities.User>> CreateExternalUser(string email, ClaimsPrincipal userPrincipal, string provider)
     {
         return await CreateUserWithRole(() => CreateExternalUserResult(email, userPrincipal,provider), RoleNames.Candidate);
     }
 
-    public async Task<Result<User>> CreateUserLogin(string provider,ClaimsPrincipal claimsPrincipal, string email)
+    public async Task<Result<Core.Entities.User>> CreateUserLogin(string provider,ClaimsPrincipal claimsPrincipal, string email)
     {
         var loginInfo = CreateLoginInfo(provider, 
             claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty,provider);
@@ -79,14 +78,14 @@ public class UserRepository(UserManager<AppUser> userManager, ApplicationDbConte
         return loginsResult.Succeeded ? Result.Ok(user.ToUser()) : Result.Fail(loginsResult.Errors.Select(e => e.Description));
     }
 
-    private async Task<Result<User>> CreateUser(string userName, string email, string password)
+    private async Task<Result<Core.Entities.User>> CreateUser(string userName, string email, string password)
     {
         var newUser = await CreateAppUser(email, userName, password);
         var result = await _userManager.CreateAsync(newUser, password);
         return result.Succeeded ? Result.Ok(newUser.ToUser()) : Result.Fail(result.Errors.Select(e => e.Description));
     }
 
-    private async Task<Result<User>> CreateExternalUserResult(string email, ClaimsPrincipal userPrincipal, string provider)
+    private async Task<Result<Core.Entities.User>> CreateExternalUserResult(string email, ClaimsPrincipal userPrincipal, string provider)
     {
         var newUser = await CreateAppUser(email, GetFullName(userPrincipal),isExternalLogin: true);
         var result = await _userManager.CreateAsync(newUser);
@@ -97,8 +96,8 @@ public class UserRepository(UserManager<AppUser> userManager, ApplicationDbConte
         return Result.Ok(newUser.ToUser());
     }
     
-    private async Task<Result<User>> CreateUserWithRole(
-        Func<Task<Result<User>>> createUser, string role)
+    private async Task<Result<Core.Entities.User>> CreateUserWithRole(
+        Func<Task<Result<Core.Entities.User>>> createUser, string role)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync();
     
@@ -112,7 +111,7 @@ public class UserRepository(UserManager<AppUser> userManager, ApplicationDbConte
         return Result.Ok(userResult.Value);
     }
 
-    public async Task<Result<User>> AssignRole(string userId, string role)
+    public async Task<Result<Core.Entities.User>> AssignRole(string userId, string role)
     {
         var user = await GetAppUserById(userId);
         if (user == null) return Result.Fail("user not found");

@@ -5,5 +5,5 @@ public record CreateAttributeDto(
     int CategoryId,
     string Title,
     string Description,
-    bool IsBuiltIn
-    );
+    bool IsBuiltIn,
+    List<string>? DropDownOptions = null);

@@ -1,5 +1,4 @@
-﻿using FluentResults;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ResumeSystemManagement.Application.DTOs.Attributes;
@@ -21,38 +20,37 @@ public class AttributeLibraryController(
     private readonly IAttributeCategoryService _categoryService = categoryService;
 
     [Authorize(Roles = RoleNames.Recruiter)]
-    public async Task<IActionResult> Index(int page = 1,int pageSize = 10)
+    public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
     {
         var attributes = await _libraryService.GetAttributesAsync(pageSize, page);
-        if (attributes.IsFailed) 
-            return ReturnCurrentException(attributes.Errors.Select(e =>e.Message).ToList(),
+        if (attributes.IsFailed)
+            return ReturnCurrentException(attributes.Errors.Select(e => e.Message).ToList(),
                 ActionName.Index);
-        var result = await PopulateDropdowns();
-        if (result.IsFailed) return ReturnCurrentException(result.Errors.Select(e => e.Message).ToList(),
-            ActionName.Index);
+        await PopulateDropdowns();
         return View(attributes.Value);
     }
-    
+
     [Authorize(Roles = RoleNames.Recruiter)]
     [HttpGet]
     public async Task<IActionResult> SearchAttribute(string name)
     {
         var attributes = await _libraryService.GetAttributesByNameAsync(name);
-        if (attributes.IsFailed) 
-            return ReturnCurrentException(attributes.Errors.Select(e =>e.Message).ToList(),
+        if (attributes.IsFailed)
+            return ReturnCurrentException(attributes.Errors.Select(e => e.Message).ToList(),
                 ActionName.Index);
         return View("Index", attributes.Value);
     }
-    
+
     [Authorize(Roles = RoleNames.Recruiter)]
     [HttpPost]
     public async Task<IActionResult> CreateAttribute(CreateAttributeDto dto)
     {
-        var isCreated = await _libraryService.CreateAttributeAsync(dto);
-        if (isCreated.IsFailed)
-            return ReturnCurrentException(isCreated.Errors.Select(e => e.Message).ToList(),
-                ActionName.Index, dto);
-        return ReturnCurrentException(["Attributes created"],ActionName.Index);
+        var idCreated = await _libraryService.CreateAttributeAsync(dto);
+        if (idCreated.IsFailed) return ReturnCurrentException(
+            idCreated.Errors.Select(e => e.Message).ToList(), ActionName.Index, dto);
+        await AddDropDownOptions(dto, idCreated.Value);
+        return RedirectWithMessage(["Attributes created"], 
+            MessageColor.Success,ActionName.Index, ControllerName.AttributeLibrary);
     }
 
     [Authorize(Roles = RoleNames.Recruiter)]
@@ -63,9 +61,7 @@ public class AttributeLibraryController(
         if (attribute.IsFailed)
             return ReturnCurrentException(attribute.Errors.Select(e => e.Message).ToList(),
                 ActionName.Index);
-        var result = await PopulateDropdowns();
-        if (result.IsFailed) return ReturnCurrentException(result.Errors.Select(e => e.Message).ToList(),
-            ActionName.Index);
+        await PopulateDropdowns();
         return PartialView("_EditForm", attribute.Value);
     }
 
@@ -78,40 +74,59 @@ public class AttributeLibraryController(
             return ReturnCurrentException(result.Errors.Select(e => e.Message).ToList(),
                 ActionName.Index);
         return RedirectWithMessage(["Attribute updated"],
-            MessageColor.Success,ActionName.Index,ControllerName.AttributeLibrary);
+            MessageColor.Success, ActionName.Index, ControllerName.AttributeLibrary);
     }
 
     [Authorize(Roles = RoleNames.Recruiter)]
     [HttpPost]
-    public async Task<IActionResult> DeleteAttributes(AttributeDetails attributes)
+    public async Task<IActionResult> DeleteAttributes(AttributeDetails model)
     {
-        if(attributes.SelectIds.Count == 0) return ReturnCurrentException(["Select attributes"],
-            ActionName.Index);
-        
-        var result = await _libraryService.BulkDeleteAttributesAsync(attributes.SelectIds);
+        if (model.SelectIds.Count == 0)
+            return ReturnCurrentException(["Select attributes"],
+                ActionName.Index);
+
+        var result = await _libraryService.BulkDeleteAttributesAsync(model.SelectIds);
         if (result.IsFailed)
             return ReturnCurrentException(result.Errors.Select(e => e.Message).ToList(),
                 ActionName.Index);
-        return RedirectWithMessage(["Attributes delete"],
-            MessageColor.Success,ActionName.Index,ControllerName.AttributeLibrary);
+        return RedirectWithMessage(["Attributes deleted"],
+            MessageColor.Success, ActionName.Index, ControllerName.AttributeLibrary);
+    }
+
+    private async Task AddDropDownOptions(CreateAttributeDto dto, int id)
+    {
+        if (dto.DropDownOptions != null && dto.DropDownOptions.Count != 0) {
+            var isAdded = await _libraryService.AddDropDownOptions(id, dto);
+            if (isAdded.IsFailed)
+            {
+                ReturnCurrentException(
+                    isAdded.Errors.Select(e => e.Message).ToList(), ActionName.Index, dto);
+            }
+        }
     }
     
-    private async Task<Result<SelectListItem>> PopulateDropdowns()
+    private async Task PopulateDropdowns()
+    {
+        await PopulateDropdownsCategory();
+        await PopulateDropdownsType();
+    }
+
+    private async Task PopulateDropdownsCategory()
     {
         var categories = await _categoryService.GetAttributeTypes();
-        var types= await _typeService.GetAttributeTypes();
-
-        if (categories.IsFailed) return categories.ToResult();
-        if (types.IsFailed) return types.ToResult();
-        
         ViewBag.Categories = categories.Value
             .Select(c => new SelectListItem(c.Title, c.Id.ToString()))
             .ToList();
+    }
 
+    private async Task PopulateDropdownsType()
+    {
+        var types = await _typeService.GetAttributeTypes();
         ViewBag.Types = types.Value
             .Select(t => new SelectListItem(t.Title, t.Id.ToString()))
             .ToList();
-
-        return Result.Ok();
+        ViewBag.DropdownTypeId = types.Value
+            .Where(a => a.Title == "One of many").Select(t => t.Id).FirstOrDefault();
     }
+
 }

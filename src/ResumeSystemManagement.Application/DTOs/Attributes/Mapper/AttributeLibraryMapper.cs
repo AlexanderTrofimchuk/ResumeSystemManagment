@@ -22,7 +22,8 @@ public static class AttributeLibraryMapper
             CategoryId = dto.CategoryId,
             Title = dto.Title,
             Description = dto.Description,
-            IsBuiltIn = dto.IsBuiltIn
+            IsBuiltIn = dto.IsBuiltIn,
+            AttributeValueForLists =  dto.DropdownOptions!.Select(d => new AttributeValueForList{Id = d.Id,  Value = d.Value}).ToList()
         };
 
     public static EditAttributeDTo ToEditAttributeDTo(this AttributeLibrary attribute) =>
@@ -31,5 +32,11 @@ public static class AttributeLibraryMapper
             attribute.CategoryId, 
             attribute.Title, 
             attribute.Description, 
-            attribute.IsBuiltIn);
+            attribute.IsBuiltIn,
+            attribute.
+                AttributeValueForLists.Select(a => new DropDownOption(a.Id,a.Value)).ToList());
+
+    public static List<AttributeValueForList> ToValueForList(this CreateAttributeDto dto, int id) =>
+        dto.DropDownOptions!.Select(o => new AttributeValueForList() { AttributeId = id, Value = o})
+            .ToList();
 }

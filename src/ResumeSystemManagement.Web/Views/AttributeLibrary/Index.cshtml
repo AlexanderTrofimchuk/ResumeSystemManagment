@@ -48,7 +48,7 @@
                 type="submit"
                 form="mainForm"
                 id="btnDelete"
-                class="btn btn-success btn-sm"
+                class="btn btn-danger btn-sm"
                 disabled
                 title="Delete attribute/attributes">
             <i class="bi bi-dash-square-fill"></i>
@@ -128,15 +128,13 @@
     </form>
 </div>
 
-<partial name="_CreateForm" model="Model.CreateAttributeDto"/>
+@await Html.PartialAsync("_CreateForm",Model.CreateAttributeDto)
 
-<div id="editModalContainer">
-    
-</div>
+<div id="editModalContainer"></div>
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-
+    
     <script>
     const selectAll     = document.getElementById('selectAll');
     const rowCheckboxes = document.querySelectorAll('.row-checkbox');
@@ -208,6 +206,8 @@
         if (!response.ok) return console.error('Failed to load edit form');
 
         document.getElementById('editModalContainer').innerHTML = await response.text();
+        initEditForm();
+        
         bootstrap.Modal.getOrCreateInstance(
             document.getElementById('editAttributeModal')
         ).show();

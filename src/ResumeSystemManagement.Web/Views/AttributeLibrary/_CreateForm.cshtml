@@ -89,6 +89,19 @@
                         </div>
                     </div>
 
+                    <!-- Dropdown Options (visible only when Type = Dropdown) -->
+                    <div class="mb-3 mt-3" id="dropdownOptionsSection" style="display:none;">
+                        <label class="form-label fw-medium">
+                            Варианты выбора <span class="text-danger">*</span>
+                        </label>
+                        <div id="dropdownOptionsList" class="d-flex flex-column gap-2 mb-2">
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="addDropdownOption">
+                            <i class="bi bi-plus-lg me-1"></i> Добавить вариант
+                        </button>
+                        <div class="form-text">Добавьте хотя бы один вариант для выпадающего списка.</div>
+                    </div>
+
                 </div>
 
                 <div class="modal-footer border-top px-4 py-3">
@@ -103,3 +116,74 @@
         </div>
     </div>
 </div>
+
+<script>
+(function () {
+    // ID of the "Dropdown" type — adjust if your TypeId differs
+    const DROPDOWN_TYPE_ID = '@(ViewBag.DropdownTypeId ?? "3")';
+
+    const typeSelect      = document.querySelector('#createAttributeForm select[name="TypeId"]');
+    const section         = document.getElementById('dropdownOptionsSection');
+    const list            = document.getElementById('dropdownOptionsList');
+    const addBtn          = document.getElementById('addDropdownOption');
+
+    function isDropdown() {
+        return typeSelect && typeSelect.value == DROPDOWN_TYPE_ID;
+    }
+
+    function toggleSection() {
+        if (isDropdown()) {
+            section.style.display = '';
+            if (list.children.length === 0) addOption();
+        } else {
+            section.style.display = 'none';
+        }
+    }
+
+    function addOption(value) {
+        const idx  = list.children.length;
+        const row  = document.createElement('div');
+        row.className = 'input-group';
+        row.innerHTML = `
+            <input type="text"
+                   class="form-control"
+                   name="DropDownOptions[${idx}]"
+                   placeholder="Вариант ${idx + 1}"
+                   value="${value ? value.replace(/"/g, '&quot;') : ''}"
+                   autocomplete="off" />
+            <button type="button" class="btn btn-outline-danger remove-option" title="Удалить">
+                <i class="bi bi-trash"></i>
+            </button>`;
+        list.appendChild(row);
+        reindex();
+    }
+
+    function reindex() {
+        list.querySelectorAll('input[type="text"]').forEach((input, i) => {
+            input.name        = `DropDownOptions[${i}]`;
+            input.placeholder = `Вариант ${i + 1}`;
+        });
+    }
+
+    list.addEventListener('click', function (e) {
+        const btn = e.target.closest('.remove-option');
+        if (btn) {
+            btn.closest('.input-group').remove();
+            reindex();
+        }
+    });
+
+    addBtn.addEventListener('click', () => addOption());
+
+    typeSelect && typeSelect.addEventListener('change', toggleSection);
+
+    // Reset options when modal closes
+    const modal = document.getElementById('createAttributeModal');
+    modal && modal.addEventListener('hidden.bs.modal', function () {
+        list.innerHTML = '';
+        toggleSection();
+    });
+
+    toggleSection();
+})();
+</script>

@@ -29,10 +29,17 @@ public class AttributeLibraryService (IAttributeLibraryRepository repository) : 
         return Result.Ok(new AttributeDetails { Attributes = attributes.Value });
     }
 
-    public Task<Result<bool>> CreateAttributeAsync(CreateAttributeDto dto)
+    public async Task<Result<int>> CreateAttributeAsync(CreateAttributeDto dto)
     {
         var createTask = Result.Try(() => repository.CreateAttributeAsync(dto.ToAttributeLibrary()));
-        return createTask;
+        return await createTask;
+    }
+
+    public async Task<Result<bool>> AddDropDownOptions(int id, CreateAttributeDto dto)
+    {
+        if (dto.DropDownOptions!.Count == 0) return Result.Fail<bool>("Not found options");
+        var addTask = Result.Try(() => repository.CreateAttributeListValue(dto.ToValueForList(id)));
+        return await addTask;
     }
 
     public async Task<Result> EditAttributeAsync(EditAttributeDTo dTo)
@@ -57,6 +64,6 @@ public class AttributeLibraryService (IAttributeLibraryRepository repository) : 
         var deleteTask = Result.Try(() => repository.BulkDeleteAttributeAsync(ids));
         var result = await deleteTask;
         if (result.IsFailed) return Result.Fail(result.Errors.Select(e => e.Message));
-        return Result.Ok();
+        return !result.Value ? Result.Fail("Something wrong. Please try again") : Result.Ok();
     }
 }

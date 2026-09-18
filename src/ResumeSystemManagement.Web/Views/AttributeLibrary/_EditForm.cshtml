@@ -15,12 +15,12 @@
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
             </div>
-           
-            <form asp-action="EditAttribute" method="post" novalidate id="createAttributeForm">
+
+            <form asp-action="EditAttribute" method="post" novalidate id="editAttributeForm">
                 <div class="modal-body px-4 py-4">
                     <input asp-for="Id" type="hidden" />
                     <input type="hidden" asp-for="IsBuiltIn" />
-                    
+
                     <div asp-validation-summary="ModelOnly"
                          class="alert alert-danger py-2 small mb-3" role="alert"></div>
 
@@ -45,7 +45,8 @@
                             </label>
                             <select asp-for="TypeId"
                                     asp-items="ViewBag.Types"
-                                    class="form-select">
+                                    class="form-select"
+                                    data-dropdown-type-id="@ViewBag.DropdownTypeId">
                                 <option value="">— выберите —</option>
                             </select>
                             <span asp-validation-for="TypeId" class="text-danger small"></span>
@@ -74,13 +75,12 @@
                         <span asp-validation-for="Description" class="text-danger small"></span>
                     </div>
 
-
                     <div class="mb-1">
                         <div class="form-check form-switch">
                             <input asp-for="IsBuiltIn"
                                    class="form-check-input"
                                    type="checkbox"
-                                   id="isBuiltInSwitch" 
+                                   id="isBuiltInSwitch"
                                    aria-checked="False" disabled/>
                             <label class="form-check-label" for="isBuiltInSwitch">
                                 Встроенный атрибут
@@ -89,6 +89,37 @@
                         <div class="form-text ms-4 ps-2">
                             Системный атрибут — пользователи не смогут его удалить.
                         </div>
+                    </div>
+
+                    <!-- Dropdown Options -->
+                    <div class="mb-3 mt-3" id="editDropdownOptionsSection" style="display:@(Model.DropdownOptions != null && Model.DropdownOptions.Any()  ? "block" : "none");">
+                        <label class="form-label fw-medium">
+                            Варианты выбора <span class="text-danger">*</span>
+                        </label>
+                        <div id="editDropdownOptionsList" class="d-flex flex-column gap-2 mb-2">
+                            @if (Model.DropdownOptions != null)
+                            {
+                                for (int i = 0; i < Model.DropdownOptions.Count; i++)
+                                {
+                                    <div class="input-group">
+                                        <input type="hidden" name="DropdownOptions[@i].Id" value="@Model.DropdownOptions[i].Id" />
+                                        <input type="text"
+                                               id="DropdownOptions-@i"
+                                               class="form-control"
+                                               name="DropdownOptions[@i].Value"
+                                               value="@Model.DropdownOptions[i].Value"
+                                               placeholder="Вариант @(i + 1)"
+                                               autocomplete="off"/>
+                                        <button type="button" class="btn btn-outline-danger remove-edit-option" title="Удалить">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="addEditDropdownOption">
+                            <i class="bi bi-plus-lg me-1"></i> Добавить вариант
+                        </button>
                     </div>
 
                 </div>
