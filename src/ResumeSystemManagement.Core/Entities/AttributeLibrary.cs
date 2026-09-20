@@ -12,7 +12,7 @@ public class AttributeLibrary
 
     public AttributeCategory AttributeCategory { get; set; } = null!;
     public AttributeType AttributeType { get; set; } = null!;
-    public List<Position> Positions { get; } = new();
+    public List<PositionAttributeLibrary> PositionAttributeLibraries { get; } = new();
     public List<AttributeValueForList> AttributeValueForLists { get; init; } = new();
     public List<AttributeFilter> AttributeFilters { get; } = new();
     public List<CandidateAttributeValue> CandidateAttributeValues { get; } = new();

@@ -26,10 +26,11 @@ public class PositionRepository(ApplicationDbContext context) : IPositionReposit
             .ToListAsync();
     }
 
-    public Task AddAsync(Position position)
+    public async Task<int> AddAsync(Position position)
     {
-        _context.Positions.AddAsync(position);
-        return _context.SaveChangesAsync();
+        await _context.Positions.AddAsync(position);
+        await _context.SaveChangesAsync();
+        return position.Id;
     }
 
     public Task UpdateAsync(Position position)

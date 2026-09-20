@@ -15,5 +15,5 @@ public class Position
 
     public List<Resume> Resumes { get; } = new();
     public List<AttributeFilter> AttributeFilters { get; } = new();
-    public List<AttributeLibrary> AttributeLibraries { get; } = new();
+    public List<PositionAttributeLibrary> PositionAttributeLibraries { get; } = new();
 }

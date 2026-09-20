@@ -54,6 +54,7 @@ public static class InfrastructureServiceExtensions
         services.AddScoped<IAttributeCategoryRepository, AttributeCategoryRepository>();
         services.AddScoped<IAttributeTypeRepository, AttributeTypeRepository>();
         services.AddScoped<IPositionRepository,PositionRepository>();
+        services.AddScoped<IPositionTemplateRepository, PositionTemplateRepository>();
         services.AddScoped<IUserContext, UserContext>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IExternalAuthProvider, ExternalAuthProvider>();

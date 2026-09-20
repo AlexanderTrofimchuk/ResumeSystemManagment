@@ -46,7 +46,7 @@
                 </ul>
                 
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
+                    <li class="nav-item" style="display: @(User.Identity!.IsAuthenticated ? "none" : "block"); ">
                         <a class="nav-link text-dark" id="login" asp-action="LoginPage" asp-controller="Account">Login</a>
                     </li>
                     @if (User.Identity!.IsAuthenticated)

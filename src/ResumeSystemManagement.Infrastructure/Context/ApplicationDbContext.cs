@@ -36,6 +36,7 @@ public class ApplicationDbContext(IConfiguration config):IdentityDbContext<AppUs
     public virtual DbSet<AttributeFilter> AttributeFilters { get; set; }
     public virtual DbSet<CandidateAttributeValue> CandidateAttributeValues { get; set; }
     public virtual DbSet<AttributeCategory> AttributeCategories { get; set; }
+    public virtual DbSet<PositionAttributeLibrary> PositionAttributeLibraries { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -99,9 +100,6 @@ public class ApplicationDbContext(IConfiguration config):IdentityDbContext<AppUs
         {
             entity.Property(e => e.Version)
                 .IsRowVersion();
-
-            entity.HasMany(e => e.AttributeLibraries)
-                .WithMany(e => e.Positions);
             
             entity.HasMany(p => p.Resumes)
                 .WithOne(d => d.Position)
@@ -138,6 +136,19 @@ public class ApplicationDbContext(IConfiguration config):IdentityDbContext<AppUs
                 .HasForeignKey(d => d.AttributeId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
+        });
+
+        builder.Entity<PositionAttributeLibrary>(entity =>
+        {
+            entity.HasKey(e => new { e.PositionId, e.AttributeLibraryId});
+            
+            entity.HasOne(e => e.Position)
+                .WithMany(e => e.PositionAttributeLibraries)
+                .HasForeignKey(e => e.PositionId);
+
+            entity.HasOne(e => e.AttributeLibrary)
+                .WithMany(e => e.PositionAttributeLibraries)
+                .HasForeignKey(e => e.AttributeLibraryId);
         });
 
         builder.Entity<AttributeCategory>(entity =>

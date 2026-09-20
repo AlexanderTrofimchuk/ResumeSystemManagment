@@ -145,10 +145,9 @@ public class AttributeLibraryRepository(ApplicationDbContext context) : IAttribu
     
     private Task<List<string>> AttributeUsingPosition(List<int> ids)
     {
-        return _context.Positions.AsNoTracking()
-            .SelectMany(p => p.AttributeLibraries
-                .Where(al => ids.Contains(al.Id))
-                .Select(a => a.Title))
+        return _context.PositionAttributeLibraries.AsNoTracking()
+            .Where(pal => ids.Contains(pal.AttributeLibraryId))
+            .Select(a => a.AttributeLibrary.Title)
             .ToListAsync();
     }
 }

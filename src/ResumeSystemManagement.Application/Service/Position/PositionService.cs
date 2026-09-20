@@ -1,13 +1,17 @@
 ﻿using FluentResults;
 using ResumeSystemManagement.Application.DTOs.Position;
+using ResumeSystemManagement.Application.DTOs.PositionTemplate;
+using ResumeSystemManagement.Application.Interfaces.Attributes;
 using ResumeSystemManagement.Application.Interfaces.Auth;
 using ResumeSystemManagement.Application.Interfaces.Position;
+using ResumeSystemManagement.Core.Enums;
 using ResumeSystemManagement.Core.Interfaces.Repositories.PositionRepository;
 
 namespace ResumeSystemManagement.Application.Service.Position;
 
-public class PositionService(IPositionRepository repository,IUserContext userContext): IPositionService
+public class PositionService(IPositionRepository repository, IAttributeLibraryService libraryService,IUserContext userContext): IPositionService
 {
+    
     public async Task<Result<EditPositionDto>> GetEditPosition(int id)
     {
         var position = await repository.GetByIdAsync(id);
@@ -29,24 +33,29 @@ public class PositionService(IPositionRepository repository,IUserContext userCon
             new PositionDetails { Positions = positions.Select(p => p.ToPositionDetail()).ToList() });
     }
 
-    public async Task<Result<List<PositionDetail>>> GetAllPositionsByName(string name)
+    public async Task<Result<PositionDetails>> GetAllPositionsByName(string name)
     {
         var position = await repository.GetAllByNameAsync(name);
-        return Result.Ok(position.Select(p => p.ToPositionDetail()).ToList());
+        return Result.Ok(new PositionDetails {
+            Positions = position.Select(p => p.ToPositionDetail()).ToList()
+        });
     }
 
-    public Task<Result> CreatePosition(CreatePositionDto dto)
+    public Task<Result<int>> CreatePosition(CreatePositionDto dto)
     {
         var position = dto.MapToPosition(userContext.UserId.ToString());
         return Result.Try(() => repository.AddAsync(position));
     }
+
+    
 
     public async Task<Result> DuplicatePosition(int id)
     {
         var position = await GetPosition(id);
         if (position.IsFailed) return Result.Fail(position.Errors);
         var duplicate = CreateDuplicatePosition(position.Value.ToPosition());
-        return await Result.Try(() => repository.AddAsync(duplicate));
+        var duplicateResult = await Result.Try(() => repository.AddAsync(duplicate));
+        return duplicateResult.IsFailed ? Result.Fail(duplicateResult.Errors) : Result.Ok();
     }
 
     public Task<Result> EditPosition(EditPositionDto dto)

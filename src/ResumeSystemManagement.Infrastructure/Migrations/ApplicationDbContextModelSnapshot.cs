@@ -22,21 +22,6 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("AttributeLibraryPosition", b =>
-                {
-                    b.Property<int>("AttributeLibrariesId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PositionsId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("AttributeLibrariesId", "PositionsId");
-
-                    b.HasIndex("PositionsId");
-
-                    b.ToTable("AttributeLibraryPosition");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -405,6 +390,24 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                     b.ToTable("Positions");
                 });
 
+            modelBuilder.Entity("ResumeSystemManagement.Core.Entities.PositionAttributeLibrary", b =>
+                {
+                    b.Property<int>("PositionId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("AttributeLibraryId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Section")
+                        .HasColumnType("integer");
+
+                    b.HasKey("PositionId", "AttributeLibraryId");
+
+                    b.HasIndex("AttributeLibraryId");
+
+                    b.ToTable("PositionAttributeLibraries");
+                });
+
             modelBuilder.Entity("ResumeSystemManagement.Core.Entities.RecruiterLike", b =>
                 {
                     b.Property<int>("Id")
@@ -556,21 +559,6 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("AttributeLibraryPosition", b =>
-                {
-                    b.HasOne("ResumeSystemManagement.Core.Entities.AttributeLibrary", null)
-                        .WithMany()
-                        .HasForeignKey("AttributeLibrariesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ResumeSystemManagement.Core.Entities.Position", null)
-                        .WithMany()
-                        .HasForeignKey("PositionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -717,6 +705,25 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                     b.Navigation("Resume");
                 });
 
+            modelBuilder.Entity("ResumeSystemManagement.Core.Entities.PositionAttributeLibrary", b =>
+                {
+                    b.HasOne("ResumeSystemManagement.Core.Entities.AttributeLibrary", "AttributeLibrary")
+                        .WithMany("PositionAttributeLibraries")
+                        .HasForeignKey("AttributeLibraryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResumeSystemManagement.Core.Entities.Position", "Position")
+                        .WithMany("PositionAttributeLibraries")
+                        .HasForeignKey("PositionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AttributeLibrary");
+
+                    b.Navigation("Position");
+                });
+
             modelBuilder.Entity("ResumeSystemManagement.Core.Entities.RecruiterLike", b =>
                 {
                     b.HasOne("ResumeSystemManagement.Infrastructure.IdentityEntities.AppUser", null)
@@ -777,6 +784,8 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                     b.Navigation("AttributeValueForLists");
 
                     b.Navigation("CandidateAttributeValues");
+
+                    b.Navigation("PositionAttributeLibraries");
                 });
 
             modelBuilder.Entity("ResumeSystemManagement.Core.Entities.AttributeType", b =>
@@ -787,6 +796,8 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
             modelBuilder.Entity("ResumeSystemManagement.Core.Entities.Position", b =>
                 {
                     b.Navigation("AttributeFilters");
+
+                    b.Navigation("PositionAttributeLibraries");
 
                     b.Navigation("Resumes");
                 });

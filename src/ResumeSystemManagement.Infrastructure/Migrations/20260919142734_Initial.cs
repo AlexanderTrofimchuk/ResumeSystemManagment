@@ -311,30 +311,6 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AttributeLibraryPosition",
-                columns: table => new
-                {
-                    AttributeLibrariesId = table.Column<int>(type: "integer", nullable: false),
-                    PositionsId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AttributeLibraryPosition", x => new { x.AttributeLibrariesId, x.PositionsId });
-                    table.ForeignKey(
-                        name: "FK_AttributeLibraryPosition_AttributeLibraries_AttributeLibrar~",
-                        column: x => x.AttributeLibrariesId,
-                        principalTable: "AttributeLibraries",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AttributeLibraryPosition_Positions_PositionsId",
-                        column: x => x.PositionsId,
-                        principalTable: "Positions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AttributeValueForLists",
                 columns: table => new
                 {
@@ -350,6 +326,31 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                         name: "FK_AttributeValueForLists_AttributeLibraries_AttributeId",
                         column: x => x.AttributeId,
                         principalTable: "AttributeLibraries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PositionAttributeLibraries",
+                columns: table => new
+                {
+                    PositionId = table.Column<int>(type: "integer", nullable: false),
+                    AttributeLibraryId = table.Column<int>(type: "integer", nullable: false),
+                    Section = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PositionAttributeLibraries", x => new { x.PositionId, x.AttributeLibraryId });
+                    table.ForeignKey(
+                        name: "FK_PositionAttributeLibraries_AttributeLibraries_AttributeLibr~",
+                        column: x => x.AttributeLibraryId,
+                        principalTable: "AttributeLibraries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PositionAttributeLibraries_Positions_PositionId",
+                        column: x => x.PositionId,
+                        principalTable: "Positions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -507,11 +508,6 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 column: "TypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AttributeLibraryPosition_PositionsId",
-                table: "AttributeLibraryPosition",
-                column: "PositionsId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AttributeValueForLists_AttributeId",
                 table: "AttributeValueForLists",
                 column: "AttributeId");
@@ -545,6 +541,11 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 name: "IX_Histories_SentBy",
                 table: "Histories",
                 column: "SentBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PositionAttributeLibraries_AttributeLibraryId",
+                table: "PositionAttributeLibraries",
+                column: "AttributeLibraryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RecruiterLikes_RecruiterId",
@@ -591,9 +592,6 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "AttributeLibraryPosition");
-
-            migrationBuilder.DropTable(
                 name: "AttributeValueForLists");
 
             migrationBuilder.DropTable(
@@ -601,6 +599,9 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Histories");
+
+            migrationBuilder.DropTable(
+                name: "PositionAttributeLibraries");
 
             migrationBuilder.DropTable(
                 name: "RecruiterLikes");

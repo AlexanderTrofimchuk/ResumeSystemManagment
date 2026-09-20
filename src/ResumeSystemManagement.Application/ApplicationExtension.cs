@@ -22,6 +22,7 @@ public static class ApplicationExtension
         services.AddScoped<IAttributeTypeService, AttributeTypeService>();
         services.AddScoped<IAttributeCategoryService, AttributeCategoryService>();
         services.AddScoped<IPositionService, PositionService>();
+        services.AddScoped<IPositionTemplateService, PositionTemplateService>();
         
         return services;
     }

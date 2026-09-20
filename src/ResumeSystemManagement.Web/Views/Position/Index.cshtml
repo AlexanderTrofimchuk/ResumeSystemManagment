@@ -9,7 +9,7 @@
 
     <div class="toolbar d-flex align-items-center gap-2 p-2 mb-3 border rounded bg-light shadow-sm um-toolbar">
 
-        <form asp-controller="PositionLibrary"
+        <form asp-controller="Position"
               asp-action="SearchPosition"
               method="get"
               class="d-flex gap-2 flex-grow-1">
@@ -56,6 +56,17 @@
                 disabled
                 title="Edit position">
                 <i class="bi bi-pencil-fill"></i>
+            </button>
+            
+            <button asp-controller="Position"
+                    asp-action="RenderTemplate"
+                    type="submit"
+                    form="mainForm"
+                    id="btnTemplate"
+                    class="btn btn-outline-info btn-sm"
+                    disabled
+                    title="Open template">
+                <i class="bi bi-file-earmark-text"></i>
             </button>
 
             <button asp-action="DeletePositions"
@@ -161,9 +172,11 @@
 
         const editBtn = document.getElementById('btnEdit');
         const duplicateBtn = document.getElementById('btnDuplicate');
+        const templateBtn = document.getElementById('btnTemplate');
         if (editBtn && duplicateBtn) {
             editBtn.disabled = checked.length !== 1;
             duplicateBtn.disabled = checked.length !== 1;
+            templateBtn.disabled = checked.length !== 1;
         }
     }
 
