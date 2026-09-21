@@ -1,6 +1,6 @@
 ﻿using FluentResults;
-using ResumeSystemManagement.Application.DTOs.Attributes;
-using ResumeSystemManagement.Application.DTOs.Attributes.Mapper;
+using ResumeSystemManagement.Application.DTOs.Attribute;
+using ResumeSystemManagement.Application.DTOs.Attribute.Mapper;
 using ResumeSystemManagement.Application.Interfaces.Attributes;
 using ResumeSystemManagement.Core.Entities;
 using ResumeSystemManagement.Core.Interfaces.Repositories.AttributeRepository;

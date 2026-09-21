@@ -6,7 +6,6 @@ using ResumeSystemManagement.Application.Interfaces.Auth;
 using ResumeSystemManagement.Core.Interfaces.Repositories.AttributeRepository;
 using ResumeSystemManagement.Core.Interfaces.Repositories.PositionRepository;
 using ResumeSystemManagement.Core.Interfaces.Repositories.UserRepository;
-using ResumeSystemManagement.Core.ReadModels;
 using ResumeSystemManagement.Infrastructure.Context;
 using ResumeSystemManagement.Infrastructure.IdentityEntities;
 using ResumeSystemManagement.Infrastructure.Interfaces;
@@ -41,6 +40,8 @@ public static class InfrastructureServiceExtensions
         
         services.ConfigureApplicationCookie(options =>
         {
+            options.LoginPath = "/Account/Login";
+            options.AccessDeniedPath = "/Account/Login";
             options.Cookie.SameSite = SameSiteMode.None;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             options.Cookie.HttpOnly = true;
@@ -61,22 +62,13 @@ public static class InfrastructureServiceExtensions
         return services;
     }
     
-    public static async Task InitializeDbAndRoles(this IServiceProvider serviceProvider)
+    public static async Task InitializeDatabase(this IServiceProvider serviceProvider)
     {
         Console.WriteLine("Initializing database and roles...");
-        var dbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
+        await using var scope = serviceProvider.CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         await dbContext.Database.MigrateAsync();
-        await serviceProvider.SeedRoles();
-    }
-
-    private static async Task SeedRoles(this IServiceProvider serviceProvider)
-    {
-        var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-        foreach (string role in RoleNames.Roles)
-        {
-            if (!await roleManager.RoleExistsAsync(role))
-                await roleManager.CreateAsync(new IdentityRole(role));
-        }
+        await scope.ServiceProvider.SeedIdentityAsync();
     }
 
     private static void AddExternalAuthentication(this IServiceCollection services)

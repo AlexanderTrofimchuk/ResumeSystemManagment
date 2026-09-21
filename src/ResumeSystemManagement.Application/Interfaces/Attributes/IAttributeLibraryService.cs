@@ -1,5 +1,5 @@
 ﻿using FluentResults;
-using ResumeSystemManagement.Application.DTOs.Attributes;
+using ResumeSystemManagement.Application.DTOs.Attribute;
 using ResumeSystemManagement.Core.Entities;
 
 namespace ResumeSystemManagement.Application.Interfaces.Attributes;

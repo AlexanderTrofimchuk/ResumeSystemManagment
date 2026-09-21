@@ -1,4 +1,4 @@
-﻿namespace ResumeSystemManagement.Application.DTOs.Attributes;
+﻿namespace ResumeSystemManagement.Application.DTOs.Attribute;
 
 public record EditAttributeDTo(
     int Id,

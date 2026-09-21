@@ -1,7 +1,7 @@
 ﻿using ResumeSystemManagement.Core.Entities;
 using ResumeSystemManagement.Core.ReadModels;
 
-namespace ResumeSystemManagement.Application.DTOs.Attributes;
+namespace ResumeSystemManagement.Application.DTOs.Attribute;
 
 public record AttributeTemplate(int Id, string Name, string Description, string TypeName);
 

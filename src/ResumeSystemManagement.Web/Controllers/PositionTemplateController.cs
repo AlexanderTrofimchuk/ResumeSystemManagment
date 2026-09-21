@@ -2,7 +2,7 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ResumeSystemManagement.Application.DTOs.Attributes;
+using ResumeSystemManagement.Application.DTOs.Attribute;
 using ResumeSystemManagement.Application.Interfaces.Attributes;
 using ResumeSystemManagement.Application.Interfaces.Position;
 using ResumeSystemManagement.Core.Enums;
@@ -76,14 +76,5 @@ public class PositionTemplateController(IAttributeTypeService typeService, IAttr
             GetErrorsMessage(deleteResult), ActionName.Template);
         return RedirectWithMessage(["Attribute is deleted from template"],
             MessageColor.Success, ActionName.Template,ControllerName.PositionTemplate, new {Id = positionId});
-    }
-    
-    private async Task PopulateDate(int page, int pageSize)
-    {
-        await PopulateTypeList();
-    }
-    private async Task PopulateTypeList()
-    {
-        
     }
 }

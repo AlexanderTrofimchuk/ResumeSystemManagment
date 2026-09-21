@@ -1,5 +1,4 @@
-﻿@using ResumeSystemManagement.Application.DTOs.Attributes
-@using ResumeSystemManagement.Core.Enums
+﻿@using ResumeSystemManagement.Core.Enums
 @model ResumeSystemManagement.Application.DTOs.PositionTemplate.PositionTemplateDTo
 
 @{
@@ -16,15 +15,6 @@
       { "Boolean",    "bi-toggle-on" },
       { "One of many","bi-menu-button-wide" }
     };
-    
-    string AlreadyAdded(int id)
-    {
-      var isContains = Model.AttributeInPosition
-        .Any(ap => ap.AttributeTemplates
-          .Any(at => at.Id == id));
-    
-      return isContains ? "already-added" : string.Empty;
-    }
 }
 
 @section Styles

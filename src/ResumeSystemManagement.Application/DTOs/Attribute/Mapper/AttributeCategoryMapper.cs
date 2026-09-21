@@ -1,6 +1,6 @@
 ﻿using ResumeSystemManagement.Core.Entities;
 
-namespace ResumeSystemManagement.Application.DTOs.Attributes.Mapper;
+namespace ResumeSystemManagement.Application.DTOs.Attribute.Mapper;
 
 public static class AttributeCategoryMapper
 {

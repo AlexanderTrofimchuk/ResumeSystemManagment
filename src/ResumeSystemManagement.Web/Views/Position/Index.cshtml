@@ -1,5 +1,4 @@
-﻿@using Microsoft.AspNetCore.Http.Features
-@using ResumeSystemManagement.Core.ReadModels
+﻿@using ResumeSystemManagement.Core.ReadModels
 @model ResumeSystemManagement.Application.DTOs.Position.PositionDetails
 @{
     ViewData["Title"] = "Position Library";
@@ -98,6 +97,7 @@
                         <th scope="col">Title</th>
                         <th scope="col">Description</th>
                         <th scope="col">Permissions</th>
+                        <th scope="col">Max Projects</th>
                         <th scope="col">Created On</th>
                     </tr>
                     </thead>
@@ -119,6 +119,7 @@
                                 <td class="position-title">@item.Title</td>
                                 <td>@item.Description</td>
                                 <td class="position-permissions">@item.Permissions</td>
+                                <td>@item.MaxProjects</td>
                                 <td>@item.CreatedOn.ToString("yyyy-MM-dd")</td>
                             </tr>
                         }
@@ -126,14 +127,14 @@
                     else
                     {
                         <tr>
-                            <td colspan="5" class="text-center">
+                            <td colspan="6" class="text-center">
                                 <p class="h3 my-3">There are no positions</p>
                             </td>
                         </tr>
                     }
 
                     <tr id="noSearchResults" style="display: none;">
-                        <td colspan="5" class="text-center">
+                        <td colspan="6" class="text-center">
                             <p class="h3 my-3">No positions found</p>
                         </td>
                     </tr>
@@ -176,7 +177,7 @@
         if (editBtn && duplicateBtn) {
             editBtn.disabled = checked.length !== 1;
             duplicateBtn.disabled = checked.length !== 1;
-            templateBtn.disabled = checked.length !== 1;
+            if (templateBtn) templateBtn.disabled = checked.length !== 1;
         }
     }
 
@@ -204,19 +205,6 @@
 
             updateToolbar();
         });
-    });
-
-    document.getElementById('btnEdit').addEventListener('click', async () => {
-        const id = document.querySelector('.row-checkbox:checked').value;
-        const response = await fetch(`/PositionLibrary/EditPositionForm?id=${id}`);
-
-        if (!response.ok) return console.error('Failed to load edit form');
-
-        document.getElementById('editModalContainer').innerHTML = await response.text();
-
-        bootstrap.Modal.getOrCreateInstance(
-            document.getElementById('editPositionModal')
-        ).show();
     });
 
     window.addEventListener('pageshow', e => {

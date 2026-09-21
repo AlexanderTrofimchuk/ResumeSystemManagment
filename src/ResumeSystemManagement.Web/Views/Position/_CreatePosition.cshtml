@@ -17,8 +17,7 @@
 
                     <div asp-validation-summary="ModelOnly"
                          class="alert alert-danger py-2 small mb-3" role="alert"></div>
-
-                    <!-- Title -->
+                    
                     <div class="mb-3">
                         <label asp-for="Title" class="form-label fw-medium">
                             Title <span class="text-danger">*</span>
@@ -38,6 +37,21 @@
                                   rows="3"
                                   placeholder="Brief description (optional)"></textarea>
                         <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Max projects -->
+                    <div class="mb-3">
+                        <label asp-for="MaxProjects" class="form-label fw-medium">
+                            Max projects <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="MaxProjects"
+                               type="number"
+                               min="0"
+                               step="1"
+                               class="form-control"
+                               placeholder="Maximum number of projects" />
+                        <div class="form-text ms-1">Maximum number of projects allowed for this position.</div>
+                        <span asp-validation-for="MaxProjects" class="text-danger small"></span>
                     </div>
 
                     <!-- Permissions -->

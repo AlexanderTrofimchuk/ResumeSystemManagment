@@ -1,12 +1,11 @@
 namespace ResumeSystemManagement.Core.Entities;
 
-public class CandidateAttributeValue
+public class CandidateAttributeValue(string userId,int attributeId,string value)
 {
-    public int Id { get; set; }
-    public string UserId { get; set; } = null!;
-    public int AttributeId { get; set; }
-    public string Value { get; set; } = null!;
-
-    public Resume Resume { get; set; } = null!;
+    public int Id { get; init; }
+    public string UserId { get; private set; } = userId;
+    public int AttributeId { get; private set; } = attributeId;
+    public string Value { get; private set; } = value;
+    
     public AttributeLibrary Attribute { get; set; } = null!;
 }

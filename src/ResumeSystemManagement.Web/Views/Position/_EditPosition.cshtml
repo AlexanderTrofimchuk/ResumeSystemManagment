@@ -22,8 +22,7 @@
 
                     <div asp-validation-summary="ModelOnly"
                          class="alert alert-danger py-2 small mb-3" role="alert"></div>
-
-                    <!-- Title -->
+                    
                     <div class="mb-3">
                         <label asp-for="Title" class="form-label fw-medium">
                             Title <span class="text-danger">*</span>
@@ -34,8 +33,7 @@
                                autocomplete="off" />
                         <span asp-validation-for="Title" class="text-danger small"></span>
                     </div>
-
-                    <!-- Description -->
+                    
                     <div class="mb-3">
                         <label asp-for="Description" class="form-label fw-medium">Description</label>
                         <textarea asp-for="Description"
@@ -44,8 +42,21 @@
                                   placeholder="Brief description (optional)"></textarea>
                         <span asp-validation-for="Description" class="text-danger small"></span>
                     </div>
-
-                    <!-- Permissions -->
+                    
+                    <div class="mb-3">
+                        <label asp-for="MaxProject" class="form-label fw-medium">
+                            Max projects <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="MaxProject"
+                               type="number"
+                               min="0"
+                               step="1"
+                               class="form-control"
+                               placeholder="Maximum number of projects" />
+                        <div class="form-text ms-1">Maximum number of projects allowed for this position.</div>
+                        <span asp-validation-for="MaxProject" class="text-danger small"></span>
+                    </div>
+                    
                     <div class="mb-1">
                         <label asp-for="Permissions" class="form-label fw-medium">Permissions</label>
                         <select asp-for="Permissions"

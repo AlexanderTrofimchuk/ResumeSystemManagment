@@ -1,4 +1,4 @@
-﻿using ResumeSystemManagement.Application.DTOs.Attributes;
+﻿using ResumeSystemManagement.Application.DTOs.Attribute;
 using ResumeSystemManagement.Core.Entities;
 using ResumeSystemManagement.Core.Enums;
 

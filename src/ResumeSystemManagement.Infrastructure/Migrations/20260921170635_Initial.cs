@@ -31,7 +31,8 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
-                    FullName = table.Column<string>(type: "text", nullable: false),
+                    FullName = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -58,7 +59,7 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Title = table.Column<string>(type: "text", nullable: false)
+                    Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,7 +72,7 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Title = table.Column<string>(type: "text", nullable: false)
+                    Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -79,22 +80,16 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Positions",
+                name: "Tags",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Title = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
-                    Permissions = table.Column<int>(type: "integer", nullable: false),
-                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
-                    CreatedBy = table.Column<string>(type: "text", nullable: false),
-                    CreateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ClosedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Positions", x => x.Id);
+                    table.PrimaryKey("PK_Tags", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -204,15 +199,43 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Positions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    Permissions = table.Column<int>(type: "integer", nullable: false),
+                    MaxProjects = table.Column<int>(type: "integer", nullable: false),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: false),
+                    CreateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ClosedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Positions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Positions_AspNetUsers_CreatedBy",
+                        column: x => x.CreatedBy,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserProjects",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
                     UserId = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "character varying(400)", maxLength: 400, nullable: false),
                     StartProject = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    EndProject = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    EndProject = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -233,8 +256,8 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     TypeId = table.Column<int>(type: "integer", nullable: false),
                     CategoryId = table.Column<int>(type: "integer", nullable: false),
-                    Title = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
+                    Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     IsBuiltIn = table.Column<bool>(type: "boolean", nullable: false),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false)
                 },
@@ -251,6 +274,58 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                         name: "FK_AttributeLibraries_AttributeTypes_TypeId",
                         column: x => x.TypeId,
                         principalTable: "AttributeTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Discussions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PositionId = table.Column<int>(type: "integer", nullable: false),
+                    Text = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    SendAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreateBy = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Discussions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Discussions_AspNetUsers_CreateBy",
+                        column: x => x.CreateBy,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Discussions_Positions_PositionId",
+                        column: x => x.PositionId,
+                        principalTable: "Positions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PositionTag",
+                columns: table => new
+                {
+                    PositionsId = table.Column<int>(type: "integer", nullable: false),
+                    RequiredTagsId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PositionTag", x => new { x.PositionsId, x.RequiredTagsId });
+                    table.ForeignKey(
+                        name: "FK_PositionTag_Positions_PositionsId",
+                        column: x => x.PositionsId,
+                        principalTable: "Positions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PositionTag_Tags_RequiredTagsId",
+                        column: x => x.RequiredTagsId,
+                        principalTable: "Tags",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -283,6 +358,30 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TagUserProject",
+                columns: table => new
+                {
+                    TagsId = table.Column<int>(type: "integer", nullable: false),
+                    UserProjectsId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TagUserProject", x => new { x.TagsId, x.UserProjectsId });
+                    table.ForeignKey(
+                        name: "FK_TagUserProject_Tags_TagsId",
+                        column: x => x.TagsId,
+                        principalTable: "Tags",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TagUserProject_UserProjects_UserProjectsId",
+                        column: x => x.UserProjectsId,
+                        principalTable: "UserProjects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AttributeFilters",
                 columns: table => new
                 {
@@ -290,7 +389,7 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     PositionId = table.Column<int>(type: "integer", nullable: false),
                     AttributeId = table.Column<int>(type: "integer", nullable: false),
-                    Operator = table.Column<string>(type: "text", nullable: false),
+                    Operator = table.Column<string>(type: "character varying(1)", maxLength: 1, nullable: false),
                     Value = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -317,13 +416,41 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     AttributeId = table.Column<int>(type: "integer", nullable: false),
-                    Value = table.Column<string>(type: "text", nullable: false)
+                    Value = table.Column<string>(type: "text", nullable: false),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AttributeValueForLists", x => x.Id);
                     table.ForeignKey(
                         name: "FK_AttributeValueForLists_AttributeLibraries_AttributeId",
+                        column: x => x.AttributeId,
+                        principalTable: "AttributeLibraries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CandidateAttributeValues",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    AttributeId = table.Column<int>(type: "integer", nullable: false),
+                    Value = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CandidateAttributeValues", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CandidateAttributeValues_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CandidateAttributeValues_AttributeLibraries_AttributeId",
                         column: x => x.AttributeId,
                         principalTable: "AttributeLibraries",
                         principalColumn: "Id",
@@ -356,34 +483,6 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Histories",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ResumeId = table.Column<int>(type: "integer", nullable: false),
-                    Text = table.Column<string>(type: "text", nullable: false),
-                    SendAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    SentBy = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Histories", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Histories_AspNetUsers_SentBy",
-                        column: x => x.SentBy,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Histories_Resumes_ResumeId",
-                        column: x => x.ResumeId,
-                        principalTable: "Resumes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "RecruiterLikes",
                 columns: table => new
                 {
@@ -404,46 +503,6 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_RecruiterLikes_Resumes_ResumeId",
-                        column: x => x.ResumeId,
-                        principalTable: "Resumes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CandidateAttributeValue",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    AttributeId = table.Column<int>(type: "integer", nullable: false),
-                    Value = table.Column<string>(type: "text", nullable: false),
-                    ResumeId = table.Column<int>(type: "integer", nullable: false),
-                    AttributeFilterId = table.Column<int>(type: "integer", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CandidateAttributeValue", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CandidateAttributeValue_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CandidateAttributeValue_AttributeFilters_AttributeFilterId",
-                        column: x => x.AttributeFilterId,
-                        principalTable: "AttributeFilters",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_CandidateAttributeValue_AttributeLibraries_AttributeId",
-                        column: x => x.AttributeId,
-                        principalTable: "AttributeLibraries",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CandidateAttributeValue_Resumes_ResumeId",
                         column: x => x.ResumeId,
                         principalTable: "Resumes",
                         principalColumn: "Id",
@@ -488,6 +547,12 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_AttributeCategories_Title",
+                table: "AttributeCategories",
+                column: "Title",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AttributeFilters_AttributeId",
                 table: "AttributeFilters",
                 column: "AttributeId");
@@ -503,44 +568,48 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AttributeLibraries_Title",
+                table: "AttributeLibraries",
+                column: "Title",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AttributeLibraries_TypeId",
                 table: "AttributeLibraries",
                 column: "TypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AttributeValueForLists_AttributeId",
+                name: "IX_AttributeTypes_Title",
+                table: "AttributeTypes",
+                column: "Title",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AttributeValueForLists_AttributeId_Value",
                 table: "AttributeValueForLists",
+                columns: new[] { "AttributeId", "Value" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CandidateAttributeValues_AttributeId",
+                table: "CandidateAttributeValues",
                 column: "AttributeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CandidateAttributeValue_AttributeFilterId",
-                table: "CandidateAttributeValue",
-                column: "AttributeFilterId");
+                name: "IX_CandidateAttributeValues_UserId_AttributeId",
+                table: "CandidateAttributeValues",
+                columns: new[] { "UserId", "AttributeId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CandidateAttributeValue_AttributeId",
-                table: "CandidateAttributeValue",
-                column: "AttributeId");
+                name: "IX_Discussions_CreateBy",
+                table: "Discussions",
+                column: "CreateBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CandidateAttributeValue_ResumeId",
-                table: "CandidateAttributeValue",
-                column: "ResumeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CandidateAttributeValue_UserId",
-                table: "CandidateAttributeValue",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Histories_ResumeId",
-                table: "Histories",
-                column: "ResumeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Histories_SentBy",
-                table: "Histories",
-                column: "SentBy");
+                name: "IX_Discussions_PositionId",
+                table: "Discussions",
+                column: "PositionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PositionAttributeLibraries_AttributeLibraryId",
@@ -548,9 +617,19 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 column: "AttributeLibraryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RecruiterLikes_RecruiterId",
+                name: "IX_Positions_CreatedBy",
+                table: "Positions",
+                column: "CreatedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PositionTag_RequiredTagsId",
+                table: "PositionTag",
+                column: "RequiredTagsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RecruiterLikes_RecruiterId_ResumeId",
                 table: "RecruiterLikes",
-                column: "RecruiterId");
+                columns: new[] { "RecruiterId", "ResumeId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_RecruiterLikes_ResumeId",
@@ -558,14 +637,26 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 column: "ResumeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Resumes_PositionId",
+                name: "IX_Resumes_PositionId_UserId",
                 table: "Resumes",
-                column: "PositionId");
+                columns: new[] { "PositionId", "UserId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Resumes_UserId",
                 table: "Resumes",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tags_Name",
+                table: "Tags",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TagUserProject_UserProjectsId",
+                table: "TagUserProject",
+                column: "UserProjectsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProjects_UserId",
@@ -592,46 +683,55 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "AttributeFilters");
+
+            migrationBuilder.DropTable(
                 name: "AttributeValueForLists");
 
             migrationBuilder.DropTable(
-                name: "CandidateAttributeValue");
+                name: "CandidateAttributeValues");
 
             migrationBuilder.DropTable(
-                name: "Histories");
+                name: "Discussions");
 
             migrationBuilder.DropTable(
                 name: "PositionAttributeLibraries");
 
             migrationBuilder.DropTable(
+                name: "PositionTag");
+
+            migrationBuilder.DropTable(
                 name: "RecruiterLikes");
 
             migrationBuilder.DropTable(
-                name: "UserProjects");
+                name: "TagUserProject");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AttributeFilters");
+                name: "AttributeLibraries");
 
             migrationBuilder.DropTable(
                 name: "Resumes");
 
             migrationBuilder.DropTable(
-                name: "AttributeLibraries");
+                name: "Tags");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "Positions");
+                name: "UserProjects");
 
             migrationBuilder.DropTable(
                 name: "AttributeCategories");
 
             migrationBuilder.DropTable(
                 name: "AttributeTypes");
+
+            migrationBuilder.DropTable(
+                name: "Positions");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }

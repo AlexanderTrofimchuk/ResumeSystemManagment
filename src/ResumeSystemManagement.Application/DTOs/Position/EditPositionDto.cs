@@ -9,22 +9,18 @@ public record EditPositionDto(
     PositionPermissions Permissions,
     DateTime CreatedOn,
     uint Version,
-    string CreatedBy);
+    string CreatedBy,
+    int MaxProject);
 
 public static class EditPositionMapper
 {
     public static Core.Entities.Position MapToPosition(this EditPositionDto dto) =>
-        new()
+        new(dto.Title,dto.Description,dto.CreatedBy,permissions: dto.Permissions)
         {
             Id = dto.Id,
-            Title = dto.Title,
-            Description = dto.Description,
-            Permissions = dto.Permissions,
-            CreateAt = DateTime.SpecifyKind(dto.CreatedOn, DateTimeKind.Utc),
             Version = dto.Version,
-            CreatedBy = dto.CreatedBy
         };
 
     public static EditPositionDto MapToEditPosition(this Core.Entities.Position position) =>
-        new(position.Id, position.Title, position.Description, position.Permissions, position.CreateAt,  position.Version, position.CreatedBy);
+        new(position.Id, position.Title, position.Description, position.Permissions, position.CreateAt,  position.Version, position.CreatedBy, position.MaxProjects);
 }

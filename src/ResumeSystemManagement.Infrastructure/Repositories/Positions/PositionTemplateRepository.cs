@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ResumeSystemManagement.Application.Interfaces.Position;
 using ResumeSystemManagement.Core.Entities;
 using ResumeSystemManagement.Core.Enums;
 using ResumeSystemManagement.Core.Interfaces.Repositories.PositionRepository;

@@ -12,7 +12,7 @@ using ResumeSystemManagement.Infrastructure.Context;
 namespace ResumeSystemManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260919142734_Initial")]
+    [Migration("20260921170635_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -157,6 +157,21 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("PositionTag", b =>
+                {
+                    b.Property<int>("PositionsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RequiredTagsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("PositionsId", "RequiredTagsId");
+
+                    b.HasIndex("RequiredTagsId");
+
+                    b.ToTable("PositionTag");
+                });
+
             modelBuilder.Entity("ResumeSystemManagement.Core.Entities.AttributeCategory", b =>
                 {
                     b.Property<int>("Id")
@@ -167,9 +182,13 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Title")
+                        .IsUnique();
 
                     b.ToTable("AttributeCategories");
                 });
@@ -187,7 +206,8 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
 
                     b.Property<string>("Operator")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(1)
+                        .HasColumnType("character varying(1)");
 
                     b.Property<int>("PositionId")
                         .HasColumnType("integer");
@@ -218,14 +238,16 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<bool>("IsBuiltIn")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int>("TypeId")
                         .HasColumnType("integer");
@@ -239,6 +261,9 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("Title")
+                        .IsUnique();
 
                     b.HasIndex("TypeId");
 
@@ -255,9 +280,13 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Title")
+                        .IsUnique();
 
                     b.ToTable("AttributeTypes");
                 });
@@ -277,9 +306,16 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AttributeId");
+                    b.HasIndex("AttributeId", "Value")
+                        .IsUnique();
 
                     b.ToTable("AttributeValueForLists");
                 });
@@ -292,13 +328,7 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AttributeFilterId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("AttributeId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ResumeId")
                         .HasColumnType("integer");
 
                     b.Property<string>("UserId")
@@ -311,18 +341,15 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AttributeFilterId");
-
                     b.HasIndex("AttributeId");
 
-                    b.HasIndex("ResumeId");
+                    b.HasIndex("UserId", "AttributeId")
+                        .IsUnique();
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("CandidateAttributeValue");
+                    b.ToTable("CandidateAttributeValues");
                 });
 
-            modelBuilder.Entity("ResumeSystemManagement.Core.Entities.ChatHistory", b =>
+            modelBuilder.Entity("ResumeSystemManagement.Core.Entities.Discussion", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -330,27 +357,28 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ResumeId")
+                    b.Property<string>("CreateBy")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("PositionId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("SendAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("SentBy")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Text")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ResumeId");
+                    b.HasIndex("CreateBy");
 
-                    b.HasIndex("SentBy");
+                    b.HasIndex("PositionId");
 
-                    b.ToTable("Histories");
+                    b.ToTable("Discussions");
                 });
 
             modelBuilder.Entity("ResumeSystemManagement.Core.Entities.Position", b =>
@@ -373,14 +401,19 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<int>("MaxProjects")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Permissions")
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<uint>("Version")
                         .IsConcurrencyToken()
@@ -389,6 +422,8 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                         .HasColumnName("xmin");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedBy");
 
                     b.ToTable("Positions");
                 });
@@ -431,9 +466,9 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RecruiterId");
-
                     b.HasIndex("ResumeId");
+
+                    b.HasIndex("RecruiterId", "ResumeId");
 
                     b.ToTable("RecruiterLikes");
                 });
@@ -458,11 +493,33 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PositionId");
-
                     b.HasIndex("UserId");
 
+                    b.HasIndex("PositionId", "UserId")
+                        .IsUnique();
+
                     b.ToTable("Resumes");
+                });
+
+            modelBuilder.Entity("ResumeSystemManagement.Core.Entities.Tag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("ResumeSystemManagement.Core.Entities.UserProject", b =>
@@ -475,10 +532,16 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(400)
+                        .HasColumnType("character varying(400)");
 
-                    b.Property<DateTime>("EndProject")
+                    b.Property<DateTime?>("EndProject")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<DateTime>("StartProject")
                         .HasColumnType("timestamp with time zone");
@@ -486,6 +549,12 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.HasKey("Id");
 
@@ -515,7 +584,8 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
 
                     b.Property<string>("FullName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -540,6 +610,12 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
 
+                    b.Property<uint>("ProfileVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
 
@@ -560,6 +636,21 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("TagUserProject", b =>
+                {
+                    b.Property<int>("TagsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserProjectsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("TagsId", "UserProjectsId");
+
+                    b.HasIndex("UserProjectsId");
+
+                    b.ToTable("TagUserProject");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -609,6 +700,21 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                     b.HasOne("ResumeSystemManagement.Infrastructure.IdentityEntities.AppUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PositionTag", b =>
+                {
+                    b.HasOne("ResumeSystemManagement.Core.Entities.Position", null)
+                        .WithMany()
+                        .HasForeignKey("PositionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResumeSystemManagement.Core.Entities.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("RequiredTagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -664,19 +770,9 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("ResumeSystemManagement.Core.Entities.CandidateAttributeValue", b =>
                 {
-                    b.HasOne("ResumeSystemManagement.Core.Entities.AttributeFilter", null)
-                        .WithMany("ResumeAttributeValues")
-                        .HasForeignKey("AttributeFilterId");
-
                     b.HasOne("ResumeSystemManagement.Core.Entities.AttributeLibrary", "Attribute")
                         .WithMany("CandidateAttributeValues")
                         .HasForeignKey("AttributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ResumeSystemManagement.Core.Entities.Resume", "Resume")
-                        .WithMany()
-                        .HasForeignKey("ResumeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -687,25 +783,32 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Attribute");
-
-                    b.Navigation("Resume");
                 });
 
-            modelBuilder.Entity("ResumeSystemManagement.Core.Entities.ChatHistory", b =>
+            modelBuilder.Entity("ResumeSystemManagement.Core.Entities.Discussion", b =>
                 {
-                    b.HasOne("ResumeSystemManagement.Core.Entities.Resume", "Resume")
-                        .WithMany("Histories")
-                        .HasForeignKey("ResumeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ResumeSystemManagement.Infrastructure.IdentityEntities.AppUser", null)
-                        .WithMany("ChatHistories")
-                        .HasForeignKey("SentBy")
+                        .WithMany("Discussions")
+                        .HasForeignKey("CreateBy")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Resume");
+                    b.HasOne("ResumeSystemManagement.Core.Entities.Position", "Position")
+                        .WithMany("Discussions")
+                        .HasForeignKey("PositionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Position");
+                });
+
+            modelBuilder.Entity("ResumeSystemManagement.Core.Entities.Position", b =>
+                {
+                    b.HasOne("ResumeSystemManagement.Infrastructure.IdentityEntities.AppUser", null)
+                        .WithMany("Positions")
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ResumeSystemManagement.Core.Entities.PositionAttributeLibrary", b =>
@@ -770,14 +873,24 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("TagUserProject", b =>
+                {
+                    b.HasOne("ResumeSystemManagement.Core.Entities.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResumeSystemManagement.Core.Entities.UserProject", null)
+                        .WithMany()
+                        .HasForeignKey("UserProjectsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ResumeSystemManagement.Core.Entities.AttributeCategory", b =>
                 {
                     b.Navigation("AttributeLibraries");
-                });
-
-            modelBuilder.Entity("ResumeSystemManagement.Core.Entities.AttributeFilter", b =>
-                {
-                    b.Navigation("ResumeAttributeValues");
                 });
 
             modelBuilder.Entity("ResumeSystemManagement.Core.Entities.AttributeLibrary", b =>
@@ -800,6 +913,8 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 {
                     b.Navigation("AttributeFilters");
 
+                    b.Navigation("Discussions");
+
                     b.Navigation("PositionAttributeLibraries");
 
                     b.Navigation("Resumes");
@@ -807,8 +922,6 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("ResumeSystemManagement.Core.Entities.Resume", b =>
                 {
-                    b.Navigation("Histories");
-
                     b.Navigation("Likes");
                 });
 
@@ -816,7 +929,9 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                 {
                     b.Navigation("CandidateAttributeValues");
 
-                    b.Navigation("ChatHistories");
+                    b.Navigation("Discussions");
+
+                    b.Navigation("Positions");
 
                     b.Navigation("Projects");
 

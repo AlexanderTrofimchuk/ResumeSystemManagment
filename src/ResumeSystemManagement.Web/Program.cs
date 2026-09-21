@@ -15,22 +15,17 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
-    options.ForwardedHeaders =
-        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;
 });
 
 var app = builder.Build();
 
 app.UseForwardedHeaders();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
+app.UseExceptionHandler("/Home/Error");
 
-    using var scope = app.Services.CreateScope();
-    var services = scope.ServiceProvider;
-    await services.InitializeDbAndRoles();
-}
+await app.Services.InitializeDatabase();
+
 app.UseRouting();
 
 app.UseAuthentication();

@@ -7,21 +7,24 @@ public record PositionDetail(
     string Title,
     string Description,
     PositionPermissions Permissions,
-    DateTime CreatedOn);
+    DateTime CreatedOn,
+    int MaxProjects);
     
 public static class PositionDetailMapper
 {
     public static PositionDetail ToPositionDetail(this Core.Entities.Position position) =>
-        new(position.Id, position.Title, position.Description,
-            position.Permissions, position.CreateAt);
+        new(position.Id, 
+            position.Title, 
+            position.Description,
+            position.Permissions, 
+            position.CreateAt, 
+            position.MaxProjects);
+            
 
-    public static Core.Entities.Position ToPosition(this PositionDetail detail) =>
-        new()
+    public static Core.Entities.Position ToPosition(this PositionDetail detail, string createBy) =>
+        new(detail.Title,detail.Description,createBy,permissions:detail.Permissions)
         {
             Id = detail.Id,
-            Title = detail.Title,
-            Description = detail.Description,
-            Permissions = detail.Permissions,
             CreateAt =  detail.CreatedOn
         };
 }

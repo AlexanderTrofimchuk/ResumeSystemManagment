@@ -1,3 +1,3 @@
-﻿namespace ResumeSystemManagement.Application.DTOs.Attributes;
+﻿namespace ResumeSystemManagement.Application.DTOs.Attribute;
 
 public record AttributeCategoryDTo (int Id, string Title);
