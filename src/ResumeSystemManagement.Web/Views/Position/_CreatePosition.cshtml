@@ -1,0 +1,104 @@
+﻿@model ResumeSystemManagement.Application.DTOs.Position.CreatePositionDto
+
+<div class="modal fade" id="createPositionModal" tabindex="-1"
+     aria-labelledby="createPositionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header border-bottom px-4 py-3">
+                <h5 class="modal-title fw-semibold" id="createPositionModalLabel">
+                    New Position
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form asp-action="CreatePosition" method="post" novalidate id="createPositionForm">
+                <div class="modal-body px-4 py-4">
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger py-2 small mb-3" role="alert"></div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label fw-medium">
+                            Title <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="Title"
+                               class="form-control"
+                               placeholder="Enter position title"
+                               autocomplete="off" />
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label fw-medium">Description</label>
+                        <textarea asp-for="Description"
+                                  class="form-control"
+                                  rows="3"
+                                  placeholder="Brief description (optional)"></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Max projects -->
+                    <div class="mb-3">
+                        <label asp-for="MaxProjects" class="form-label fw-medium">
+                            Max projects <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="MaxProjects"
+                               type="number"
+                               min="0"
+                               step="1"
+                               class="form-control"
+                               placeholder="Maximum number of projects" />
+                        <div class="form-text ms-1">Maximum number of projects allowed for this position.</div>
+                        <span asp-validation-for="MaxProjects" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Permissions -->
+                    <div class="mb-1">
+                        <label asp-for="Permissions" class="form-label fw-medium">Permissions</label>
+                        <select asp-for="Permissions"
+                                asp-items="Html.GetEnumSelectList<ResumeSystemManagement.Core.Enums.PositionPermissions>()"
+                                class="form-select">
+                        </select>
+                        <div class="form-text ms-1">
+                            Controls who can see and use this position. Defaults to <strong>Public</strong>.
+                        </div>
+                        <span asp-validation-for="Permissions" class="text-danger small"></span>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer border-top px-4 py-3">
+                    <button type="button" class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-check-lg me-1"></i> Create
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    const modal = document.getElementById('createPositionModal');
+    if (!modal) return;
+
+    // Re-open modal on validation error (server-side)
+    const form = document.getElementById('createPositionForm');
+    if (form) {
+        const summary = form.querySelector('[data-valmsg-summary]');
+        if (summary && summary.querySelectorAll('li').length > 0) {
+            bootstrap.Modal.getOrCreateInstance(modal).show();
+        }
+    }
+
+    // Reset form on close
+    modal.addEventListener('hidden.bs.modal', function () {
+        if (form) form.reset();
+    });
+})();
+</script>

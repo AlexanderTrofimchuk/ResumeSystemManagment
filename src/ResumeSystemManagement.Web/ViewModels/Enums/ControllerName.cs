@@ -4,5 +4,8 @@ public enum ControllerName
 {
     Home,
     Account,
-    AttributeLibrary
+    AttributeLibrary,
+    Position,
+    PositionTemplate,
+    Admin
 }

@@ -32,7 +32,7 @@
                         <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark">Positions</a>
+                        <a class="nav-link text-dark" asp-action="Index" asp-controller="Position">Positions</a>
                     </li>
                     @if (User.IsInRole(RoleNames.Recruiter))
                     {
@@ -43,10 +43,16 @@
                             <a class="nav-link text-dark">CVs</a>
                         </li>
                     }
+                    @if (User.IsInRole(RoleNames.Administrator))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-action="UserManagement" asp-controller="Admin">Users</a>
+                        </li>
+                    }
                 </ul>
                 
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
+                    <li class="nav-item" style="display: @(User.Identity!.IsAuthenticated ? "none" : "block"); ">
                         <a class="nav-link text-dark" id="login" asp-action="LoginPage" asp-controller="Account">Login</a>
                     </li>
                     @if (User.Identity!.IsAuthenticated)

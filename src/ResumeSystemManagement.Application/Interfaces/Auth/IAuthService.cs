@@ -2,6 +2,6 @@
 
 public interface IAuthService
 {
-    Task Login(string id, string email, string role);
+    Task Login(string id, string email, string role, string? securityStamp);
     Task Logout();
 }

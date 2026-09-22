@@ -13,4 +13,6 @@ public class LoginViewModel
     [DataType(DataType.Password)]
     [StringLength(8, ErrorMessage = "Password must be no more than 8 characters")]
     public string Password { get; set; } = null!;
+    
+    public ChangePasswordViewModel? ChangePassword { get; set; }
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using ResumeSystemManagement.Application.DTOs.Attributes;
+using ResumeSystemManagement.Application.DTOs.Attribute;
 using ResumeSystemManagement.Application.Interfaces.Attributes;
 using ResumeSystemManagement.Core.ReadModels;
 using ResumeSystemManagement.Web.ViewModels.Enums;
@@ -62,7 +62,7 @@ public class AttributeLibraryController(
             return ReturnCurrentException(attribute.Errors.Select(e => e.Message).ToList(),
                 ActionName.Index);
         await PopulateDropdowns();
-        return PartialView("_EditForm", attribute.Value);
+        return PartialView("_EditAttribute", attribute.Value);
     }
 
     [Authorize(Roles = RoleNames.Recruiter)]

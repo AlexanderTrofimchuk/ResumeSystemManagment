@@ -1,0 +1,40 @@
+﻿@model IEnumerable<ResumeSystemManagement.Application.DTOs.Attribute.AttributeTemplate>
+
+@{
+    var typeIcons = new Dictionary<string, string>
+    {
+        { "String",     "bi-type" },
+        { "Text",       "bi-text-left" },
+        { "Image",      "bi-image" },
+        { "Numeric",    "bi-123" },
+        { "Date",       "bi-calendar3" },
+        { "Period",     "bi-calendar-range" },
+        { "Boolean",    "bi-toggle-on" },
+        { "One of many","bi-menu-button-wide" }
+    };
+    
+    var addedIds = ViewBag.AddedAttributes as HashSet<int>;
+    string AlreadyAdded(int id)
+    {
+        return addedIds!.Contains(id) ? "already-added" : string.Empty;
+    }
+}
+
+@foreach (var item in Model)
+{
+    <div class="list-group-item list-group-item-action d-flex align-items-center gap-2 py-2 lib-item @AlreadyAdded(item.Id)">
+        <div class="flex-grow-1">
+            <span class="small">@item.Name</span>
+            <span class="badge bg-light text-secondary border ms-1" style="font-size:.65rem">
+                <i class="bi @(typeIcons.GetValueOrDefault(item.TypeName, "bi-question-circle"))"></i> @item.TypeName
+            </span>
+        </div>
+        <button class="btn btn-sm btn-outline-primary border-0 py-0 px-1" 
+                data-bs-toggle="modal"
+                data-bs-target="#addToSectionModal"
+                data-attr-id="@item.Id"
+                title="Добавить">
+            <i class="bi bi-plus-circle"></i>
+        </button>
+    </div>
+}

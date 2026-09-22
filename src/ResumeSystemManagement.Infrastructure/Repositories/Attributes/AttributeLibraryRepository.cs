@@ -95,10 +95,10 @@ public class AttributeLibraryRepository(ApplicationDbContext context) : IAttribu
     
     private static void UpdateFields(AttributeLibrary existing, AttributeLibrary attribute)
     {
-        existing.TypeId      = attribute.TypeId;
-        existing.CategoryId  = attribute.CategoryId;
-        existing.Title       = attribute.Title;
-        existing.Description = attribute.Description;
+        existing.SetType(attribute.TypeId);
+        existing.SetCategoryId(attribute.CategoryId);
+        existing.SetTitle(attribute.Title);
+        existing.SetDescription(attribute.Description);
     }
 
     private void RemoveDeletedOptions(AttributeLibrary existing, AttributeLibrary attribute)
@@ -145,10 +145,9 @@ public class AttributeLibraryRepository(ApplicationDbContext context) : IAttribu
     
     private Task<List<string>> AttributeUsingPosition(List<int> ids)
     {
-        return _context.Positions.AsNoTracking()
-            .SelectMany(p => p.AttributeLibraries
-                .Where(al => ids.Contains(al.Id))
-                .Select(a => a.Title))
+        return _context.PositionAttributeLibraries.AsNoTracking()
+            .Where(pal => ids.Contains(pal.AttributeLibraryId))
+            .Select(a => a.AttributeLibrary.Title)
             .ToListAsync();
     }
 }

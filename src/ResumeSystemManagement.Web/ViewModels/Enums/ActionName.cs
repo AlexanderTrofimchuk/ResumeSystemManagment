@@ -5,5 +5,6 @@ public enum ActionName
     Index,
     LoginPage,
     RegisterPage,
-    Register,
+    Template,
+    UserManagement,
 }

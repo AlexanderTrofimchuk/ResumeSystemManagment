@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 using ResumeSystemManagement.Web.ViewModels.Enums;
 
@@ -24,4 +25,6 @@ public class BaseController: Controller
         
         return View(action.ToString(), model);
     }
+
+    public List<string> GetErrorsMessage(Result result) => result.Errors.Select(e => e.Message).ToList();
 }

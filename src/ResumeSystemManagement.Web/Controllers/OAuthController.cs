@@ -9,10 +9,13 @@ namespace ResumeSystemManagement.Web.Controllers;
 
 public class OAuthController(IExternalLoginService loginService, IExternalAuthProvider externalProvider): BaseController
 {
+    private readonly IExternalAuthProvider _externalProvider = externalProvider;
+    private readonly IExternalLoginService _loginService = loginService;
+    
     [HttpGet]
     public IActionResult GoogleLogin()
     {
-        var properties = externalProvider.ConfigureGoogleLogin(Url.Action("GoogleCallback"));
+        var properties = _externalProvider.ConfigureGoogleLogin(Url.Action("GoogleCallback"));
         return Challenge(properties, "Google");
     }
     
@@ -20,15 +23,15 @@ public class OAuthController(IExternalLoginService loginService, IExternalAuthPr
     public async Task<IActionResult> GoogleCallback()
     {
         return await ExternalCallback(
-            externalProvider.GetGooglePrincipal,
-            loginService.Login,
+            _externalProvider.GetGooglePrincipal,
+            _loginService.Login,
             "Google");
     }
     
     [HttpGet]
     public IActionResult FacebookLogin()
     {
-        var properties = externalProvider.ConfigureFacebookLogin(Url.Action("FacebookCallback"));
+        var properties = _externalProvider.ConfigureFacebookLogin(Url.Action("FacebookCallback"));
         return Challenge(properties, "Facebook");
     }
     
@@ -36,8 +39,8 @@ public class OAuthController(IExternalLoginService loginService, IExternalAuthPr
     public async Task<IActionResult> FacebookCallback()
     {
         return await ExternalCallback(
-            externalProvider.GetFacebookPrincipal,
-            loginService.Login,
+            _externalProvider.GetFacebookPrincipal,
+            _loginService.Login,
             "Facebook");
     }
     

@@ -1,7 +1,8 @@
 ﻿using FluentResults;
-using ResumeSystemManagement.Application.DTOs.Attributes;
-using ResumeSystemManagement.Application.DTOs.Attributes.Mapper;
+using ResumeSystemManagement.Application.DTOs.Attribute;
+using ResumeSystemManagement.Application.DTOs.Attribute.Mapper;
 using ResumeSystemManagement.Application.Interfaces.Attributes;
+using ResumeSystemManagement.Core.Entities;
 using ResumeSystemManagement.Core.Interfaces.Repositories.AttributeRepository;
 
 namespace ResumeSystemManagement.Application.Service.Attributes;
@@ -15,11 +16,18 @@ public class AttributeLibraryService (IAttributeLibraryRepository repository) : 
         return Result.Ok(new AttributeDetails { Attributes = attributes.Value});
     }
 
+    public async Task<Result<AttributeLibrary>> GetAttributeLibrary(int attributeId)
+    {
+        var attribute = await repository.GetAttributeByIdAsync(attributeId);
+        if (attribute is null) return Result.Fail("Attribute not found");
+        return attribute;
+    }
+
     public async Task<Result<EditAttributeDTo>> GetEditAttributeAsync(int id)
     {
-        var attribute = await repository.GetAttributeByIdAsync(id);
-        if (attribute is null) return Result.Fail("Attribute not found");
-        return Result.Ok(attribute.ToEditAttributeDTo());
+        var attribute = await GetAttributeLibrary(id);
+        if (attribute.IsFailed) return Result.Fail(attribute.Errors);
+        return Result.Ok(attribute.Value.ToEditAttributeDTo());
     }
 
     public async Task<Result<AttributeDetails>> GetAttributesByNameAsync(string name)
