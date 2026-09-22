@@ -804,7 +804,7 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                     b.HasOne("ResumeSystemManagement.Infrastructure.IdentityEntities.AppUser", null)
                         .WithMany("Positions")
                         .HasForeignKey("CreatedBy")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
                 });
 

@@ -221,7 +221,7 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                         column: x => x.CreatedBy,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(

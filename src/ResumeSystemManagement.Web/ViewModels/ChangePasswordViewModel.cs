@@ -2,7 +2,7 @@
 
 namespace ResumeSystemManagement.Web.ViewModels;
 
-public class LoginViewModel
+public class ChangePasswordViewModel
 {
     [Required]
     [EmailAddress(ErrorMessage = "Invalid email address.")] 
@@ -12,7 +12,10 @@ public class LoginViewModel
     [Required]
     [DataType(DataType.Password)]
     [StringLength(8, ErrorMessage = "Password must be no more than 8 characters")]
-    public string Password { get; set; } = null!;
+    public string OldPassword { get; set; } = null!;
     
-    public ChangePasswordViewModel? ChangePassword { get; set; }
+    [Required]
+    [DataType(DataType.Password)]
+    [StringLength(8, ErrorMessage = "Password must be no more than 8 characters")]
+    public string NewPassword { get; set; } = null!;
 }

@@ -12,7 +12,7 @@ using ResumeSystemManagement.Infrastructure.Context;
 namespace ResumeSystemManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260921170635_Initial")]
+    [Migration("20260922104049_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -807,7 +807,7 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                     b.HasOne("ResumeSystemManagement.Infrastructure.IdentityEntities.AppUser", null)
                         .WithMany("Positions")
                         .HasForeignKey("CreatedBy")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
                 });
 

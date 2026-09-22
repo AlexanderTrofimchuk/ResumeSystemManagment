@@ -18,6 +18,8 @@ namespace ResumeSystemManagement.Infrastructure;
 
 public static class InfrastructureServiceExtensions
 {
+    private const int CookieLifetimeHours = 24;
+    
     public static IServiceCollection AddInfrastructureServices
         (this IServiceCollection services)
     {
@@ -28,26 +30,12 @@ public static class InfrastructureServiceExtensions
         services.Configure<IdentityOptions>(options =>
         {
             options.Password.RequiredLength = 8;
-            
-            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(24);
-            options.Lockout.MaxFailedAccessAttempts = 5;
-            options.Lockout.AllowedForNewUsers = true;
-            
             options.User.AllowedUserNameCharacters =
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
             options.User.RequireUniqueEmail = true;
         });
         
-        services.ConfigureApplicationCookie(options =>
-        {
-            options.LoginPath = "/Account/Login";
-            options.AccessDeniedPath = "/Account/Login";
-            options.Cookie.SameSite = SameSiteMode.None;
-            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-            options.Cookie.HttpOnly = true;
-            options.Cookie.IsEssential = true;
-        });
-        
+        services.AddCookieOption();
         services.AddExternalAuthentication();
         services.AddHttpContextAccessor();
         services.AddScoped<IUserRepository,UserRepository>();
@@ -87,5 +75,25 @@ public static class InfrastructureServiceExtensions
                 facebookOptions.Fields.Add("email");
                 facebookOptions.SignInScheme =  IdentityConstants.ExternalScheme;
             });
+    }
+
+    private static void AddCookieOption(this IServiceCollection services)
+    {
+        services.ConfigureApplicationCookie(options =>
+        {
+            options.LoginPath = "/Account/Login";
+            options.AccessDeniedPath = "/Account/Login";
+            options.Cookie.SameSite = SameSiteMode.None;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            options.Cookie.HttpOnly = true;
+            options.Cookie.IsEssential = true;
+            
+            options.ExpireTimeSpan = TimeSpan.FromHours(CookieLifetimeHours);
+        });
+        
+        services.Configure<SecurityStampValidatorOptions>(options =>
+        {
+            options.ValidationInterval = TimeSpan.FromMinutes(30);
+        });
     }
 }

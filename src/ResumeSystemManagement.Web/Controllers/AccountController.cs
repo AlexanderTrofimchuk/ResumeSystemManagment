@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using ResumeSystemManagement.Application.Interfaces.User;
 using ResumeSystemManagement.Core.Interfaces.Service.Login;
 using ResumeSystemManagement.Core.Interfaces.Service.Registration;
+using ResumeSystemManagement.Core.ReadModels;
 using ResumeSystemManagement.Web.ViewModels;
 using ResumeSystemManagement.Web.ViewModels.Enums;
 
 namespace ResumeSystemManagement.Web.Controllers;
 
-public class AccountController(ILoginService loginService, IRegistrationService registrationService): BaseController
+public class AccountController(ILoginService loginService,IUserService userService, IRegistrationService registrationService): BaseController
 {
     public IActionResult LoginPage()
     {
@@ -45,6 +48,21 @@ public class AccountController(ILoginService loginService, IRegistrationService 
         return RedirectWithMessage(["Вы зарегистрировались"], MessageColor.Success, ActionName.Index, ControllerName.Home);
     }
 
+    [HttpPost]
+    public async Task<IActionResult> СhangePassword(
+        [Bind(Prefix = "ChangePassword")] ChangePasswordViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return RedirectWithMessage(["Invalid input"], MessageColor.Danger, ActionName.LoginPage, ControllerName.Account);
+
+        var changeResult = await userService.ChangePasswordAsync(model.Email, model.OldPassword, model.NewPassword);
+        if (changeResult.IsFailed) return RedirectWithMessage(GetErrorsMessage(changeResult),
+            MessageColor.Danger, ActionName.LoginPage, ControllerName.Account);
+        return RedirectWithMessage(["Password was changed"],
+            MessageColor.Success, ActionName.LoginPage, ControllerName.Account);
+    }
+    
+    [Authorize(Roles = $"{RoleNames.Candidate},{RoleNames.Recruiter},{RoleNames.Administrator}")]
     [HttpGet]
     public async Task<IActionResult> Logout()
     {

@@ -23,10 +23,11 @@ public class CredentialLogin(IAuthService authService, IUserRepository userRepos
         await AuthService.Logout();
     }
 
-    private async Task<Result<User>> ValidateCredentials(string email, string password)
+    private async Task<Result<UserInfo>> ValidateCredentials(string email, string password)
     {
-        var user = await UserRepository.GetUserByEmail(email, password);
+        var user = await UserRepository.GetUserByEmail(email);
         if (user is null) return Result.Fail("User not Found");
+        if (await UserRepository.UserIsBlocked(user.Id))  return Result.Fail("User is Blocked");
         if (!await UserRepository.CheckPassword(user.Id, password))
             return Result.Fail("Password Incorrect");
         return Result.Ok(user);

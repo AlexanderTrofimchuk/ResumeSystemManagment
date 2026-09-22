@@ -13,7 +13,7 @@ public class RegistrationService(IUserRepository repository, IAuthService authSe
         if(!result.IsSuccess) return result.ToResult();
         var role = await repository.GetRoles(result.Value.Id);
         if (role is null) return Result.Fail("Not found roles");
-        await authService.Login(result.Value.Id, result.Value.Email, role);
+        await authService.Login(result.Value.Id, result.Value.Email, role, result.Value.SecurityStamp);
         return Result.Ok();
     }
 }

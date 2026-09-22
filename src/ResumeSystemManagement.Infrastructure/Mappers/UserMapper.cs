@@ -5,14 +5,16 @@ namespace ResumeSystemManagement.Infrastructure.Mappers;
 
 public static class UserMapper
 {
-    public static User ToUser(this AppUser user, string? role = null)
+    public static UserInfo ToUser(this AppUser user, string? role = null, bool isBlocked = false)
     {
-        return new User
+        return new UserInfo
         {
             Id = user.Id,
-            UserName = user.UserName!,
+            FullName = user.FullName,
             Email = user.Email!,
             Role = role,
+            IsBlocked = isBlocked,
+            SecurityStamp = user.SecurityStamp
         };
     }
 }

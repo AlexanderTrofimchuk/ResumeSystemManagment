@@ -43,6 +43,12 @@
                             <a class="nav-link text-dark">CVs</a>
                         </li>
                     }
+                    @if (User.IsInRole(RoleNames.Administrator))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-action="UserManagement" asp-controller="Admin">Users</a>
+                        </li>
+                    }
                 </ul>
                 
                 <ul class="navbar-nav ms-auto">

@@ -8,9 +8,9 @@ namespace ResumeSystemManagement.Infrastructure.Service;
 
 public class AuthService(IHttpContextAccessor accessor): IAuthService
 {
-    public async Task Login(string id, string email, string role)
+    public async Task Login(string id, string email, string role,string? securityStamp)
     {
-        var principal = CreateClaimsPrincipal(id, email, role);
+        var principal = CreateClaimsPrincipal(id, email, role, securityStamp);
         await accessor.HttpContext!.SignInAsync(IdentityConstants.ApplicationScheme, principal);
     }
 
@@ -20,12 +20,13 @@ public class AuthService(IHttpContextAccessor accessor): IAuthService
         await accessor.HttpContext!.SignOutAsync(IdentityConstants.ExternalScheme);
     }
 
-    private static ClaimsPrincipal CreateClaimsPrincipal(string id, string email, string role)
+    private static ClaimsPrincipal CreateClaimsPrincipal(string id, string email, string role, string? securityStamp)
     {
         var claims =new List<Claim> 
             { new Claim(ClaimTypes.NameIdentifier, id), 
                 new Claim(ClaimTypes.Email, email),
-                new Claim(ClaimTypes.Role, role)
+                new Claim(ClaimTypes.Role, role),
+                new Claim("AspNet.Identity.SecurityStamp", securityStamp)
             };
         var identity = new ClaimsIdentity(claims, IdentityConstants.ApplicationScheme);
         return new ClaimsPrincipal(identity);

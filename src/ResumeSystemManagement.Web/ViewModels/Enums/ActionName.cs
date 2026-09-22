@@ -6,4 +6,5 @@ public enum ActionName
     LoginPage,
     RegisterPage,
     Template,
+    UserManagement,
 }

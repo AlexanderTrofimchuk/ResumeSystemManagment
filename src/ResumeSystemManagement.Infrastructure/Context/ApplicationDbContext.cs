@@ -57,7 +57,7 @@ public class ApplicationDbContext(IConfiguration config):IdentityDbContext<AppUs
             entity.HasMany(p => p.Positions)
                 .WithOne()
                 .HasForeignKey(d => d.CreatedBy)
-                .OnDelete(DeleteBehavior.Cascade)
+                .OnDelete(DeleteBehavior.SetNull)
                 .IsRequired();
             
             entity.HasMany(p => p.Resumes)
