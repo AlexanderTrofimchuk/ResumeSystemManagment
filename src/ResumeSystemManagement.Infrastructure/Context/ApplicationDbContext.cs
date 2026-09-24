@@ -17,7 +17,6 @@ public class ApplicationDbContext(IConfiguration config):IdentityDbContext<AppUs
         optionsBuilder
             .UseNpgsql(_config.GetConnectionString("DefaultConnection"), o =>
                 o.MigrationsHistoryTable("__MigrationsHistory", "public"))
-            .UseLoggerFactory(CreateLoggerFactory())
             .UseSeeding((context, _) =>
             {
                 context.SeedAttributes();
@@ -27,9 +26,6 @@ public class ApplicationDbContext(IConfiguration config):IdentityDbContext<AppUs
                 await context.SeedAttributesAsync(cancellationToken: cancellationToken);
             });
     }
-    
-    private static ILoggerFactory CreateLoggerFactory() =>
-        LoggerFactory.Create(builder => { builder.AddConsole(); });
     
     public virtual DbSet<Resume> Resumes { get; set; }
     public virtual DbSet<Position> Positions { get; set;}
