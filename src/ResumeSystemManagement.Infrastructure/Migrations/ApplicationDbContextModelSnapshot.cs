@@ -203,8 +203,8 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
 
                     b.Property<string>("Operator")
                         .IsRequired()
-                        .HasMaxLength(1)
-                        .HasColumnType("character varying(1)");
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
 
                     b.Property<int>("PositionId")
                         .HasColumnType("integer");
@@ -336,6 +336,12 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AttributeId");
@@ -366,8 +372,8 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
 
                     b.Property<string>("Text")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.HasKey("Id");
 
@@ -396,16 +402,25 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                    b.Property<int>("Level")
+                        .HasColumnType("integer");
 
                     b.Property<int>("MaxProjects")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime?>("ModifiedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("Permissions")
                         .HasColumnType("integer");
+
+                    b.Property<int>("PublishStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ShortDescription")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
 
                     b.Property<string>("Title")
                         .IsRequired()

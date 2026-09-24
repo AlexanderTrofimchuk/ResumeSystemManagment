@@ -210,6 +210,9 @@ public class ApplicationDbContext(IConfiguration config):IdentityDbContext<AppUs
         {
             entity.HasIndex(e => new {e.UserId,  e.AttributeId})
                 .IsUnique();
+            
+            entity.Property(e => e.Version)
+                .IsRowVersion();
         });
 
         builder.Entity<RecruiterLike>(entity =>

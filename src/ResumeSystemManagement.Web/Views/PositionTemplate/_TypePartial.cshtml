@@ -1,6 +1,6 @@
-﻿@model List<ResumeSystemManagement.Application.DTOs.Attribute.AttributeTypeDTo>
+@model List<ResumeSystemManagement.Application.DTOs.Attribute.AttributeTypeDTo>
 
-<button class="btn btn-primary btn-sm rounded-pill" data-type="all">Все</button>
+<button class="btn btn-primary btn-sm rounded-pill" data-type="all">All</button>
 @foreach (var type in Model)
 {
     <button class="btn btn-outline-secondary btn-sm rounded-pill" data-type-id="@type.Id" data-type="text">@type.Title</button>

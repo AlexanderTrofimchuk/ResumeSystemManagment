@@ -14,11 +14,11 @@ public class RegistrationViewModel
     public string Email { get; set; } = null!;
     
     [Required]
-    [StringLength(8,MinimumLength = 1, ErrorMessage = "Password must be at least 1 characters")]
+    [StringLength(12,ErrorMessage = "Password must be at least 1 characters")]
     public string Password { get; set; } = null!;
     
     [Required(ErrorMessage = "You don't repeat password")]
     [Compare(nameof(Password), ErrorMessage = "Passwords do not match")]
-    [StringLength(8,MinimumLength = 1, ErrorMessage = "Password must be at least 1 characters")]
+    [StringLength(12, ErrorMessage = "Password must be at least 1 characters")]
     public string ConfirmPassword { get; set; } = null!;
 }

@@ -63,15 +63,16 @@ public class AttributeLibraryService (IAttributeLibraryRepository repository) : 
     {
         var attribute = await repository.GetAttributeByIdAsync(id);
         if (attribute is null) return Result.Fail("Attribute not found");
-        return await repository.DeleteAttributeAsync(attribute) ? Result.Ok() : Result.Fail("Something wrong. Please try again");
+        if (attribute.IsBuiltIn) return Result.Fail("Built-in attributes cannot be deleted.");
+        return await repository.DeleteAttributeAsync(attribute) ? Result.Ok() : 
+            Result.Fail("Something wrong. Please try again");
     }
 
     public async Task<Result> BulkDeleteAttributesAsync(List<int>? ids)
     {
         if (ids is null || ids.Count == 0) return Result.Fail("You must provide at least one id");
-        var deleteTask = Result.Try(() => repository.BulkDeleteAttributeAsync(ids));
-        var result = await deleteTask;
-        if (result.IsFailed) return Result.Fail(result.Errors.Select(e => e.Message));
-        return !result.Value ? Result.Fail("Something wrong. Please try again") : Result.Ok();
+        var deleteResult = await Result.Try(() => repository.BulkDeleteAttributesAsync(ids));
+        if (deleteResult.IsFailed) return Result.Fail(deleteResult.Errors.Select(e => e.Message));
+        return !deleteResult.Value ? Result.Fail("Something wrong. Please try again") : Result.Ok();
     }
 }

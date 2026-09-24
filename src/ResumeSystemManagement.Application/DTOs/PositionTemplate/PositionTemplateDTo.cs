@@ -8,6 +8,7 @@ public class PositionTemplateDTo
 {
     public int PositionId { get; set; }
     public string PositionTitle { get; set; } = null!;
+    public PublishStatus  PublishStatus { get; set; }
     public List<AttributeSection> AttributeInPosition { get; set; } = new ();
     
     public List<AttributeTemplate> GetAttributes(TemplateSection section) =>
@@ -23,6 +24,7 @@ public static class PositionTemplateDToExtensions
         {
             PositionId = position.Id,
             PositionTitle = position.Title,
+            PublishStatus = position.PublishStatus,
             AttributeInPosition = position.PositionAttributeLibraries
                 .GroupBy(p => p.Section)
                 .Select(g => new AttributeSection

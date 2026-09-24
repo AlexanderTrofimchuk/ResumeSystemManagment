@@ -1,12 +1,47 @@
-﻿@model ResumeSystemManagement.Application.DTOs.Attribute.AttributeDetails
+﻿<style>
+    /* Attribute library: keep the toolbar and table visible and responsive. */
+    .um-container {
+        display: block !important;
+        width: 100%;
+        max-width: 1400px;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    .um-toolbar {
+        width: 100%;
+    }
+
+    .um-table-wrapper {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        width: 100%;
+    }
+
+    .um-scroll-area {
+        display: block !important;
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: visible;
+    }
+
+    .um-table {
+        display: table !important;
+        width: 100%;
+        min-width: 700px;
+    }
+</style>
+
+@model ResumeSystemManagement.Application.DTOs.Attribute.AttributeDetails
 @{
     ViewData["Title"] = "Attribute Library";
 }
 
 <div class="container mx-auto justify-content-center align-items-center mt-2 robot-mono-font um-container">
-    
+
     <div class="toolbar d-flex align-items-center gap-2 p-2 mb-3 border rounded bg-light shadow-sm um-toolbar">
-        
+
         <form asp-controller="AttributeLibrary"
               asp-action="SearchAttribute"
               method="get"
@@ -26,7 +61,7 @@
             </button>
 
         </form>
-        
+
         <button
             id="btnCreate"
             class="btn btn-outline-primary btn-sm"
@@ -37,10 +72,10 @@
         </button>
 
         <button
-                id="btnEdit"
-                class="btn btn-outline-secondary btn-sm"
-                disabled
-                title="Edit attribute">
+            id="btnEdit"
+            class="btn btn-outline-secondary btn-sm"
+            disabled
+            title="Edit attribute">
             <i class="bi bi-pencil-fill"></i>
         </button>
 
@@ -50,12 +85,12 @@
                 id="btnDelete"
                 class="btn btn-danger btn-sm"
                 disabled
-                title="Delete attribute/attributes">
+                title="Delete attribute(s)">
             <i class="bi bi-dash-square-fill"></i>
         </button>
 
     </div>
-    
+
     <form method="post" id="mainForm">
         <div class="um-table-wrapper">
             <div class="um-scroll-area">
@@ -71,9 +106,8 @@
                         </th>
                         <th scope="col">Title</th>
                         <th scope="col">Description</th>
-                        <th scope="col">Type Name</th>
-                        <th scope="col">Category Name</th>
-                        <th scope="col">Is Built in</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Category</th>
                     </tr>
                     </thead>
 
@@ -90,33 +124,24 @@
                                            type="checkbox"
                                            class="form-check-input row-checkbox">
                                 </td>
-
                                 <td class="attribute-title">@item.Title</td>
                                 <td>@item.Description</td>
                                 <td class="attribute-type">@item.TypeName</td>
                                 <td class="attribute-category">@item.CategoryName</td>
-
-                                <td>
-                                    <input checked="@item.IsBuiltIn"
-                                           id="isBuiltIn-@item.Id"
-                                           type="checkbox"
-                                           class="form-check-input"
-                                           disabled>
-                                </td>
                             </tr>
                         }
                     }
                     else
                     {
                         <tr>
-                            <td colspan="6" class="text-center">
-                                <p class="h3 my-3">There are no attributes</p>
+                            <td colspan="5" class="text-center">
+                                <p class="h3 my-3">No attributes yet</p>
                             </td>
                         </tr>
                     }
 
                     <tr id="noSearchResults" style="display: none;">
-                        <td colspan="6" class="text-center">
+                        <td colspan="5" class="text-center">
                             <p class="h3 my-3">No attributes found</p>
                         </td>
                     </tr>
@@ -128,13 +153,13 @@
     </form>
 </div>
 
-@await Html.PartialAsync("_CreateAttribute",Model.CreateAttributeDto)
+@await Html.PartialAsync("_CreateAttribute", Model.CreateAttributeDto)
 
 <div id="editModalContainer"></div>
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    
+
     <script>
     const selectAll     = document.getElementById('selectAll');
     const rowCheckboxes = document.querySelectorAll('.row-checkbox');
@@ -143,7 +168,7 @@
         document.getElementById('btnEdit'),
         document.getElementById('btnDelete'),
     ];
-    
+
     function updateToolbar() {
         const checked = Array.from(rowCheckboxes).filter(cb => cb.checked);
         const any = checked.length > 0;
@@ -151,71 +176,125 @@
         toolbarBtns.forEach(btn => {
             if (btn) btn.disabled = !any;
         });
-        
-        const editBtn = document.getElementById('btnEdit');
 
+        const editBtn = document.getElementById('btnEdit');
         if (editBtn) {
             editBtn.disabled = checked.length !== 1;
         }
     }
 
-    selectAll.addEventListener('change', function () {
-        rowCheckboxes.forEach(cb => {
-            if (!cb.closest('tr').hidden) {
-                cb.checked = this.checked;
-                cb.closest('tr').classList.toggle('table-active', this.checked);
-            }
-        });
+    if (selectAll) {
+        selectAll.addEventListener('change', function () {
+            rowCheckboxes.forEach(cb => {
+                const row = cb.closest('tr');
 
-        updateToolbar();
-    });
+                if (row && !row.hidden) {
+                    cb.checked = this.checked;
+                    row.classList.toggle('table-active', this.checked);
+                }
+            });
+
+            updateToolbar();
+        });
+    }
 
     rowCheckboxes.forEach(cb => {
         cb.addEventListener('change', function () {
-            this.closest('tr').classList.toggle('table-active', this.checked);
+            const row = this.closest('tr');
 
-            const visibleCheckboxes = Array.from(rowCheckboxes)
-                .filter(c => !c.closest('tr').hidden);
+            if (row) {
+                row.classList.toggle('table-active', this.checked);
+            }
 
-            selectAll.checked =
-                visibleCheckboxes.length > 0 &&
-                visibleCheckboxes.every(c => c.checked);
+            const visibleCheckboxes = Array.from(rowCheckboxes).filter(c => {
+                const checkboxRow = c.closest('tr');
+                return checkboxRow && !checkboxRow.hidden;
+            });
+
+            if (selectAll) {
+                selectAll.checked =
+                    visibleCheckboxes.length > 0 &&
+                    visibleCheckboxes.every(c => c.checked);
+            }
 
             updateToolbar();
         });
     });
-    
+
     (function () {
         const form = document.getElementById('createAttributeForm');
-
         if (!form) return;
 
         const summary = form.querySelector('[data-valmsg-summary]');
+        const createModal = document.getElementById('createAttributeModal');
 
-        if (summary && summary.querySelectorAll('li').length > 0) {
-            bootstrap.Modal.getOrCreateInstance(
-                document.getElementById('createAttributeModal')
-            ).show();
+        if (summary &&
+            summary.querySelectorAll('li').length > 0 &&
+            createModal &&
+            window.bootstrap) {
+            bootstrap.Modal.getOrCreateInstance(createModal).show();
         }
     })();
 
-    document.getElementById('btnEdit').addEventListener('click', async () => {
-        const id = document.querySelector('.row-checkbox:checked').value;
-        const response = await fetch(`/AttributeLibrary/EditAttributeForm?id=${id}`);
+    const editBtn = document.getElementById('btnEdit');
 
-        if (!response.ok) return console.error('Failed to load edit form');
+    if (editBtn) {
+        editBtn.addEventListener('click', async () => {
+            const selected = document.querySelector('.row-checkbox:checked');
 
-        document.getElementById('editModalContainer').innerHTML = await response.text();
-        initEditForm();
-        
-        bootstrap.Modal.getOrCreateInstance(
-            document.getElementById('editAttributeModal')
-        ).show();
-    });
-    
+            if (!selected) {
+                return;
+            }
+
+            const id = selected.value;
+            const response = await fetch(
+                `/AttributeLibrary/EditAttributeForm?id=${encodeURIComponent(id)}`
+            );
+
+            if (!response.ok) {
+                console.error('Failed to load edit form');
+                return;
+            }
+
+            const editModalContainer =
+                document.getElementById('editModalContainer');
+
+            if (!editModalContainer) {
+                return;
+            }
+
+            editModalContainer.innerHTML = await response.text();
+
+            if (typeof initEditForm === 'function') {
+                initEditForm();
+            }
+
+            const editModal =
+                document.getElementById('editAttributeModal');
+
+            if (editModal && window.bootstrap) {
+                bootstrap.Modal.getOrCreateInstance(editModal).show();
+            }
+        });
+    }
+
+    updateToolbar();
+
     window.addEventListener('pageshow', e => {
         if (e.persisted) {
-            rowCheckboxes.forEach(cb => cb.checked = false);
+            rowCheckboxes.forEach(cb => {
+                cb.checked = false;
+
+                const row = cb.closest('tr');
+                if (row) {
+                    row.classList.remove('table-active');
+                }
+            });
+
+            if (selectAll) {
+                selectAll.checked = false;
+            }
+
             updateToolbar();
         }
     });

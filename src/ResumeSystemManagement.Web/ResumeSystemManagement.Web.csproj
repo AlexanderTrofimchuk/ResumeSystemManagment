@@ -27,4 +27,9 @@
         
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\Profile\Profile.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Profile\_AttributeField.cshtml" />
+    </ItemGroup>
+
 </Project>

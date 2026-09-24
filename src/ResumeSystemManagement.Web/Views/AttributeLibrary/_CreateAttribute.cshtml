@@ -1,7 +1,7 @@
-﻿@model ResumeSystemManagement.Application.DTOs.Attribute.CreateAttributeDto
+@model ResumeSystemManagement.Application.DTOs.Attribute.CreateAttributeDto
 
 @{
-    ViewData["Title"] = "Создать атрибут";
+    ViewData["Title"] = "Create Attribute";
 }
 
 <div class="modal fade" id="createAttributeModal" tabindex="-1"
@@ -11,9 +11,9 @@
 
             <div class="modal-header border-bottom px-4 py-3">
                 <h5 class="modal-title fw-semibold" id="createAttributeModalLabel">
-                    Новый атрибут
+                    New Attribute
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <form asp-action="CreateAttribute" method="post" novalidate id="createAttributeForm">
@@ -23,92 +23,75 @@
                          class="alert alert-danger py-2 small mb-3" role="alert"></div>
 
                     <div class="row g-3 mb-3">
-                        <!-- Категория -->
+                        <!-- Category -->
                         <div class="col-sm-6">
                             <label asp-for="CategoryId" class="form-label fw-medium">
-                                Категория <span class="text-danger">*</span>
+                                Category <span class="text-danger">*</span>
                             </label>
                             <select asp-for="CategoryId"
                                     asp-items="ViewBag.Categories"
                                     class="form-select">
-                                <option value="">— выберите —</option>
+                                <option value="">— select —</option>
                             </select>
                             <span asp-validation-for="CategoryId" class="text-danger small"></span>
                         </div>
 
-                        <!-- Тип -->
+                        <!-- Type -->
                         <div class="col-sm-6">
                             <label asp-for="TypeId" class="form-label fw-medium">
-                                Тип <span class="text-danger">*</span>
+                                Type <span class="text-danger">*</span>
                             </label>
                             <select asp-for="TypeId"
                                     asp-items="ViewBag.Types"
                                     class="form-select">
-                                <option value="">— выберите —</option>
+                                <option value="">— select —</option>
                             </select>
                             <span asp-validation-for="TypeId" class="text-danger small"></span>
                         </div>
                     </div>
 
-                    <!-- Название -->
+                    <!-- Title -->
                     <div class="mb-3">
                         <label asp-for="Title" class="form-label fw-medium">
-                            Название <span class="text-danger">*</span>
+                            Title <span class="text-danger">*</span>
                         </label>
                         <input asp-for="Title"
                                class="form-control"
-                               placeholder="Введите название атрибута"
+                               placeholder="Enter attribute title"
                                autocomplete="off" />
                         <span asp-validation-for="Title" class="text-danger small"></span>
                     </div>
 
-                    <!-- Описание -->
+                    <!-- Description -->
                     <div class="mb-3">
-                        <label asp-for="Description" class="form-label fw-medium">Описание</label>
+                        <label asp-for="Description" class="form-label fw-medium">Description</label>
                         <textarea asp-for="Description"
                                   class="form-control"
                                   rows="3"
-                                  placeholder="Краткое описание (необязательно)"></textarea>
+                                  placeholder="Brief description (optional)"></textarea>
                         <span asp-validation-for="Description" class="text-danger small"></span>
-                    </div>
-
-
-                    <div class="mb-1">
-                        <div class="form-check form-switch">
-                            <input asp-for="IsBuiltIn"
-                                   class="form-check-input"
-                                   type="checkbox"
-                                   id="isBuiltInSwitch" 
-                                   aria-checked="False"/>
-                            <label class="form-check-label" for="isBuiltInSwitch">
-                                Встроенный атрибут
-                            </label>
-                        </div>
-                        <div class="form-text ms-4 ps-2">
-                            Системный атрибут — пользователи не смогут его удалить.
-                        </div>
                     </div>
 
                     <!-- Dropdown Options (visible only when Type = Dropdown) -->
                     <div class="mb-3 mt-3" id="dropdownOptionsSection" style="display:none;">
                         <label class="form-label fw-medium">
-                            Варианты выбора <span class="text-danger">*</span>
+                            Options <span class="text-danger">*</span>
                         </label>
                         <div id="dropdownOptionsList" class="d-flex flex-column gap-2 mb-2">
                         </div>
                         <button type="button" class="btn btn-outline-secondary btn-sm" id="addDropdownOption">
-                            <i class="bi bi-plus-lg me-1"></i> Добавить вариант
+                            <i class="bi bi-plus-lg me-1"></i> Add option
                         </button>
-                        <div class="form-text">Добавьте хотя бы один вариант для выпадающего списка.</div>
+                        <div class="form-text">Add at least one option for the dropdown list.</div>
                     </div>
 
                 </div>
 
                 <div class="modal-footer border-top px-4 py-3">
                     <button type="button" class="btn btn-outline-secondary"
-                            data-bs-dismiss="modal">Отмена</button>
+                            data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary px-4">
-                        <i class="bi bi-check-lg me-1"></i> Создать
+                        <i class="bi bi-check-lg me-1"></i> Create
                     </button>
                 </div>
             </form>
@@ -119,13 +102,12 @@
 
 <script>
 (function () {
-    // ID of the "Dropdown" type — adjust if your TypeId differs
     const DROPDOWN_TYPE_ID = '@(ViewBag.DropdownTypeId ?? "3")';
 
-    const typeSelect      = document.querySelector('#createAttributeForm select[name="TypeId"]');
-    const section         = document.getElementById('dropdownOptionsSection');
-    const list            = document.getElementById('dropdownOptionsList');
-    const addBtn          = document.getElementById('addDropdownOption');
+    const typeSelect = document.querySelector('#createAttributeForm select[name="TypeId"]');
+    const section    = document.getElementById('dropdownOptionsSection');
+    const list       = document.getElementById('dropdownOptionsList');
+    const addBtn     = document.getElementById('addDropdownOption');
 
     function isDropdown() {
         return typeSelect && typeSelect.value == DROPDOWN_TYPE_ID;
@@ -141,17 +123,17 @@
     }
 
     function addOption(value) {
-        const idx  = list.children.length;
-        const row  = document.createElement('div');
+        const idx = list.children.length;
+        const row = document.createElement('div');
         row.className = 'input-group';
         row.innerHTML = `
             <input type="text"
                    class="form-control"
                    name="DropDownOptions[${idx}]"
-                   placeholder="Вариант ${idx + 1}"
+                   placeholder="Option ${idx + 1}"
                    value="${value ? value.replace(/"/g, '&quot;') : ''}"
                    autocomplete="off" />
-            <button type="button" class="btn btn-outline-danger remove-option" title="Удалить">
+            <button type="button" class="btn btn-outline-danger remove-option" title="Remove">
                 <i class="bi bi-trash"></i>
             </button>`;
         list.appendChild(row);
@@ -161,7 +143,7 @@
     function reindex() {
         list.querySelectorAll('input[type="text"]').forEach((input, i) => {
             input.name        = `DropDownOptions[${i}]`;
-            input.placeholder = `Вариант ${i + 1}`;
+            input.placeholder = `Option ${i + 1}`;
         });
     }
 
@@ -177,7 +159,6 @@
 
     typeSelect && typeSelect.addEventListener('change', toggleSection);
 
-    // Reset options when modal closes
     const modal = document.getElementById('createAttributeModal');
     modal && modal.addEventListener('hidden.bs.modal', function () {
         list.innerHTML = '';

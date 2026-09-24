@@ -26,10 +26,11 @@ public class PositionTemplateService(IPositionTemplateRepository repository, IPo
 
     public async Task<Result> AssignAttributeAsync(int positionId, int attributeId, TemplateSection section)
     {
-        var positionExisting = await _positionService.GetPosition(positionId);
+        var positionExisting = await _positionService.GetPositionDetail(positionId);
         if (positionExisting.IsFailed) return Result.Fail(positionExisting.Errors);
         var attributeExisting = await _attributeLibraryService.GetAttributeLibrary(attributeId);
         if (attributeExisting.IsFailed) return Result.Fail(attributeExisting.Errors);
+        if (attributeExisting.Value.IsBuiltIn) return Result.Fail("This attribute is built-in, it don't move");
         return await Result.Try(() => _repository.AttachAttributeAsync(positionId, attributeId, section));
     }
 

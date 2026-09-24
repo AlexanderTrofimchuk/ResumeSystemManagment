@@ -10,9 +10,10 @@ public interface IAttributeLibraryRepository
     Task<List<AttributeLibrary>> GetByCategoryAsync(int categoryId);
     Task<List<AttributeDetail>> GetByNameAsync(string name);
     Task<List<AttributeDetail>> GetAttributesAsync(int pageSize, int page);
+    Task<List<AttributeLibrary>> GetBuildInAttribute();
     Task<int> CreateAttributeAsync(AttributeLibrary attribute);
     Task<bool> CreateAttributeListValue(List<AttributeValueForList> variations);
     Task<bool> UpdateAttributeAsync(AttributeLibrary attribute);
     Task<bool> DeleteAttributeAsync(AttributeLibrary attribute);
-    Task<Result<bool>> BulkDeleteAttributeAsync(List<int> ids);
+    Task<Result<bool>> BulkDeleteAttributesAsync(List<int> ids);
 }

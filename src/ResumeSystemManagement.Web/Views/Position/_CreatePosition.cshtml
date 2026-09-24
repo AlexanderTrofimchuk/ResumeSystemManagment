@@ -53,6 +53,15 @@
                         <div class="form-text ms-1">Maximum number of projects allowed for this position.</div>
                         <span asp-validation-for="MaxProjects" class="text-danger small"></span>
                     </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Level" class="form-label fw-medium">Level</label>
+                        <select asp-for="Level"
+                                asp-items="Html.GetEnumSelectList<ResumeSystemManagement.Core.Enums.PositionLevel>()"
+                                class="form-select">
+                        </select>
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
 
                     <!-- Permissions -->
                     <div class="mb-1">

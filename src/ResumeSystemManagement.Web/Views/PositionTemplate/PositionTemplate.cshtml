@@ -1,19 +1,19 @@
-﻿@using ResumeSystemManagement.Core.Enums
+@using ResumeSystemManagement.Core.Enums
 @model ResumeSystemManagement.Application.DTOs.PositionTemplate.PositionTemplateDTo
 
 @{
     ViewData["Title"] = "Position Template";
-    
+
     var typeIcons = new Dictionary<string, string>
     {
-      { "String",     "bi-type" },
-      { "Text",       "bi-text-left" },
-      { "Image",      "bi-image" },
-      { "Numeric",    "bi-123" },
-      { "Date",       "bi-calendar3" },
-      { "Period",     "bi-calendar-range" },
-      { "Boolean",    "bi-toggle-on" },
-      { "One of many","bi-menu-button-wide" }
+      { "String",      "bi-type" },
+      { "Text",        "bi-text-left" },
+      { "Image",       "bi-image" },
+      { "Numeric",     "bi-123" },
+      { "Date",        "bi-calendar3" },
+      { "Period",      "bi-calendar-range" },
+      { "Boolean",     "bi-toggle-on" },
+      { "One of many", "bi-menu-button-wide" }
     };
 }
 
@@ -30,22 +30,43 @@
   </style>
 }
 
-<!-- Navbar -->
+<!-- Topbar -->
 <nav class="navbar navbar-light bg-white border-bottom px-3 py-2">
   <div class="d-flex align-items-center gap-3">
     <span class="navbar-brand fw-bold mb-0">
-      <i class="bi bi-file-earmark-person me-2 text-primary"></i>Редактор позиции
+      <i class="bi bi-file-earmark-person me-2 text-primary"></i>Position Editor
     </span>
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb mb-0 small">
-        <li class="breadcrumb-item"><a href="#" class="text-muted text-decoration-none">Позиции</a></li>
+        <li class="breadcrumb-item"><a href="#" class="text-muted text-decoration-none">Positions</a></li>
         <li class="breadcrumb-item active">@Model.PositionTitle</li>
       </ol>
     </nav>
   </div>
   <div class="d-flex gap-2">
-    <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-eye me-1"></i>Предпросмотр</button>
-    <button class="btn btn-sm btn-primary"><i class="bi bi-check2 me-1"></i>Сохранить</button>
+    
+    <span class="badge @(Model.PublishStatus == PublishStatus.Publish
+                         ? "bg-success"
+                         : "bg-secondary")">Status
+      @(Model.PublishStatus == PublishStatus.Publish ? "Published" : "Draft")
+    </span>
+
+    <a class="btn btn-sm btn-primary"
+       asp-action="PublishPosition"
+       asp-controller="PositionTemplate"
+       asp-route-id="@Model.PositionId"
+       disabled="@(Model.PublishStatus == PublishStatus.Publish)">
+      <i class="bi bi-check2 me-1"></i>
+      @(Model.PublishStatus == PublishStatus.Publish ? "Published" : "Publish")
+    </a>
+    <a class="btn btn-sm btn-primary"
+       asp-action="DraftPosition"
+       asp-controller="PositionTemplate"
+       asp-route-id="@Model.PositionId"
+       disabled="@(Model.PublishStatus == PublishStatus.Draft)">
+      <i class="bi bi-check2 me-1"></i>
+      Move to Draft
+    </a>
   </div>
 </nav>
 
@@ -57,20 +78,20 @@
     <div class="col-md-4 col-lg-3">
       <div class="card library-panel">
         <div class="card-header bg-light fw-semibold small text-uppercase text-secondary">
-          <i class="bi bi-collection me-2"></i>Библиотека атрибутов
+          <i class="bi bi-collection me-2"></i>Attribute Library
         </div>
 
         <!-- Search -->
         <div class="card-body p-2 border-bottom">
           <div class="input-group input-group-sm">
             <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
-            <input type="text" class="form-control border-start-0" id="libSearch" placeholder="Поиск...">
+            <input type="text" class="form-control border-start-0" id="libSearch" placeholder="Search...">
           </div>
         </div>
-        
+
         <div class="card-body p-2 border-bottom d-flex flex-wrap gap-1" id="filterBtns">
         </div>
-        
+
         <div class="list-group list-group-flush lib-list" id="libraryList">
         </div>
       </div>
@@ -81,7 +102,7 @@
       <div class="card">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
           <span class="fw-semibold small text-uppercase text-secondary">
-            <i class="bi bi-layout-text-sidebar-reverse me-2"></i>Структура шаблона
+            <i class="bi bi-layout-text-sidebar-reverse me-2"></i>Template Structure
           </span>
           <span class="badge bg-primary" id="totalCount">@Model.AttributeInPosition.Sum(ap => ap.AttributeTemplates.Count)</span>
         </div>
@@ -92,9 +113,9 @@
             var icon  = sectionPosition.GetDisplayIcon();
             var label = sectionPosition.GetDisplayName();
             var secId = (int)sectionPosition;
-            
+
             <div class="border-bottom" id="sec-@secId">
-              <!-- Заголовок секции (toggle остаётся в JS) -->
+              <!-- Section header -->
               <div class="d-flex align-items-center justify-content-between px-3 py-2 bg-light"
                    style="cursor:pointer" onclick="toggleSection('@secId')">
                   <div class="d-flex align-items-center gap-2 fw-semibold small">
@@ -102,18 +123,18 @@
                       @label
                       <span class="badge bg-secondary bg-opacity-25 text-secondary fw-normal"
                             style="font-size:.65rem">
-                          @(items.Any() ? $"{items.Count} атр." : "пусто")
+                          @(items.Any() ? $"{items.Count} attr." : "empty")
                       </span>
                   </div>
                   <i class="bi bi-chevron-down text-secondary small section-toggle" id="toggle-@secId"></i>
               </div>
 
-              <!-- Атрибуты -->
+              <!-- Attributes -->
               <div id="list-@secId">
                 @if (!items.Any())
                 {
                   <div class="text-muted small text-center fst-italic py-3">
-                    <i class="bi bi-plus-circle me-1"></i>Добавьте атрибуты из библиотеки
+                    <i class="bi bi-plus-circle me-1"></i>Add attributes from the library
                   </div>
                 }
                 else
@@ -123,7 +144,7 @@
                     var attr = items[i];
                     <div class="d-flex align-items-center gap-2 px-3 py-2 border-bottom bg-white">
 
-                      <!-- Кнопки ↑↓ -->
+                      <!-- Up / Down buttons -->
                       <div class="order-btns">
                         <form asp-action="ReorderAttribute" asp-controller="Position" method="post">
                           <input type="hidden" name="positionId" value="@Model.PositionId"/>
@@ -131,7 +152,7 @@
                           <input type="hidden" name="section"     value="@sectionPosition"/>
                           <input type="hidden" name="direction"   value="-1"/>
                           <button class="btn btn-sm btn-outline-secondary border-0 py-0 px-1 lh-1"
-                                  @(i == 0 ? "disabled" : "") title="Вверх">
+                                  @(i == 0 ? "disabled" : "") title="Move up">
                             <i class="bi bi-chevron-up" style="font-size:.7rem"></i>
                           </button>
                         </form>
@@ -141,39 +162,39 @@
                           <input type="hidden" name="section"     value=@sectionPosition />
                           <input type="hidden" name="direction"   value="1"/>
                           <button class="btn btn-sm btn-outline-secondary border-0 py-0 px-1 lh-1"
-                                  @(i == items.Count - 1 ? "disabled" : "") title="Вниз">
+                                  @(i == items.Count - 1 ? "disabled" : "") title="Move down">
                             <i class="bi bi-chevron-down" style="font-size:.7rem"></i>
                           </button>
                         </form>
                       </div>
 
-                      <!-- Название -->
+                      <!-- Name -->
                       <div class="flex-grow-1">
                         <div class="small">@attr.Name</div>
                       </div>
 
-                      <!-- Тип -->
+                      <!-- Type badge -->
                       <span class="badge bg-light text-secondary border" style="font-size:.65rem">
                         <i class="bi @(typeIcons.GetValueOrDefault(attr.TypeName, "bi-question-circle"))"></i>
                         @attr.TypeName
                       </span>
 
-                      <!-- Переместить в другую секцию -->
+                      <!-- Move to another section -->
                       <button class="btn btn-sm btn-outline-secondary border-0 py-0 px-1"
                               data-bs-toggle="modal"
                               data-bs-target="#moveSectionModal"
                               data-attr-id="@attr.Id"
                               data-from-section="@sectionPosition"
-                              title="Переместить в секцию">
+                              title="Move to section">
                         <i class="bi bi-arrows-move"></i>
                       </button>
 
-                      <!-- Удалить -->
+                      <!-- Remove -->
                       <form asp-action="RemoveAttribute" asp-controller="PositionTemplate" method="post">
                         <input type="hidden" name="positionId"  value="@Model.PositionId"/>
                         <input type="hidden" name="attributeId" value="@attr.Id"/>
                         <input type="hidden" name="section"     value="@sectionPosition"/>
-                        <button class="btn btn-sm btn-outline-danger border-0 py-0 px-1" title="Удалить">
+                        <button class="btn btn-sm btn-outline-danger border-0 py-0 px-1" title="Remove">
                           <i class="bi bi-x-lg"></i>
                         </button>
                       </form>
@@ -191,12 +212,12 @@
   </div>
 </div>
 
-<!-- Modal: выбор секции при добавлении -->
+<!-- Modal: choose section when adding -->
 <div class="modal fade" id="addToSectionModal" tabindex="-1">
   <div class="modal-dialog modal-sm modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h6 class="modal-title">Добавить в секцию</h6>
+        <h6 class="modal-title">Add to Section</h6>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
@@ -213,13 +234,13 @@
               <i class="bi @sec.GetDisplayIcon() text-primary"></i>
               <span>@sec.GetDisplayName()</span>
               <span class="ms-auto text-muted small">
-                @(Model.GetAttributes(sec).Count) атр.
+                @(Model.GetAttributes(sec).Count) attr.
               </span>
             </button>
           }
 
           <button type="submit" class="btn btn-primary w-100 mt-1" id="addSubmitBtn" disabled>
-            Добавить
+            Add
           </button>
         </form>
       </div>
@@ -227,12 +248,12 @@
   </div>
 </div>
 
-<!-- Modal: перемещение в другую секцию -->
+<!-- Modal: move to another section -->
 <div class="modal fade" id="moveSectionModal" tabindex="-1">
   <div class="modal-dialog modal-sm modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h6 class="modal-title">Переместить в секцию</h6>
+        <h6 class="modal-title">Move to Section</h6>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body" id="moveSectionChoices">
@@ -249,13 +270,13 @@
               <i class="bi @sec.GetDisplayIcon() text-primary"></i>
               <span>@sec.GetDisplayName()</span>
               <span class="ms-auto text-muted small">
-                @(Model.GetAttributes(sec).Count) атр.
+                @(Model.GetAttributes(sec).Count) attr.
               </span>
             </button>
           }
 
           <button type="submit" class="btn btn-primary w-100 mt-1" id="moveSubmitBtn" disabled>
-            Переместить
+            Move
           </button>
         </form>
       </div>
@@ -264,57 +285,49 @@
 </div>
 
 @section Scripts{
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // ── Данные ────────────────────────────────────────────────────────────────────
-    
-    function openModal(modal,attrId,section,btn) {
+    function openModal(modal, attrId, section, btn) {
       document.getElementById(modal).addEventListener('show.bs.modal', e => {
         document.getElementById(attrId).value = e.relatedTarget.dataset.attrId;
         document.getElementById(section).value = '';
         document.getElementById(btn).disabled = true;
       });
     }
-    
-    function selectSection(sectionId,modalSectionId, btnId) {
+
+    function selectSection(sectionId, modalSectionId, btnId) {
       document.getElementById(modalSectionId).value = sectionId;
       document.getElementById(btnId).disabled = false;
     }
-    
-    async function loadLibrary(positionId, page, pageSize) {
-      let html = await fetch(`/PositionTemplate/GetAttributeLibrary?page=1&pageSize=10&positionId=${positionId}`)
+
+    async function loadLibrary(positionId) {
+      const html = await fetch(`/PositionTemplate/GetAttributeLibrary?page=1&pageSize=10&positionId=${positionId}`)
         .then(r => r.text());
-      
       document.getElementById('libraryList').innerHTML = html;
     }
 
-    async function loadTypes(){
-      let html = await fetch(`/PositionTemplate/GetAttributeTypes`)
+    async function loadTypes() {
+      const html = await fetch(`/PositionTemplate/GetAttributeTypes`)
         .then(r => r.text());
-
       document.getElementById('filterBtns').innerHTML = html;
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
-      await loadLibrary(@Model.PositionId, 1, 10);
+      await loadLibrary(@Model.PositionId);
       await loadTypes();
 
-      openModal('addToSectionModal', 'modalAttrId', 'modalSection', 'addSubmitBtn');
-      openModal('moveSectionModal', 'moveModalAttrId', 'moveModalSection', 'moveSubmitBtn');
+      openModal('addToSectionModal',  'modalAttrId',     'modalSection',     'addSubmitBtn');
+      openModal('moveSectionModal',   'moveModalAttrId', 'moveModalSection', 'moveSubmitBtn');
     });
-  
-    // ── Фильтр и поиск ────────────────────────────────────────────────────────────
-  
+
     document.getElementById('filterBtns').addEventListener('click', e => {
-        const btn = e.target.closest('button[data-type]');
-        if (!btn) return;
-        activeFilter = btn.dataset.type;
-        document.querySelectorAll('#filterBtns button').forEach(b => {
-          b.className = 'btn btn-outline-secondary btn-sm rounded-pill';
-        });
-        btn.className = 'btn btn-primary btn-sm rounded-pill';
+      const btn = e.target.closest('button[data-type]');
+      if (!btn) return;
+      document.querySelectorAll('#filterBtns button').forEach(b => {
+        b.className = 'btn btn-outline-secondary btn-sm rounded-pill';
+      });
+      btn.className = 'btn btn-primary btn-sm rounded-pill';
     });
-  
+
     document.getElementById('libSearch').addEventListener('input', e => {
       searchQuery = e.target.value;
       renderLibrary();

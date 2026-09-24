@@ -2,6 +2,7 @@
 using ResumeSystemManagement.Application.DTOs.User;
 using ResumeSystemManagement.Application.Interfaces.User;
 using ResumeSystemManagement.Core.Interfaces.Repositories.UserRepository;
+using ResumeSystemManagement.Core.ReadModels;
 
 namespace ResumeSystemManagement.Application.Service.User;
 
@@ -13,16 +14,17 @@ public class UserService(IUserRepository repository) : IUserService
     {
         return new() 
         {
-            UserInfos = await _userRepository.GetAllAsync(pageNumber, pageSize),
+            UserInfos = await _userRepository.GetAllAsync(pageNumber),
             CurrentPage = pageNumber,
-            PageSize = pageSize,
+            PageSize = PaginationConstants.DefaultPageSize,
             TotalCount = await _userRepository.GetUsersCount()
         };
     }
 
     public async Task<Result> ChangeRoleAsync(List<string> selectedIds, string role)
     {
-        await HasOneAdministrator(selectedIds);
+        var result = await HasOneAdministrator(selectedIds);
+        if (result.IsFailed) return result;
         return await Result.Try(() => _userRepository.ChangeUsersRole(selectedIds, role));
     }
 

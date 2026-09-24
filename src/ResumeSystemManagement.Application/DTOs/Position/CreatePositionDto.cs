@@ -9,6 +9,7 @@ public record CreatePositionDto(
     [MaxLength(1000)]
     string Description,
     int MaxProjects,
+    PositionLevel Level,
     PositionPermissions Permissions = PositionPermissions.Public);
     
 
@@ -22,6 +23,7 @@ public static class CreatePositionMapper
                 permissions: dto.Permissions)
             ;
         newPosition.SetMaxProjects(dto.MaxProjects);
+        newPosition.SetLevel(dto.Level);
         return newPosition;
     }
         
