@@ -17,7 +17,7 @@ public class AttributeLibrary(string title, string description, int categoryId, 
     public AttributeCategory AttributeCategory { get; set; } = null!;
     public AttributeType AttributeType { get; set; } = null!;
     public List<PositionAttributeLibrary> PositionAttributeLibraries { get; } = new();
-    public List<AttributeValueForList> AttributeValueForLists { get; init; } = new();
+    public List<AttributeValueForList> AttributeValueForLists { get; private set; } = new();
     public List<AttributeFilter> AttributeFilters { get; } = new();
     public List<CandidateAttributeValue> CandidateAttributeValues { get; } = new();
     
@@ -25,4 +25,5 @@ public class AttributeLibrary(string title, string description, int categoryId, 
     public void SetCategoryId(int categoryId) => CategoryId = categoryId;
     public void SetTitle(string title) => Title = title;
     public void SetDescription(string description) => Description = description;
+    public void SetAttributeValueForLists(List<AttributeValueForList> value) => AttributeValueForLists = value;
 }

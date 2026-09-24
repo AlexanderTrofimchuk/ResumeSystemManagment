@@ -205,12 +205,15 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    ShortDescription = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
                     Permissions = table.Column<int>(type: "integer", nullable: false),
                     MaxProjects = table.Column<int>(type: "integer", nullable: false),
+                    Level = table.Column<int>(type: "integer", nullable: false),
                     xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: false),
+                    PublishStatus = table.Column<int>(type: "integer", nullable: false),
                     CreateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ClosedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
@@ -285,7 +288,7 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     PositionId = table.Column<int>(type: "integer", nullable: false),
-                    Text = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    Text = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     SendAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreateBy = table.Column<string>(type: "text", nullable: false)
                 },
@@ -389,7 +392,7 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     PositionId = table.Column<int>(type: "integer", nullable: false),
                     AttributeId = table.Column<int>(type: "integer", nullable: false),
-                    Operator = table.Column<string>(type: "character varying(1)", maxLength: 1, nullable: false),
+                    Operator = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false),
                     Value = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -438,7 +441,8 @@ namespace ResumeSystemManagement.Infrastructure.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<string>(type: "text", nullable: false),
                     AttributeId = table.Column<int>(type: "integer", nullable: false),
-                    Value = table.Column<string>(type: "text", nullable: false)
+                    Value = table.Column<string>(type: "text", nullable: false),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false)
                 },
                 constraints: table =>
                 {

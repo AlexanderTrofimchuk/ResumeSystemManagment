@@ -1,4 +1,39 @@
-﻿@using ResumeSystemManagement.Core.ReadModels
+﻿<style>
+    /* Position library: keep the table visible at every screen width. */
+    .um-container {
+        display: block !important;
+        width: 100%;
+        max-width: 1400px;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    .um-toolbar {
+        width: 100%;
+    }
+
+    .um-table-wrapper {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        width: 100%;
+    }
+
+    .um-scroll-area {
+        display: block !important;
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: visible;
+    }
+
+    .um-table {
+        display: table !important;
+        width: 100%;
+        min-width: 900px;
+    }
+</style>
+
+@using ResumeSystemManagement.Core.ReadModels
 @model ResumeSystemManagement.Application.DTOs.Position.PositionDetails
 @{
     ViewData["Title"] = "Position Library";
@@ -28,7 +63,7 @@
 
         </form>
         
-        @if (User.IsInRole(RoleNames.Recruiter))
+        @if (User.IsInRole(RoleNames.Recruiter) || User.IsInRole(RoleNames.Administrator))
         {
             <button
                 id="btnCreate"
@@ -95,10 +130,13 @@
                                    aria-label="Select All">
                         </th>
                         <th scope="col">Title</th>
-                        <th scope="col">Description</th>
+                        <th scope="col">Short Description</th>
+                        <th scope="col">Level</th>
                         <th scope="col">Permissions</th>
+                        <th scope="col">Publish Status</th>
                         <th scope="col">Max Projects</th>
                         <th scope="col">Created On</th>
+                        <th scope="col">Closed On</th>
                     </tr>
                     </thead>
 
@@ -116,25 +154,30 @@
                                            class="form-check-input row-checkbox">
                                 </td>
 
-                                <td class="position-title">@item.Title</td>
+                                <td class="position-title">
+                                    <a asp-action="GetPositionDetail" asp-controller="Position" asp-route-positionId=@item.Id>@item.Title</a>
+                                </td>
                                 <td>@item.Description</td>
+                                <td>@item.Level</td>
                                 <td class="position-permissions">@item.Permissions</td>
+                                <td >@item.Status</td>
                                 <td>@item.MaxProjects</td>
                                 <td>@item.CreatedOn.ToString("yyyy-MM-dd")</td>
+                                <td>@item.ClosedAt?.ToString("yyyy-MM-dd")</td>
                             </tr>
                         }
                     }
                     else
                     {
                         <tr>
-                            <td colspan="6" class="text-center">
+                            <td colspan="9" class="text-center">
                                 <p class="h3 my-3">There are no positions</p>
                             </td>
                         </tr>
                     }
 
                     <tr id="noSearchResults" style="display: none;">
-                        <td colspan="6" class="text-center">
+                        <td colspan="9" class="text-center">
                             <p class="h3 my-3">No positions found</p>
                         </td>
                     </tr>
@@ -151,57 +194,77 @@
 <div id="editModalContainer"></div>
 
 @section Scripts {
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); } 
 
     <script>
-    const selectAll     = document.getElementById('selectAll');
+    const selectAll = document.getElementById('selectAll');
     const rowCheckboxes = document.querySelectorAll('.row-checkbox');
 
     const toolbarBtns = [
         document.getElementById('btnEdit'),
         document.getElementById('btnDuplicate'),
         document.getElementById('btnDelete'),
-    ];
+        document.getElementById('btnTemplate')
+    ].filter(Boolean);
 
     function updateToolbar() {
         const checked = Array.from(rowCheckboxes).filter(cb => cb.checked);
         const any = checked.length > 0;
 
         toolbarBtns.forEach(btn => {
-            if (btn) btn.disabled = !any;
+            btn.disabled = !any;
         });
 
         const editBtn = document.getElementById('btnEdit');
         const duplicateBtn = document.getElementById('btnDuplicate');
         const templateBtn = document.getElementById('btnTemplate');
-        if (editBtn && duplicateBtn) {
+
+        if (editBtn) {
             editBtn.disabled = checked.length !== 1;
+        }
+
+        if (duplicateBtn) {
             duplicateBtn.disabled = checked.length !== 1;
-            if (templateBtn) templateBtn.disabled = checked.length !== 1;
+        }
+
+        if (templateBtn) {
+            templateBtn.disabled = checked.length !== 1;
         }
     }
 
-    selectAll.addEventListener('change', function () {
-        rowCheckboxes.forEach(cb => {
-            if (!cb.closest('tr').hidden) {
-                cb.checked = this.checked;
-                cb.closest('tr').classList.toggle('table-active', this.checked);
-            }
-        });
+    if (selectAll) {
+        selectAll.addEventListener('change', function () {
+            rowCheckboxes.forEach(cb => {
+                const row = cb.closest('tr');
 
-        updateToolbar();
-    });
+                if (row && !row.hidden) {
+                    cb.checked = this.checked;
+                    row.classList.toggle('table-active', this.checked);
+                }
+            });
+
+            updateToolbar();
+        });
+    }
 
     rowCheckboxes.forEach(cb => {
         cb.addEventListener('change', function () {
-            this.closest('tr').classList.toggle('table-active', this.checked);
+            const row = this.closest('tr');
 
-            const visibleCheckboxes = Array.from(rowCheckboxes)
-                .filter(c => !c.closest('tr').hidden);
+            if (row) {
+                row.classList.toggle('table-active', this.checked);
+            }
 
-            selectAll.checked =
-                visibleCheckboxes.length > 0 &&
-                visibleCheckboxes.every(c => c.checked);
+            const visibleCheckboxes = Array.from(rowCheckboxes).filter(c => {
+                const checkboxRow = c.closest('tr');
+                return checkboxRow && !checkboxRow.hidden;
+            });
+
+            if (selectAll) {
+                selectAll.checked =
+                    visibleCheckboxes.length > 0 &&
+                    visibleCheckboxes.every(c => c.checked);
+            }
 
             updateToolbar();
         });
@@ -209,25 +272,66 @@
 
     window.addEventListener('pageshow', e => {
         if (e.persisted) {
-            rowCheckboxes.forEach(cb => cb.checked = false);
+            rowCheckboxes.forEach(cb => {
+                cb.checked = false;
+                const row = cb.closest('tr');
+                if (row) {
+                    row.classList.remove('table-active');
+                }
+            });
+
+            if (selectAll) {
+                selectAll.checked = false;
+            }
+
             updateToolbar();
         }
     });
 
-    document.getElementById('btnEdit').addEventListener('click', async () => {
-        const id = document.querySelector('.row-checkbox:checked').value;
-        const response = await fetch(`/Position/EditPositionForm?id=${id}`);
+    const editBtn = document.getElementById('btnEdit');
 
-        if (!response.ok) return console.error('Failed to load edit form');
+    if (editBtn) {
+        editBtn.addEventListener('click', async () => {
+            const selected = document.querySelector('.row-checkbox:checked');
 
-        document.getElementById('editModalContainer').innerHTML = await response.text();
+            if (!selected) {
+                return;
+            }
 
-        const form = document.getElementById('editPositionForm');
-        $.validator.unobtrusive.parse(form);
+            const id = selected.value;
+            const response = await fetch(
+                `/Position/EditPositionForm?id=${encodeURIComponent(id)}`
+            );
 
-        bootstrap.Modal.getOrCreateInstance(
-            document.getElementById('editPositionModal')
-        ).show();
-    });
+            if (!response.ok) {
+                console.error('Failed to load edit form');
+                return;
+            }
+
+            const editModalContainer =
+                document.getElementById('editModalContainer');
+
+            if (!editModalContainer) {
+                return;
+            }
+
+            editModalContainer.innerHTML = await response.text();
+
+            const form = document.getElementById('editPositionForm');
+
+            if (form && window.$ && $.validator && $.validator.unobtrusive) {
+                $.validator.unobtrusive.parse(form);
+            }
+
+            const editModal =
+                document.getElementById('editPositionModal');
+
+            if (editModal && window.bootstrap) {
+                bootstrap.Modal.getOrCreateInstance(editModal).show();
+            }
+        });
+    }
+
+    updateToolbar();
     </script>
 }

@@ -1,6 +1,8 @@
 ﻿using FluentResults;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using ResumeSystemManagement.Core.Entities;
+using ResumeSystemManagement.Core.Exceptions;
 using ResumeSystemManagement.Core.Interfaces.Repositories.AttributeRepository;
 using ResumeSystemManagement.Core.ReadModels;
 using ResumeSystemManagement.Infrastructure.Context;
@@ -40,47 +42,85 @@ public class AttributeLibraryRepository(ApplicationDbContext context) : IAttribu
             .AsNoTracking()
             .Include(t => t.AttributeType)
             .Include(c => c.AttributeCategory)
+            .Where(a => !a.IsBuiltIn)
+            .OrderBy(x => x.Id)
             .Skip((page - 1) * pageSize).Take(pageSize)
             .Select(a => a.ToAttributeDetail())
             .ToListAsync();
     }
 
+    public Task<List<AttributeLibrary>> GetBuildInAttribute()
+    {
+        return _context.AttributeLibraries.Where(a => a.IsBuiltIn)
+            .ToListAsync();
+    }
+
     public async Task<int> CreateAttributeAsync(AttributeLibrary attribute)
     {
+        var existing = await _context.AttributeLibraries.FirstOrDefaultAsync(al => al.Title.ToLower() == attribute.Title.ToLower());
+        if (existing is null) throw new  ArgumentException("attribute title already exists");
         try
         {
             await _context.AttributeLibraries.AddAsync(attribute); 
             await _context.SaveChangesAsync();
             return attribute.Id;
         }
-        catch (Exception e)
+        catch (DbUpdateException e)when 
+            (e.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation })
         {
-            Console.WriteLine(e);
-            throw;
+            throw new DuplicateRecordException(attribute.Title);
+        }
+        catch (DbUpdateException e)
+        {
+            Console.WriteLine("Unexpected database error while creating attribute values. \n Error {0}", e);
+            throw new DatabaseException("Failed to save attribute values. Please try again.");
         }
     }
 
     public async Task<bool> CreateAttributeListValue(List<AttributeValueForList> variations)
     {
-        foreach (var variation in variations) {
-            await _context.AttributeValueForLists.AddAsync(variation); }
-        
         try {
+            await _context.AttributeValueForLists.AddRangeAsync(variations);
             return await _context.SaveChangesAsync() > 0;
         }
-        catch (Exception e) {
-            Console.WriteLine(e);
-            throw;
+        catch (DbUpdateException e)when 
+            (e.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation })
+        {
+            var existingTitles = await GetExistingTitles(variations);
+            throw new DuplicateRecordException(string.Join(",",existingTitles));
         }
+        catch (DbUpdateException e)
+        {
+            Console.WriteLine("Unexpected database error while creating attribute values. \n Error {0}", e);
+            throw new DatabaseException("Failed to save attribute values. Please try again.");
+        }
+    }
+
+    private async Task<List<string>> GetExistingTitles(List<AttributeValueForList> variations)
+    {
+        var existingTitles = await _context.AttributeValueForLists
+            .Where(x => variations
+                .Select(v => v.AttributeId)
+                .Contains(x.AttributeId))
+            .Select(x => x.Value)
+            .ToListAsync();
+        return existingTitles;
     }
 
     public async Task<bool> UpdateAttributeAsync(AttributeLibrary attribute)
     {
-            var existing = await GetAttributeByIdAsync(attribute.Id);
-            if (existing is null)  return false; 
-            SyncOptions(existing, attribute);
-            UpdateFields(existing, attribute);
+        var existing = await GetAttributeByIdAsync(attribute.Id);
+        if (existing is null) return false;
+        SyncOptions(existing, attribute);
+        UpdateFields(existing, attribute);
+        try
+        {
             return await _context.SaveChangesAsync() > 0;
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            throw new InvalidOperationException("Position was modified by another user. Please reload and try again.");
+        }
     }
     
     private void SyncOptions(AttributeLibrary existing, AttributeLibrary attribute)
@@ -125,12 +165,13 @@ public class AttributeLibraryRepository(ApplicationDbContext context) : IAttribu
         return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task<Result<bool>> BulkDeleteAttributeAsync(List<int> ids)
+    public async Task<Result<bool>> BulkDeleteAttributesAsync(List<int> ids)
     {
         try
         {
             var usingAttributes = await AttributeUsingPosition(ids);
-            if (usingAttributes.Count > 0) return Result.Fail($"This {string.Join(",",usingAttributes)} attributes were used in positions.");
+            if (usingAttributes.Count > 0) 
+                return Result.Fail($"This {string.Join(",",usingAttributes)} attributes were used in positions.");
             var length = await _context.AttributeLibraries
                 .Where(a => ids.Contains(a.Id))
                 .ExecuteDeleteAsync();

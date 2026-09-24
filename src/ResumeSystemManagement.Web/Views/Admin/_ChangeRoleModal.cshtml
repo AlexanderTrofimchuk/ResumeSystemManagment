@@ -33,7 +33,6 @@
                         </div>
                     }
 
-                    @* SelectIds будут добавлены из mainForm через JS *@
                     <div id="modalSelectIds"></div>
                 </div>
 
@@ -54,7 +53,7 @@
 </div>
 
 <script>
-    // При открытии модалки — копируем выбранные SelectIds в форму модалки
+    // On modal open — copy checked SelectIds into the modal form
     document.getElementById('changeRoleModal').addEventListener('show.bs.modal', function () {
         const container = document.getElementById('modalSelectIds');
         container.innerHTML = '';

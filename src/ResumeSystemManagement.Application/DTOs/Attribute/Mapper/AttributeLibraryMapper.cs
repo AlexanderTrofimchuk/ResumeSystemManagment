@@ -8,17 +8,23 @@ public static class AttributeLibraryMapper
         new(
             dto.Title,
             dto.Description,
-            dto.TypeId,
             dto.CategoryId,
+            dto.TypeId,
             dto.IsBuiltIn
         );
 
-    public static AttributeLibrary ToAttributeLibrary(this EditAttributeDTo dto) => 
-        new( dto.Title, dto.Description, dto.TypeId,dto.CategoryId,dto.IsBuiltIn)
+    public static AttributeLibrary ToAttributeLibrary(this EditAttributeDTo dto)
+    {
+        var attribute = new AttributeLibrary( dto.Title, dto.Description, dto.TypeId,dto.CategoryId,dto.IsBuiltIn)
         {
-            Id = dto.Id,
-            AttributeValueForLists =  dto.DropdownOptions!.Select(d => new AttributeValueForList(d.Value,dto.Id,d.Id)).ToList()
+            Id = dto.Id
         };
+        if (dto.DropdownOptions is not null && dto.DropdownOptions.Count > 0)
+            attribute.SetAttributeValueForLists(dto.DropdownOptions!
+                .Select(d => new AttributeValueForList(d.Value, dto.Id, d.Id)).ToList());
+        
+        return attribute;
+    }
 
     public static EditAttributeDTo ToEditAttributeDTo(this AttributeLibrary attribute) =>
         new(attribute.Id, 

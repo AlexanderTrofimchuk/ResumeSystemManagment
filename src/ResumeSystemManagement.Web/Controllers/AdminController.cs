@@ -22,10 +22,11 @@ public class AdminController(IUserService userService): BaseController
     public async Task<IActionResult> ChangeRole(UserDetails model, string role)
     {
         if(!model.SelectIds.Any()) return ReturnCurrentException(
-            ["You don't select any record."], ActionName.UserManagement,model);
+            ["You don't select any record."], ActionName.UserManagement);
         var changeResult = await userService.ChangeRoleAsync(model.SelectIds, role);
-        if (changeResult.IsFailed) return ReturnCurrentException(
-            GetErrorsMessage(changeResult), ActionName.UserManagement, model);
+        if (changeResult.IsFailed) return RedirectWithMessage(
+            GetErrorsMessage(changeResult), MessageColor.Danger,ActionName.UserManagement
+            , ControllerName.Admin,new {pageNumber = model.CurrentPage, pageSize = model.PageSize});
         return RedirectWithMessage(["Users change role"],
             MessageColor.Success,ActionName.UserManagement,ControllerName.Admin);
     }

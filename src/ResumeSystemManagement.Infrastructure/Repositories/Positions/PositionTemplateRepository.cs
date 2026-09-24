@@ -35,6 +35,9 @@ public class PositionTemplateRepository(ApplicationDbContext context): IPosition
 
     public Task Update(int positionId, int attributeId, TemplateSection section)
     {
+        var existing = _context.AttributeLibraries.FirstOrDefault(pa => pa.Id == attributeId);
+        if  (existing is null) throw new  ArgumentException("attribute not exists");
+        if (existing.IsBuiltIn) throw new  ArgumentException("This attribute dont move. Because it is built-in");
         var  positionAttribute = CreatePositionAttribute(positionId, attributeId, section);
         _context.PositionAttributeLibraries.Update(positionAttribute);
         return _context.SaveChangesAsync();

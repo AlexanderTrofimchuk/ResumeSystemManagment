@@ -1,6 +1,6 @@
 namespace ResumeSystemManagement.Core.Enums;
 
-public enum ResumeStatus
+public enum PublishStatus
 {
     Publish,
     Draft

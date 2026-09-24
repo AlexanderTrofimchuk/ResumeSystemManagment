@@ -35,8 +35,7 @@
                                    type="password"
                                    class="form-control border-black reg-input"
                                    placeholder="Enter password"
-                                   minlength="1"
-                                   maxlength="8">
+                                   maxlength="12">
                             <button class="btn btn-outline-secondary"
                                     type="button"
                                     id="togglePassword">
@@ -52,8 +51,7 @@
                                    type="password"
                                    class="form-control border-black reg-input"
                                    placeholder="Confirm password"
-                                   minlength="1"
-                                   maxlength="8">
+                                   maxlength="12">
                             <button class="btn btn-outline-secondary"
                                     type="button"
                                     id="toggleConfirmPassword">
@@ -79,11 +77,10 @@
 </div>
 
 @section Scripts {
-    <script type="module">
-        import('/js/site.js').then(m => {
-            m.changePasswordIcon('Password', 'toggleIcon', 'togglePassword');
-            m.changePasswordIcon('ConfirmPassword', 'iconConfirmPassword', 'toggleConfirmPassword');
-        });
+    <script src="~/js/site.js"></script>
+    <script>
+        changePasswordIcon('Password', 'toggleIcon', 'togglePassword');
+        changePasswordIcon('ConfirmPassword', 'iconConfirmPassword', 'toggleConfirmPassword');
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
             crossorigin="anonymous"

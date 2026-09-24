@@ -1,6 +1,49 @@
-﻿@model ResumeSystemManagement.Application.DTOs.User.UserDetails
+<style>
+    /* User management: keep the toolbar, table and pagination in normal document flow. */
+    .um-container {
+        display: block !important;
+        width: 100%;
+        max-width: 1400px;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    .um-toolbar {
+        display: flex !important;
+        width: 100%;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .um-table-wrapper {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        width: 100%;
+    }
+
+    .um-scroll-area {
+        display: block !important;
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: visible;
+    }
+
+    .um-table {
+        display: table !important;
+        width: 100%;
+        min-width: 700px;
+    }
+
+    .um-table th,
+    .um-table td {
+        vertical-align: middle;
+    }
+</style>
+
+@model ResumeSystemManagement.Application.DTOs.User.UserDetails
 @{
-ViewData["Title"] = "User Management";
+    ViewData["Title"] = "Users Control";
 }
 
 <div class="container mx-auto justify-content-center align-items-center mt-2 robot-mono-font um-container">
@@ -19,24 +62,23 @@ ViewData["Title"] = "User Management";
                 form="mainForm"
                 id="btnBlock"
                 class="btn btn-outline-danger btn-sm" disabled
-                title="Block select user">
-            <span class="btn-text"> Block</span>
+                title="Block selected user">
+            <i class="bi bi-slash-circle"></i>
         </button>
 
         <button asp-action="UnBlockUsers" asp-controller="Admin"
                 form="mainForm"
                 id="btnUnblock"
                 class="btn btn-success btn-sm" disabled
-                title="Unblock select user">
+                title="Unblock selected user">
             <i class="bi bi-unlock"></i>
         </button>
-
 
         <button type="submit" asp-action="DeleteUsers" asp-controller="Admin"
                 form="mainForm"
                 id="btnDelete"
                 class="btn btn-danger btn-sm" disabled
-                title="Delete select user">
+                title="Delete selected user">
             <i class="bi bi-trash"></i>
         </button>
 
@@ -47,7 +89,7 @@ ViewData["Title"] = "User Management";
         <input type="hidden" name="PageSize" value="@Model.PageSize" />
         <div class="um-table-wrapper">
             <div class="um-scroll-area">
-                <table class="table table-striped-columns um-table">
+                <table class="table table-striped-columns um-table text-center">
                     <thead>
                     <tr>
                         <th scope="col">
@@ -55,7 +97,7 @@ ViewData["Title"] = "User Management";
                         </th>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
-                        <th scope="col">Status</th>
+                        <th scope="col">Blocked</th>
                         <th scope="col">Role</th>
                     </tr>
                     </thead>
@@ -76,10 +118,11 @@ ViewData["Title"] = "User Management";
                                 <td>@user.Email</td>
                                 <td>
                                     <input checked="@user.IsBlocked"
-                                           id="checkbox-@user.Email"
+                                           id="blocked-checkbox-@user.Id"
                                            type="checkbox"
                                            class="form-check-input"
-                                           disabled></td>
+                                           disabled>
+                                </td>
                                 <td>@user.Role</td>
                             </tr>
                         }
@@ -88,7 +131,7 @@ ViewData["Title"] = "User Management";
                     {
                         <tr>
                             <td colspan="5" class="text-center">
-                                <p class="h3 my-3">There are no users</p>
+                                <p class="h3 my-3">No users found</p>
                             </td>
                         </tr>
                     }
@@ -171,50 +214,103 @@ ViewData["Title"] = "User Management";
     </nav>
 
     <p class="text-center text-muted small">
-        Страница @Model.CurrentPage из @Model.TotalPages
-        &nbsp;|&nbsp; Всего пользователей: @Model.TotalCount
+        Page @Model.CurrentPage of @Model.TotalPages
+        &nbsp;|&nbsp; Total users: @Model.TotalCount
     </p>
     }
 </div>
 
 <script>
+(function () {
     const selectAll = document.getElementById('selectAll');
-    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+    const rowCheckboxes = Array.from(document.querySelectorAll('.row-checkbox'));
 
     const toolbarButtons = [
         document.getElementById('btnChange'),
         document.getElementById('btnBlock'),
         document.getElementById('btnUnblock'),
-        document.getElementById('btnDelete'),
-    ];
+        document.getElementById('btnDelete')
+    ].filter(Boolean);
 
-    function updateToolbarState(rowCheckboxes, toolbarButtons) {
-        const anyChecked = Array.from(rowCheckboxes).some(cb => cb.checked);
-        toolbarButtons.forEach(btn => btn.disabled = !anyChecked);
+    function updateToolbarState() {
+        const checked = rowCheckboxes.filter(cb => cb.checked);
+        const anyChecked = checked.length > 0;
+
+        toolbarButtons.forEach(btn => {
+            btn.disabled = !anyChecked;
+        });
+
+        // Changing a role applies to one selected user at a time.
+        const changeButton = document.getElementById('btnChange');
+        if (changeButton) {
+            changeButton.disabled = checked.length !== 1;
+        }
     }
 
-    selectAll.addEventListener('change', function () {
-        rowCheckboxes.forEach(cb => {
-            cb.checked = selectAll.checked;
-            cb.closest('tr').classList.toggle('table-active', this.checked);
+    function updateSelectAllState() {
+        if (!selectAll) {
+            return;
+        }
+
+        selectAll.checked =
+            rowCheckboxes.length > 0 &&
+            rowCheckboxes.every(cb => cb.checked);
+
+        selectAll.indeterminate =
+            rowCheckboxes.some(cb => cb.checked) &&
+            !selectAll.checked;
+    }
+
+    if (selectAll) {
+        selectAll.addEventListener('change', function () {
+            rowCheckboxes.forEach(cb => {
+                cb.checked = this.checked;
+
+                const row = cb.closest('tr');
+                if (row) {
+                    row.classList.toggle('table-active', this.checked);
+                }
+            });
+
+            selectAll.indeterminate = false;
+            updateToolbarState();
         });
-        updateToolbarState(rowCheckboxes, toolbarButtons);
-    });
+    }
 
     rowCheckboxes.forEach(cb => {
         cb.addEventListener('change', function () {
-            cb.closest('tr').classList.toggle('table-active', cb.checked);
-            if (!cb.checked) {
-                selectAll.checked = false;
+            const row = this.closest('tr');
+
+            if (row) {
+                row.classList.toggle('table-active', this.checked);
             }
-            updateToolbarState(rowCheckboxes, toolbarButtons);
+
+            updateSelectAllState();
+            updateToolbarState();
         });
     });
 
     window.addEventListener('pageshow', (event) => {
         if (event.persisted) {
-            rowCheckboxes.forEach(cb => cb.checked = false)
+            rowCheckboxes.forEach(cb => {
+                cb.checked = false;
+
+                const row = cb.closest('tr');
+                if (row) {
+                    row.classList.remove('table-active');
+                }
+            });
+
+            if (selectAll) {
+                selectAll.checked = false;
+                selectAll.indeterminate = false;
+            }
+
+            updateToolbarState();
         }
     });
 
+    updateSelectAllState();
+    updateToolbarState();
+})();
 </script>

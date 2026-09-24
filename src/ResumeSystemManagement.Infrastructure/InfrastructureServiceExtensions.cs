@@ -29,7 +29,7 @@ public static class InfrastructureServiceExtensions
         
         services.Configure<IdentityOptions>(options =>
         {
-            options.Password.RequiredLength = 8;
+            options.Password.RequiredLength = 12;
             options.User.AllowedUserNameCharacters =
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
             options.User.RequireUniqueEmail = true;

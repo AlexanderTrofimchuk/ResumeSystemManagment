@@ -74,7 +74,7 @@ public static class AttributeSeeding
         ];
 
         foreach (var attribute in buildInAttribute)
-            if (!context.Set<AttributeLibrary>().Any(at => at.Title == attribute.Title))
+            if (context.Set<AttributeLibrary>().FirstOrDefault(at => at.Title == attribute.Title) is null)
                 context.Set<AttributeLibrary>().Add(attribute);
         context.SaveChanges();
     }
@@ -86,15 +86,20 @@ public static class AttributeSeeding
         var personalInformation = await context.Set<AttributeCategory>()
             .FirstOrDefaultAsync(ac => ac.Title == "Personal Information",cancellationToken);
 
-        AttributeLibrary[] buildInAttribute = [
-            Create("First Name",stringId!.Id,personalInformation!.Id),
-            Create("Last Name", stringId.Id,personalInformation.Id),
-            Create("Location", stringId.Id,personalInformation.Id),
-            Create("Image",imageId!.Id,personalInformation.Id)
+        AttributeLibrary[] buildInAttribute =
+        [
+            Create("First Name", stringId!.Id, personalInformation!.Id),
+            Create("Last Name", stringId.Id, personalInformation.Id),
+            Create("Location", stringId.Id, personalInformation.Id),
+            Create("Personal Photo", imageId!.Id, personalInformation.Id),
+            Create("Email", stringId.Id, personalInformation.Id),
+            Create("Phone", stringId.Id, personalInformation.Id)
         ];
 
         foreach (var attribute in buildInAttribute)
-            if (!await context.Set<AttributeLibrary>().AnyAsync(at => at.Title == attribute.Title, cancellationToken: cancellationToken))
+            if (await context.Set<AttributeLibrary>()
+                    .FirstOrDefaultAsync(at => at.Title == attribute.Title, 
+                        cancellationToken: cancellationToken) is null)
                 await context.Set<AttributeLibrary>().AddAsync(attribute, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
     }
@@ -104,8 +109,8 @@ public static class AttributeSeeding
         return new(
             title,
             "Basic candidate information",
-            typeId,
             categoryId,
+            typeId,
             true
         );
     }

@@ -8,7 +8,7 @@ using ResumeSystemManagement.Web.ViewModels.Enums;
 
 namespace ResumeSystemManagement.Web.Controllers;
 
-[Authorize(Roles = RoleNames.Recruiter)]
+[Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
 public class AttributeLibraryController(
     IAttributeCategoryService categoryService,
     IAttributeTypeService typeService,
@@ -19,7 +19,7 @@ public class AttributeLibraryController(
     private readonly IAttributeTypeService _typeService = typeService;
     private readonly IAttributeCategoryService _categoryService = categoryService;
 
-    [Authorize(Roles = RoleNames.Recruiter)]
+    [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
     public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
     {
         var attributes = await _libraryService.GetAttributesAsync(pageSize, page);
@@ -30,7 +30,7 @@ public class AttributeLibraryController(
         return View(attributes.Value);
     }
 
-    [Authorize(Roles = RoleNames.Recruiter)]
+    [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
     [HttpGet]
     public async Task<IActionResult> SearchAttribute(string name)
     {
@@ -41,19 +41,19 @@ public class AttributeLibraryController(
         return View("Index", attributes.Value);
     }
 
-    [Authorize(Roles = RoleNames.Recruiter)]
+    [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
     [HttpPost]
     public async Task<IActionResult> CreateAttribute(CreateAttributeDto dto)
     {
         var idCreated = await _libraryService.CreateAttributeAsync(dto);
         if (idCreated.IsFailed) return ReturnCurrentException(
-            idCreated.Errors.Select(e => e.Message).ToList(), ActionName.Index, dto);
+            idCreated.Errors.Select(e => e.Message).ToList(), ActionName.Index);
         await AddDropDownOptions(dto, idCreated.Value);
         return RedirectWithMessage(["Attributes created"], 
             MessageColor.Success,ActionName.Index, ControllerName.AttributeLibrary);
     }
 
-    [Authorize(Roles = RoleNames.Recruiter)]
+    [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
     [HttpGet]
     public async Task<IActionResult> EditAttributeForm(int id)
     {
@@ -65,7 +65,7 @@ public class AttributeLibraryController(
         return PartialView("_EditAttribute", attribute.Value);
     }
 
-    [Authorize(Roles = RoleNames.Recruiter)]
+    [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
     [HttpPost]
     public async Task<IActionResult> EditAttribute(EditAttributeDTo dto)
     {
@@ -77,7 +77,7 @@ public class AttributeLibraryController(
             MessageColor.Success, ActionName.Index, ControllerName.AttributeLibrary);
     }
 
-    [Authorize(Roles = RoleNames.Recruiter)]
+    [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
     [HttpPost]
     public async Task<IActionResult> DeleteAttributes(AttributeDetails model)
     {

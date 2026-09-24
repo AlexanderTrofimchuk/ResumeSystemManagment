@@ -15,6 +15,15 @@ public class PositionController(IPositionService service): BaseController
         return View(positons.Value);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetPositionDetail(int positionId)
+    {
+        var positionResult = await service.GetPositionDetailForUser(positionId);
+        if (positionResult.IsFailed) return ReturnCurrentException(
+            GetErrorsMessage(positionResult.ToResult()), ActionName.Index);
+        return View("PositionDetail",positionResult.Value);
+    }
+
     [HttpPost]
     public async Task<IActionResult> SearchPosition(string name)
     {
@@ -24,7 +33,7 @@ public class PositionController(IPositionService service): BaseController
         return  View("Index", searchResult.Value);
     }
     
-    [Authorize(Roles = RoleNames.Recruiter)]
+    [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
     [HttpPost]
     public async Task<IActionResult> CreatePosition(CreatePositionDto model)
     {
@@ -35,7 +44,7 @@ public class PositionController(IPositionService service): BaseController
             MessageColor.Success,ActionName.Template,ControllerName.PositionTemplate,new {Id = resultCreated.Value});
     }
 
-    [Authorize(Roles = RoleNames.Recruiter)]
+    [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
     [HttpGet]
     public async Task<IActionResult> EditPositionForm(int id)
     {
@@ -45,7 +54,7 @@ public class PositionController(IPositionService service): BaseController
         return PartialView("_EditPosition", positionResult.Value);
     }
     
-    [Authorize(Roles = RoleNames.Recruiter)]
+    [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
     [HttpPost]
     public async Task<IActionResult> DuplicatePosition(PositionDetails model)
     {
@@ -56,7 +65,7 @@ public class PositionController(IPositionService service): BaseController
             MessageColor.Success,ActionName.Index,ControllerName.Position);
     }
     
-    [Authorize(Roles = RoleNames.Recruiter)]
+    [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
     [HttpPost]
     public async Task<IActionResult> EditPosition(EditPositionDto model)
     {
@@ -67,13 +76,13 @@ public class PositionController(IPositionService service): BaseController
             MessageColor.Success,ActionName.Index,ControllerName.Position);
     }
 
-    [Authorize(Roles = RoleNames.Recruiter)]
+    [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
     [HttpPost]
     public IActionResult RenderTemplate(PositionDetails model) =>
         RedirectToAction(nameof(ActionName.Template),  nameof(ControllerName.PositionTemplate),
             routeValues:new {Id = model.SelectIds[0]});
     
-    [Authorize(Roles = RoleNames.Recruiter)]
+    [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
     [HttpPost]
     public async Task<IActionResult> DeletePositions(PositionDetails model)
     {

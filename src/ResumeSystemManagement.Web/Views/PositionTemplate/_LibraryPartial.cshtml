@@ -1,18 +1,18 @@
-﻿@model IEnumerable<ResumeSystemManagement.Application.DTOs.Attribute.AttributeTemplate>
+@model IEnumerable<ResumeSystemManagement.Application.DTOs.Attribute.AttributeTemplate>
 
 @{
     var typeIcons = new Dictionary<string, string>
     {
-        { "String",     "bi-type" },
-        { "Text",       "bi-text-left" },
-        { "Image",      "bi-image" },
-        { "Numeric",    "bi-123" },
-        { "Date",       "bi-calendar3" },
-        { "Period",     "bi-calendar-range" },
-        { "Boolean",    "bi-toggle-on" },
-        { "One of many","bi-menu-button-wide" }
+        { "String",      "bi-type" },
+        { "Text",        "bi-text-left" },
+        { "Image",       "bi-image" },
+        { "Numeric",     "bi-123" },
+        { "Date",        "bi-calendar3" },
+        { "Period",      "bi-calendar-range" },
+        { "Boolean",     "bi-toggle-on" },
+        { "One of many", "bi-menu-button-wide" }
     };
-    
+
     var addedIds = ViewBag.AddedAttributes as HashSet<int>;
     string AlreadyAdded(int id)
     {
@@ -29,11 +29,11 @@
                 <i class="bi @(typeIcons.GetValueOrDefault(item.TypeName, "bi-question-circle"))"></i> @item.TypeName
             </span>
         </div>
-        <button class="btn btn-sm btn-outline-primary border-0 py-0 px-1" 
+        <button class="btn btn-sm btn-outline-primary border-0 py-0 px-1"
                 data-bs-toggle="modal"
                 data-bs-target="#addToSectionModal"
                 data-attr-id="@item.Id"
-                title="Добавить">
+                title="Add to section">
             <i class="bi bi-plus-circle"></i>
         </button>
     </div>

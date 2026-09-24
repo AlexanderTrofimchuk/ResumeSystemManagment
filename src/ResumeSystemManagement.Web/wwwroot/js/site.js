@@ -1,4 +1,4 @@
-﻿export function changePasswordIcon(idInput, idIcon, idButton) {
+﻿function changePasswordIcon(idInput, idIcon, idButton) {
     const button = document.getElementById(idButton);
     if (!button) return;
 
