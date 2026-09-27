@@ -1,4 +1,5 @@
-﻿using ResumeSystemManagement.Application.DTOs.Statistic;
+﻿using ResumeSystemManagement.Application.DTOs.Position;
+using ResumeSystemManagement.Application.DTOs.Statistic;
 using ResumeSystemManagement.Application.Interfaces.Statistics;
 using ResumeSystemManagement.Core.Interfaces.Repositories.PositionRepository;
 using ResumeSystemManagement.Core.Interfaces.Repositories.UserRepository;

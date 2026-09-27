@@ -1,5 +1,8 @@
+using System.Globalization;
 using dotenv.net;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.Razor;
 using ResumeSystemManagement.Application;
 using ResumeSystemManagement.Infrastructure;
 
@@ -11,7 +14,25 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
 builder.Services.AddInfrastructureServices();
 builder.Services.AddApplication();
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddDataAnnotationsLocalization()
+    .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix);
+
+builder.Services.AddLocalization(option =>
+{
+    option.ResourcesPath = "Resources";
+});
+
+builder.Services.Configure<RequestLocalizationOptions>(option =>
+{
+    var supportedCultures = new[]
+    {
+        new CultureInfo("en-US"),
+        new CultureInfo("de-DE")
+    };
+    option.DefaultRequestCulture = new RequestCulture("en-US");
+    option.SupportedUICultures = supportedCultures;
+});
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -19,7 +40,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 });
 
 var app = builder.Build();
-
+app.UseRequestLocalization();
 app.UseForwardedHeaders();
 
 app.UseExceptionHandler("/Home/Error");

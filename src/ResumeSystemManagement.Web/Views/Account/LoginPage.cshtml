@@ -1,6 +1,8 @@
-﻿@model ResumeSystemManagement.Web.ViewModels.LoginViewModel
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@model ResumeSystemManagement.Web.ViewModels.LoginViewModel
+@inject IViewLocalizer Localizer
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = Localizer["PageTitle"];
 }
 
 @section Styles
@@ -11,7 +13,7 @@
 <div class="container-fluid p-0 robot-mono-font">
   <div class="d-flex flex-column justify-content-center align-items-center position-relative login-center">
     <div class="login-form-box shadow p-4 mb-5 bg-body-tertiary rounded">
-      <h2 class="mb-4 login-heading text-center">Sign in</h2>
+      <h2 class="mb-4 login-heading text-center">@Localizer["SignInHeading"]</h2>
       <form
         asp-antiforgery="true"
         asp-action="LoginUser"
@@ -20,12 +22,12 @@
         novalidate
       >
         <div class="mb-2">
-          <label asp-for="Email" class="form-label mb-1"><b>Email address</b></label>
+          <label asp-for="Email" class="form-label mb-1"><b>@Localizer["EmailLabel"]</b></label>
           <input
             asp-for="Email"
             class="form-control form-control-sm border-black login-input"
             type="text"
-            placeholder="Enter email"
+            placeholder="@Localizer["EmailPlaceholder"]"
           />
           <span
             asp-validation-for="Email"
@@ -35,14 +37,14 @@
         </div>
 
         <div class="mb-3">
-          <label asp-for="Password" class="form-label mb-1"><b>Password</b></label>
+          <label asp-for="Password" class="form-label mb-1"><b>@Localizer["PasswordLabel"]</b></label>
           <div class="input-group">
             <input
               asp-for="Password"
               class="form-control form-control-sm border-black login-input"
               type="password"
               maxlength="12"
-              placeholder="Enter password"
+              placeholder="@Localizer["PasswordPlaceholder"]"
             />
             <button
               class="btn btn-outline-secondary btn-sm"
@@ -65,7 +67,7 @@
           data-bs-target="#forgotPasswordModal"
           class="text-primary text-decoration-none d-block mt-2 mb-3 login-forgot"
         >
-          Forgot Password?
+          @Localizer["ForgotPasswordLink"]
         </a>
 
         <div class="d-grid gap-2">
@@ -73,7 +75,7 @@
             type="submit"
             class="btn btn-primary btn-sm robot-mono-font login-btn-submit"
           >
-            Sign in
+            @Localizer["SignInButton"]
           </button>
           <a
             class="btn btn-outline-primary btn-sm login-btn-submit"
@@ -81,7 +83,7 @@
             asp-controller="OAuth"
             asp-action="GoogleLogin"
           >
-            <i class="bi bi-google"></i> Sign in with Google
+            <i class="bi bi-google"></i> @Localizer["GoogleSignInButton"]
           </a>
           <a
             class="btn btn-outline-primary btn-sm login-btn-submit"
@@ -89,14 +91,14 @@
             asp-controller="OAuth"
             asp-action="FacebookLogin"
           >
-              <i class="bi bi-facebook"></i> Sign in with Facebook
+              <i class="bi bi-facebook"></i> @Localizer["FacebookSignInButton"]
           </a>
         </div>
       </form>
 
       <p class="login-footer-text mt-3 mb-0 text-center">
-          Don't have an account?
-          <a asp-action="RegisterPage" asp-controller="Account">Sign up</a>
+          @Localizer["NoAccountText"]
+          <a asp-action="RegisterPage" asp-controller="Account">@Localizer["SignUpLink"]</a>
       </p>
     </div>
   </div>
@@ -108,59 +110,59 @@
         <div class="modal-content robot-mono-font">
 
             <div class="modal-header">
-                <h5 class="modal-title" id="forgotPasswordModalLabel">Change Password</h5>
+                <h5 class="modal-title" id="forgotPasswordModalLabel">@Localizer["ChangePasswordModalTitle"]</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form asp-action="СhangePassword" asp-controller="Account" novalidate>
+            <form asp-action="ChangePassword" asp-controller="Account" novalidate>
                 <div class="modal-body">
 
                     <div class="mb-3">
-                        <label asp-for="ChangePassword.Email" class="form-label"><b>Email address</b></label>
-                        <input asp-for="ChangePassword.Email"
+                        <label asp-for="ChangePassword!.Email" class="form-label"><b>@Localizer["EmailLabel"]</b></label>
+                        <input asp-for="ChangePassword!.Email"
                                type="text"
                                class="form-control border-black"
-                               placeholder="Enter your email">
-                        <span asp-validation-for="ChangePassword.Email" class="text-danger" style="font-size: 0.875em;"></span>
+                               placeholder="@Localizer["ModalEmailPlaceholder"]">
+                        <span asp-validation-for="ChangePassword!.Email" class="text-danger" style="font-size: 0.875em;"></span>
                     </div>
                     <div class="mb-3">
-                        <label asp-for="ChangePassword.OldPassword" class="form-label"><b>Old Password</b></label>
+                        <label asp-for="ChangePassword!.OldPassword" class="form-label"><b>@Localizer["OldPasswordLabel"]</b></label>
                         <div class="input-group">
-                            <input asp-for="ChangePassword.OldPassword"
+                            <input asp-for="ChangePassword!.OldPassword"
                                    type="password"
                                    class="form-control border-black"
                                    maxlength="12"
-                                   placeholder="Enter current password">
+                                   placeholder="@Localizer["OldPasswordPlaceholder"]">
                             <button class="btn btn-outline-secondary"
                                     type="button"
                                     id="toggleOldPassword">
                                 <i class="bi bi-eye" id="toggleOldPasswordIcon"></i>
                             </button>
                         </div>
-                        <span asp-validation-for="ChangePassword.OldPassword" class="text-danger" style="font-size: 0.875em;"></span>
+                        <span asp-validation-for="ChangePassword!.OldPassword" class="text-danger" style="font-size: 0.875em;"></span>
                     </div>
                     <div class="mb-3">
-                        <label asp-for="ChangePassword.NewPassword" class="form-label"><b>New Password</b></label>
+                        <label asp-for="ChangePassword!.NewPassword" class="form-label"><b>@Localizer["NewPasswordLabel"]</b></label>
                         <div class="input-group">
-                            <input asp-for="ChangePassword.NewPassword"
+                            <input asp-for="ChangePassword!.NewPassword"
                                    type="password"
                                    class="form-control border-black"
                                    maxlength="12"
-                                   placeholder="Enter new password">
+                                   placeholder="@Localizer["NewPasswordPlaceholder"]">
                             <button class="btn btn-outline-secondary"
                                     type="button"
                                     id="toggleChangePassword">
                                 <i class="bi bi-eye" id="toggleChangePasswordIcon"></i>
                             </button>
                         </div>
-                        <span asp-validation-for="ChangePassword.NewPassword" class="text-danger" style="font-size: 0.875em;"></span>
+                        <span asp-validation-for="ChangePassword!.NewPassword" class="text-danger" style="font-size: 0.875em;"></span>
                     </div>
 
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Change Password</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["CancelButton"]</button>
+                    <button type="submit" class="btn btn-primary">@Localizer["ChangePasswordButton"]</button>
                 </div>
             </form>
 
@@ -170,24 +172,11 @@
 
 @section Scripts
 {
-    <script type="module">
-        import('/js/site.js').then(m => {
-            m.changePasswordIcon('Password', 'toggleIcon', 'togglePassword');
-            m.changePasswordIcon('ChangePassword_OldPassword', 'toggleOldPasswordIcon', 'toggleOldPassword');
-            m.changePasswordIcon('ChangePassword_NewPassword', 'toggleChangePasswordIcon', 'toggleChangePassword');
-        });
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-            crossorigin="anonymous"
-            integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"
-            crossorigin="anonymous"
-            integrity="sha512-rstIgDs0xPgmG6RX1Aba4KV5cWJbAMcvRCVmglpam9SoHZiUCyQVDdH2LPlxoHtrv17XWblE/V/PP+Tr04hbtA==">
-    </script>
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"
-        crossorigin="anonymous"
-        integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==">
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/site.js"></script>>
+    <script>
+        changePasswordIcon('Password', 'toggleIcon', 'togglePassword');
+        changePasswordIcon('ChangePassword_OldPassword', 'toggleOldPasswordIcon', 'toggleOldPassword');
+        changePasswordIcon('ChangePassword_NewPassword', 'toggleChangePasswordIcon', 'toggleChangePassword');
     </script>
 }

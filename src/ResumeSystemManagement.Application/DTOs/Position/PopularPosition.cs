@@ -1,4 +1,4 @@
-﻿namespace ResumeSystemManagement.Application.DTOs.Statistic;
+﻿namespace ResumeSystemManagement.Application.DTOs.Position;
 
 public class PopularPosition
 {

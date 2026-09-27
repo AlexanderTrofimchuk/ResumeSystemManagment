@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentResults;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ResumeSystemManagement.Application.DTOs.Attribute;
 using ResumeSystemManagement.Application.Interfaces.Attributes;
@@ -9,7 +10,10 @@ using ResumeSystemManagement.Web.ViewModels.Enums;
 
 namespace ResumeSystemManagement.Web.Controllers;
 
-public class PositionTemplateController(IAttributeTypeService typeService, IAttributeLibraryService libraryService, IPositionTemplateService templateService, IPositionService positionService): BaseController
+public class PositionTemplateController(IAttributeTypeService typeService, 
+    IAttributeLibraryService libraryService, 
+    IPositionTemplateService templateService, 
+    IPositionService positionService): BaseController
 {
     private readonly IAttributeTypeService _typeService = typeService;
     private readonly IAttributeLibraryService _libraryService = libraryService;
@@ -29,7 +33,7 @@ public class PositionTemplateController(IAttributeTypeService typeService, IAttr
     [HttpGet]
     public async Task<IActionResult> GetAttributeLibrary(int page, int pageSize, int positionId)
     {
-        var attributes = await _libraryService.GetAttributesAsync(pageSize, page);
+        var attributes = await _libraryService.GetAttributesAsync(page);
         var attributeTemplate = attributes.Value.Attributes.Select(a => a.ToAttributeTemplate());
         var addedResult = await _templateService.GetAttributeInPosition(positionId);
         ViewBag.AddedAttributes = addedResult.Value;
@@ -49,10 +53,8 @@ public class PositionTemplateController(IAttributeTypeService typeService, IAttr
     public async Task<IActionResult> AddAttribute(int positionId, int attributeId, TemplateSection section)
     {
         var assignResult = await _templateService.AssignAttributeAsync(positionId, attributeId, section);
-        if (assignResult.IsFailed) return ReturnCurrentException(
-            GetErrorsMessage(assignResult), ActionName.Template);
-        return RedirectWithMessage(["Attribute is assigned"],
-            MessageColor.Success, ActionName.Template,ControllerName.PositionTemplate, new {Id = positionId});
+        if (assignResult.IsFailed) return ShowOperationErrors(assignResult);
+        return AlertSuccessExecution(positionId, "Attribute is assigned");
     }
 
     [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
@@ -63,8 +65,7 @@ public class PositionTemplateController(IAttributeTypeService typeService, IAttr
         if (updateResult.IsFailed)
             RedirectWithMessage(GetErrorsMessage(updateResult),
                 MessageColor.Danger, ActionName.Template, ControllerName.PositionTemplate, new { Id = positionId });
-        return RedirectWithMessage(["Attribute is moved"],
-            MessageColor.Success, ActionName.Template,ControllerName.PositionTemplate, new {Id = positionId});
+        return AlertSuccessExecution(positionId, "Attribute is moved");
     }
 
     [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
@@ -72,10 +73,8 @@ public class PositionTemplateController(IAttributeTypeService typeService, IAttr
     public async Task<IActionResult> RemoveAttribute(int positionId, int attributeId)
     {
         var deleteResult = await _templateService.DeleteAttributeAsync(positionId, attributeId);
-        if (deleteResult.IsFailed)  return ReturnCurrentException(
-            GetErrorsMessage(deleteResult), ActionName.Template);
-        return RedirectWithMessage(["Attribute is deleted from template"],
-            MessageColor.Success, ActionName.Template,ControllerName.PositionTemplate, new {Id = positionId});
+        if (deleteResult.IsFailed)  return ShowOperationErrors(deleteResult);
+        return AlertSuccessExecution(positionId, "Attribute is deleted from template");
     }
 
     [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
@@ -83,10 +82,8 @@ public class PositionTemplateController(IAttributeTypeService typeService, IAttr
     public async Task<IActionResult> PublishPosition(int id)
     {
         var publishResult = await _positionService.PublishPosition(id);
-        if (publishResult.IsFailed)  return ReturnCurrentException(
-            GetErrorsMessage(publishResult), ActionName.Template);
-        return RedirectWithMessage(["Position was published"],
-            MessageColor.Success, ActionName.Template,ControllerName.PositionTemplate, new {Id = id});
+        if (publishResult.IsFailed)  return ShowOperationErrors(publishResult);
+        return AlertSuccessExecution(id, "Position was published");
     }
     
     [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
@@ -94,9 +91,18 @@ public class PositionTemplateController(IAttributeTypeService typeService, IAttr
     public async Task<IActionResult> DraftPosition(int id)
     {
         var publishResult = await _positionService.DraftPosition(id);
-        if (publishResult.IsFailed)  return ReturnCurrentException(
-            GetErrorsMessage(publishResult), ActionName.Template);
-        return RedirectWithMessage(["Position was published"],
+        if (publishResult.IsFailed)  return ShowOperationErrors(publishResult);
+        return AlertSuccessExecution(id, "Position was published");
+    }
+
+    private IActionResult AlertSuccessExecution(int id, string successMessage)
+    {
+        return RedirectWithMessage([successMessage],
             MessageColor.Success, ActionName.Template,ControllerName.PositionTemplate, new {Id = id});
+    }
+
+    private IActionResult ShowOperationErrors(Result publishResult)
+    {
+        return ReturnCurrentException(GetErrorsMessage(publishResult), ActionName.Template);
     }
 }

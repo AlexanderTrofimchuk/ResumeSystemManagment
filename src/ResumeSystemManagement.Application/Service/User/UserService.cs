@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 using ResumeSystemManagement.Application.DTOs.User;
-using ResumeSystemManagement.Application.Interfaces.User;
+using ResumeSystemManagement.Application.Interfaces.Users;
 using ResumeSystemManagement.Core.Interfaces.Repositories.UserRepository;
 using ResumeSystemManagement.Core.ReadModels;
 
@@ -10,12 +10,12 @@ public class UserService(IUserRepository repository) : IUserService
 {
     private readonly IUserRepository _userRepository = repository;
     
-    public async Task<UserDetails> GetAllRecordAsync(int pageNumber, int pageSize)
+    public async Task<UserDetails> GetAllRecordAsync(int pageNumbers)
     {
         return new() 
         {
-            UserInfos = await _userRepository.GetAllAsync(pageNumber),
-            CurrentPage = pageNumber,
+            UserInfos = await _userRepository.GetAllAsync(pageNumbers),
+            CurrentPage = pageNumbers,
             PageSize = PaginationConstants.DefaultPageSize,
             TotalCount = await _userRepository.GetUsersCount()
         };

@@ -73,8 +73,7 @@ public class UserRepository(UserManager<AppUser> userManager, ApplicationDbConte
             .OrderBy(u => u.Id)
             .Skip((pageNumber - 1) * PaginationConstants.DefaultPageSize)
             .Take(PaginationConstants.DefaultPageSize)
-            .Join(_context.UserRoles,
-                u => u.Id,
+            .Join(_context.UserRoles, u => u.Id,
                 ur => ur.UserId,
                 (u, ur) => new { u, ur.RoleId })
             .Join(_context.Roles,

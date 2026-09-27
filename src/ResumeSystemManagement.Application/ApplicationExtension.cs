@@ -3,7 +3,7 @@ using ResumeSystemManagement.Application.Interfaces.Attributes;
 using ResumeSystemManagement.Application.Interfaces.Logins;
 using ResumeSystemManagement.Application.Interfaces.Position;
 using ResumeSystemManagement.Application.Interfaces.Statistics;
-using ResumeSystemManagement.Application.Interfaces.User;
+using ResumeSystemManagement.Application.Interfaces.Users;
 using ResumeSystemManagement.Application.Service.Attributes;
 using ResumeSystemManagement.Application.Service.Login;
 using ResumeSystemManagement.Application.Service.Position;

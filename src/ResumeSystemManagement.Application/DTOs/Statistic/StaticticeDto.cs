@@ -1,4 +1,7 @@
-﻿namespace ResumeSystemManagement.Application.DTOs.Statistic;
+﻿using ResumeSystemManagement.Application.DTOs.Position;
+using ResumeSystemManagement.Application.DTOs.Tags;
+
+namespace ResumeSystemManagement.Application.DTOs.Statistic;
 
 public class StaticticeDto
 {

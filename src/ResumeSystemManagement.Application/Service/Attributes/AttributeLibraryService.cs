@@ -9,9 +9,9 @@ namespace ResumeSystemManagement.Application.Service.Attributes;
 
 public class AttributeLibraryService (IAttributeLibraryRepository repository) : IAttributeLibraryService
 {
-    public async Task<Result<AttributeDetails>> GetAttributesAsync(int pageSize, int page)
+    public async Task<Result<AttributeDetails>> GetAttributesAsync(int page)
     {
-        var resultTask = Result.Try(() => repository.GetAttributesAsync(pageSize, page));
+        var resultTask = Result.Try(() => repository.GetAttributesAsync(page));
         var attributes = await resultTask;
         return Result.Ok(new AttributeDetails { Attributes = attributes.Value});
     }

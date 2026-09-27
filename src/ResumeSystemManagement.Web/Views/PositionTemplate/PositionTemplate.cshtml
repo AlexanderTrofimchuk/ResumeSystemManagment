@@ -175,7 +175,7 @@
 
                       <!-- Type badge -->
                       <span class="badge bg-light text-secondary border" style="font-size:.65rem">
-                        <i class="bi @(typeIcons.GetValueOrDefault(attr.TypeName, "bi-question-circle"))"></i>
+                        <i class="bi @(typeIcons!.GetValueOrDefault(attr.TypeName, "bi-question-circle"))"></i>
                         @attr.TypeName
                       </span>
 

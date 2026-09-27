@@ -1,5 +1,4 @@
 <style>
-    /* User management: keep the toolbar, table and pagination in normal document flow. */
     .um-container {
         display: block !important;
         width: 100%;
@@ -178,12 +177,12 @@
             @for (int p = startPage; p <= endPage; p++)
             {
             <li class="page-item @(p == Model.CurrentPage ? "active" : "")">
+                @{ var p1 = p; }
                 <a class="page-link"
                    asp-action="UserManagement"
                    asp-controller="Admin"
-                   asp-route-pageNumber="@p"
-                   asp-route-pageSize="@Model.PageSize">
-                    @p
+                   asp-route-pageNumber="@p1">
+                    @p1
                 </a>
             </li>
             }
@@ -193,7 +192,6 @@
                    asp-action="UserManagement"
                    asp-controller="Admin"
                    asp-route-pageNumber="@(Model.CurrentPage + 1)"
-                   asp-route-pageSize="@Model.PageSize"
                    aria-label="Next">
                     <i class="bi bi-chevron-right"></i>
                 </a>
@@ -204,7 +202,6 @@
                    asp-action="UserManagement"
                    asp-controller="Admin"
                    asp-route-pageNumber="@Model.TotalPages"
-                   asp-route-pageSize="@Model.PageSize"
                    aria-label="Last">
                     <i class="bi bi-chevron-double-right"></i>
                 </a>
@@ -215,7 +212,7 @@
 
     <p class="text-center text-muted small">
         Page @Model.CurrentPage of @Model.TotalPages
-        &nbsp;|&nbsp; Total users: @Model.TotalCount
+        Total users: @Model.TotalCount
     </p>
     }
 </div>
@@ -240,7 +237,6 @@
             btn.disabled = !anyChecked;
         });
 
-        // Changing a role applies to one selected user at a time.
         const changeButton = document.getElementById('btnChange');
         if (changeButton) {
             changeButton.disabled = checked.length !== 1;

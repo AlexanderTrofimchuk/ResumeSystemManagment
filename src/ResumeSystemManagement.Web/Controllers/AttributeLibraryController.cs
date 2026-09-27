@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentResults;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ResumeSystemManagement.Application.DTOs.Attribute;
@@ -20,12 +21,10 @@ public class AttributeLibraryController(
     private readonly IAttributeCategoryService _categoryService = categoryService;
 
     [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
-    public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
+    public async Task<IActionResult> Index(int page = 1)
     {
-        var attributes = await _libraryService.GetAttributesAsync(pageSize, page);
-        if (attributes.IsFailed)
-            return ReturnCurrentException(attributes.Errors.Select(e => e.Message).ToList(),
-                ActionName.Index);
+        var attributes = await _libraryService.GetAttributesAsync(page);
+        if (attributes.IsFailed) return AlertOperationErrors(attributes.ToResult());
         await PopulateDropdowns();
         return View(attributes.Value);
     }
@@ -35,9 +34,7 @@ public class AttributeLibraryController(
     public async Task<IActionResult> SearchAttribute(string name)
     {
         var attributes = await _libraryService.GetAttributesByNameAsync(name);
-        if (attributes.IsFailed)
-            return ReturnCurrentException(attributes.Errors.Select(e => e.Message).ToList(),
-                ActionName.Index);
+        if (attributes.IsFailed) return AlertOperationErrors(attributes.ToResult());
         return View("Index", attributes.Value);
     }
 
@@ -46,8 +43,7 @@ public class AttributeLibraryController(
     public async Task<IActionResult> CreateAttribute(CreateAttributeDto dto)
     {
         var idCreated = await _libraryService.CreateAttributeAsync(dto);
-        if (idCreated.IsFailed) return ReturnCurrentException(
-            idCreated.Errors.Select(e => e.Message).ToList(), ActionName.Index);
+        if (idCreated.IsFailed) return AlertOperationErrors(idCreated.ToResult());
         await AddDropDownOptions(dto, idCreated.Value);
         return RedirectWithMessage(["Attributes created"], 
             MessageColor.Success,ActionName.Index, ControllerName.AttributeLibrary);
@@ -58,9 +54,7 @@ public class AttributeLibraryController(
     public async Task<IActionResult> EditAttributeForm(int id)
     {
         var attribute = await _libraryService.GetEditAttributeAsync(id);
-        if (attribute.IsFailed)
-            return ReturnCurrentException(attribute.Errors.Select(e => e.Message).ToList(),
-                ActionName.Index);
+        if (attribute.IsFailed) return AlertOperationErrors(attribute.ToResult());
         await PopulateDropdowns();
         return PartialView("_EditAttribute", attribute.Value);
     }
@@ -70,9 +64,7 @@ public class AttributeLibraryController(
     public async Task<IActionResult> EditAttribute(EditAttributeDTo dto)
     {
         var result = await _libraryService.EditAttributeAsync(dto);
-        if (result.IsFailed)
-            return ReturnCurrentException(result.Errors.Select(e => e.Message).ToList(),
-                ActionName.Index);
+        if (result.IsFailed) return AlertOperationErrors(result);
         return RedirectWithMessage(["Attribute updated"],
             MessageColor.Success, ActionName.Index, ControllerName.AttributeLibrary);
     }
@@ -86,11 +78,14 @@ public class AttributeLibraryController(
                 ActionName.Index);
 
         var result = await _libraryService.BulkDeleteAttributesAsync(model.SelectIds);
-        if (result.IsFailed)
-            return ReturnCurrentException(result.Errors.Select(e => e.Message).ToList(),
-                ActionName.Index);
+        if (result.IsFailed) return AlertOperationErrors(result);
         return RedirectWithMessage(["Attributes deleted"],
             MessageColor.Success, ActionName.Index, ControllerName.AttributeLibrary);
+    }
+
+    private IActionResult AlertOperationErrors(Result result)
+    {
+        return ReturnCurrentException(GetErrorsMessage(result), ActionName.Index);
     }
 
     private async Task AddDropDownOptions(CreateAttributeDto dto, int id)

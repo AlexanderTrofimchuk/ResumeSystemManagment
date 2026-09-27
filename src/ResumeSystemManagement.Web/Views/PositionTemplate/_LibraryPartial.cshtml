@@ -26,7 +26,7 @@
         <div class="flex-grow-1">
             <span class="small">@item.Name</span>
             <span class="badge bg-light text-secondary border ms-1" style="font-size:.65rem">
-                <i class="bi @(typeIcons.GetValueOrDefault(item.TypeName, "bi-question-circle"))"></i> @item.TypeName
+                <i class="bi @(typeIcons!.GetValueOrDefault(item.TypeName, "bi-question-circle"))"></i> @item.TypeName
             </span>
         </div>
         <button class="btn btn-sm btn-outline-primary border-0 py-0 px-1"

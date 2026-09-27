@@ -36,7 +36,7 @@ public class AttributeLibraryRepository(ApplicationDbContext context) : IAttribu
             .ToListAsync();
     }
 
-    public Task<List<AttributeDetail>> GetAttributesAsync(int pageSize, int page)
+    public Task<List<AttributeDetail>> GetAttributesAsync(int page)
     {
         return _context.AttributeLibraries
             .AsNoTracking()
@@ -44,7 +44,8 @@ public class AttributeLibraryRepository(ApplicationDbContext context) : IAttribu
             .Include(c => c.AttributeCategory)
             .Where(a => !a.IsBuiltIn)
             .OrderBy(x => x.Id)
-            .Skip((page - 1) * pageSize).Take(pageSize)
+            .Skip((page - 1) * PaginationConstants.DefaultPageSize)
+            .Take(PaginationConstants.DefaultPageSize)
             .Select(a => a.ToAttributeDetail())
             .ToListAsync();
     }

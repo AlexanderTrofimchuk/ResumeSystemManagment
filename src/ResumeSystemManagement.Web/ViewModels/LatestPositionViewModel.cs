@@ -4,7 +4,7 @@ public class LatestPositionViewModel
 {
     public int Id { get; set; }
 
-    public string Title { get; set; }
+    public string Title { get; set; } = null!;
 
     public string? CompanyName { get; set; }
 
