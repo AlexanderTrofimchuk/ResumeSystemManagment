@@ -3,7 +3,7 @@
     ViewData["Title"] = "Error";
 }
 
-<div class="container-fluid py-5 d-flex align-items-center justify-content-center" style="min-height: 70vh;">
+<div class="container-fluid py-5 d-flex align-items-center justify-content-center error-page" style="min-height: 70vh;">
     <div class="col-12 col-md-8 col-lg-6">
 
         <div class="card border-0 shadow-sm">
@@ -41,28 +41,6 @@
                 </div>
 
             </div>
-
-            @if (System.Diagnostics.Debugger.IsAttached || true)
-            {
-                <div class="card-footer bg-transparent border-top-0 px-5 pb-4">
-                    <details class="small text-muted">
-                        <summary class="text-decoration-underline" style="cursor: pointer;">Development mode details</summary>
-                        <div class="mt-2">
-                            <p class="mb-2">
-                                Swapping to <strong>Development</strong> environment will display more detailed information
-                                about the error that occurred.
-                            </p>
-                            <p class="mb-0">
-                                <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
-                                It can result in displaying sensitive information from exceptions to end users.
-                                For local debugging, enable the <strong>Development</strong> environment by setting the
-                                <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
-                                and restarting the app.
-                            </p>
-                        </div>
-                    </details>
-                </div>
-            }
         </div>
 
     </div>

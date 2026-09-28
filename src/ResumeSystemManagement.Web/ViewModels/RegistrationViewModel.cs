@@ -3,22 +3,22 @@ namespace ResumeSystemManagement.Web.ViewModels;
 
 public class RegistrationViewModel
 {
-    [Required(ErrorMessage = "Full name is required.")] 
-    [StringLength(150)]
-    [RegularExpression("^[A-Za-zА]+(?:[ ][A-Za-zА]+)+$", ErrorMessage = "Please enter both first and last name")]
+    [Required(ErrorMessage = "FullNameRequired")]
+    [StringLength(150, ErrorMessage = "FullNameMaxLength")]
+    [RegularExpression("^[A-Za-zА]+(?:[ ][A-Za-zА]+)+$", ErrorMessage = "FullNamePattern")]
     public string FullName { get; set; } = null!;
 
-    [Required(ErrorMessage = "Email address is required.")]
-    [EmailAddress(ErrorMessage = "Invalid email address")]
-    [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "Invalid pattern.")]
+    [Required(ErrorMessage = "EmailRequired")]
+    [EmailAddress(ErrorMessage = "EmailInvalid")]
+    [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "EmailPatternInvalid")]
     public string Email { get; set; } = null!;
     
-    [Required(ErrorMessage = "Password is required.")]
-    [StringLength(12,ErrorMessage = "Password must be at least 1 characters")]
+    [Required(ErrorMessage = "PasswordRequired")]
+    [StringLength(12, ErrorMessage = "PasswordMaxLength")]
     public string Password { get; set; } = null!;
     
-    [Required(ErrorMessage = "You don't repeat password")]
-    [Compare(nameof(Password), ErrorMessage = "Passwords do not match")]
-    [StringLength(12, ErrorMessage = "Password must be at least 1 characters")]
+    [Required(ErrorMessage = "ConfirmPasswordRequired")]
+    [Compare(nameof(Password), ErrorMessage = "PasswordsDoNotMatch")]
+    [StringLength(12, ErrorMessage = "PasswordMaxLength")]
     public string ConfirmPassword { get; set; } = null!;
 }

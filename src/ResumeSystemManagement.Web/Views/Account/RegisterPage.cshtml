@@ -11,14 +11,14 @@
 
 <div class="container-fluid p-0 robot-mono-font">
     <div class="d-flex flex-column justify-content-center align-items-center position-relative login-center">
-            <div class="reg-form-box shadow p-4 mb-5 bg-body-tertiary rounded">
-                <h2 class="mb-4 reg-heading text-center">@Localizer["SignUpHeading"]</h2>
-                <form asp-antiforgery="true" asp-action="RegisterUser" method="post" class="reg-form px-5" novalidate>
+            <div class="reg-form-box shadow p-3 mb-5 bg-body-tertiary rounded">
+                <h2 class="mb-3 reg-heading text-center">@Localizer["SignUpHeading"]</h2>
+                <form asp-antiforgery="true" asp-action="RegisterUser" method="post" class="reg-form px-4" novalidate>
                     <div class="mb-3">
                         <label asp-for="FullName" class="form-label"><b>@Localizer["FullNameLabel"]</b></label>
                         <input asp-for="FullName"
                                type="text"
-                               class="form-control border-black reg-input"
+                               class="form-control form-control-sm border-black reg-input"
                                placeholder="@Localizer["FullNamePlaceholder"]">
                         <span asp-validation-for="FullName" class="text-danger" style="font-size: 0.875em;"></span>
                     </div>
@@ -35,10 +35,10 @@
                         <div class="input-group">
                             <input asp-for="Password"
                                    type="password"
-                                   class="form-control border-black reg-input"
+                                   class="form-control form-control-sm border-black reg-input"
                                    placeholder="@Localizer["PasswordPlaceholder"]"
                                    maxlength="12">
-                            <button class="btn btn-outline-secondary"
+                            <button class="btn btn-outline-secondary btn-sm"
                                     type="button"
                                     id="togglePassword">
                                 <i class="bi bi-eye" id="iconPassword"></i>
@@ -51,10 +51,10 @@
                         <div class="input-group">
                             <input asp-for="ConfirmPassword"
                                    type="password"
-                                   class="form-control border-black reg-input"
+                                   class="form-control form-control-sm border-black reg-input"
                                    placeholder="@Localizer["ConfirmPasswordPlaceholder"]"
                                    maxlength="12">
-                            <button class="btn btn-outline-secondary"
+                            <button class="btn btn-outline-secondary btn-sm"
                                     type="button"
                                     id="toggleConfirmPassword">
                                 <i class="bi bi-eye" id="iconConfirmPassword"></i>

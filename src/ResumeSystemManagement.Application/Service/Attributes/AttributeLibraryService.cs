@@ -1,7 +1,7 @@
 ﻿using FluentResults;
-using ResumeSystemManagement.Application.DTOs.Attribute;
-using ResumeSystemManagement.Application.DTOs.Attribute.Mapper;
+using ResumeSystemManagement.Application.DTOs.Attributes;
 using ResumeSystemManagement.Application.Interfaces.Attributes;
+using ResumeSystemManagement.Application.Mappers;
 using ResumeSystemManagement.Core.Entities;
 using ResumeSystemManagement.Core.Interfaces.Repositories.AttributeRepository;
 
@@ -13,7 +13,12 @@ public class AttributeLibraryService (IAttributeLibraryRepository repository) : 
     {
         var resultTask = Result.Try(() => repository.GetAttributesAsync(page));
         var attributes = await resultTask;
-        return Result.Ok(new AttributeDetails { Attributes = attributes.Value});
+        return Result.Ok(new AttributeDetails
+        {
+            Attributes = attributes.Value,
+            CurrentPage = page,
+            TotalCount = await repository.GetTotalCountAsync()
+        });
     }
 
     public async Task<Result<AttributeLibrary>> GetAttributeLibrary(int attributeId)
@@ -23,18 +28,23 @@ public class AttributeLibraryService (IAttributeLibraryRepository repository) : 
         return attribute;
     }
 
-    public async Task<Result<EditAttributeDTo>> GetEditAttributeAsync(int id)
+    public async Task<Result<EditAttributeDto>> GetEditAttributeAsync(int id)
     {
         var attribute = await GetAttributeLibrary(id);
         if (attribute.IsFailed) return Result.Fail(attribute.Errors);
-        return Result.Ok(attribute.Value.ToEditAttributeDTo());
+        return Result.Ok(attribute.Value.ToEditAttributeDto());
     }
 
-    public async Task<Result<AttributeDetails>> GetAttributesByNameAsync(string name)
+    public async Task<Result<AttributeDetails>> GetAttributesByNameAsync(string name, int page)
     {
-        var resultTask = Result.Try(() => repository.GetByNameAsync(name));
+        var resultTask = Result.Try(() => repository.GetByNameAsync(name, page));
         var attributes = await resultTask;
-        return Result.Ok(new AttributeDetails { Attributes = attributes.Value });
+        return Result.Ok(new AttributeDetails
+        {
+            Attributes = attributes.Value,
+            CurrentPage = page,
+            TotalCount = await repository.GetByNameCountAsync(name)
+        });
     }
 
     public async Task<Result<int>> CreateAttributeAsync(CreateAttributeDto dto)
@@ -43,16 +53,16 @@ public class AttributeLibraryService (IAttributeLibraryRepository repository) : 
         return await createTask;
     }
 
-    public async Task<Result<bool>> AddDropDownOptions(int id, CreateAttributeDto dto)
+    public async Task<Result<bool>> AddDropdownOptions(int id, CreateAttributeDto dto)
     {
-        if (dto.DropDownOptions!.Count == 0) return Result.Fail<bool>("Not found options");
+        if (dto.DropdownOptions!.Count == 0) return Result.Fail<bool>("Not found options");
         var addTask = Result.Try(() => repository.CreateAttributeListValue(dto.ToValueForList(id)));
         return await addTask;
     }
 
-    public async Task<Result> EditAttributeAsync(EditAttributeDTo dTo)
+    public async Task<Result> EditAttributeAsync(EditAttributeDto dto)
     {
-        var attribute = dTo.ToAttributeLibrary();
+        var attribute = dto.ToAttributeLibrary();
         var updateTask = Result.Try(() => repository.UpdateAttributeAsync(attribute));
         var result = await updateTask;
         if (result.IsFailed) return Result.Fail(result.Errors.Select(e => e.Message));

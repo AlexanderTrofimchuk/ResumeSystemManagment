@@ -1,5 +1,4 @@
-﻿using ResumeSystemManagement.Application.DTOs.Attribute;
-using ResumeSystemManagement.Core.Entities;
+﻿using ResumeSystemManagement.Application.DTOs.Attributes;
 using ResumeSystemManagement.Core.Enums;
 
 namespace ResumeSystemManagement.Application.DTOs.PositionTemplate;

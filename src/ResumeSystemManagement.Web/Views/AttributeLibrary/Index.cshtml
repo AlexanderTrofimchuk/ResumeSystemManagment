@@ -1,43 +1,15 @@
-﻿<style>
-    .um-container {
-        display: block !important;
-        width: 100%;
-        max-width: 1400px;
-        margin-left: auto !important;
-        margin-right: auto !important;
-    }
-
-    .um-toolbar {
-        width: 100%;
-    }
-
-    .um-table-wrapper {
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        width: 100%;
-    }
-
-    .um-scroll-area {
-        display: block !important;
-        width: 100%;
-        overflow-x: auto;
-        overflow-y: visible;
-    }
-
-    .um-table {
-        display: table !important;
-        width: 100%;
-        min-width: 700px;
-    }
-</style>
-
-@model ResumeSystemManagement.Application.DTOs.Attribute.AttributeDetails
+@using Microsoft.AspNetCore.Mvc.Localization
+@model ResumeSystemManagement.Application.DTOs.Attributes.AttributeDetails
+@inject IViewLocalizer Localizer
 @{
-    ViewData["Title"] = "Attribute Library";
+    ViewData["Title"] = Localizer["PageTitle"];
 }
 
-<div class="container mx-auto justify-content-center align-items-center mt-2 robot-mono-font um-container">
+@section Styles {
+    <link rel="stylesheet" href="~/css/responsive.attribute-library.css" asp-append-version="true"/>
+}
+
+<div class="container mx-auto justify-content-center align-items-center mt-2 robot-mono-font um-container attribute-library-page">
 
     <div class="toolbar d-flex align-items-center gap-2 p-2 mb-3 border rounded bg-light shadow-sm um-toolbar">
 
@@ -49,13 +21,14 @@
             <input type="text"
                    name="name"
                    class="form-control form-control-sm"
-                   placeholder="Search by title, type or category..."
-                   aria-label="Search attributes"
-                   value="@Context.Request.Query["name"]">
+                   placeholder="@Localizer["SearchPlaceholder"]"
+                   aria-label="@Localizer["SearchAttributes"]"
+                   value="@ViewContext.HttpContext.Request.Query["name"]">
 
             <button type="submit"
                     class="btn btn-outline-secondary btn-sm flex-shrink-0"
-                    title="Search">
+                    title="@Localizer["Search"]"
+                    aria-label="@Localizer["Search"]">
                 <i class="bi bi-search"></i>
             </button>
 
@@ -64,18 +37,20 @@
         <button
             id="btnCreate"
             class="btn btn-outline-primary btn-sm"
-            title="Create attribute"
+            title="@Localizer["CreateAttribute"]"
+            aria-label="@Localizer["CreateAttribute"]"
             data-bs-toggle="modal"
             data-bs-target="#createAttributeModal">
-            <span class="btn-text"><i class="bi bi-plus-square-fill"></i></span>
+            <span class="btn-text"><i class="bi bi-plus-square-fill" aria-hidden="true"></i></span>
         </button>
 
         <button
             id="btnEdit"
             class="btn btn-outline-secondary btn-sm"
             disabled
-            title="Edit attribute">
-            <i class="bi bi-pencil-fill"></i>
+            title="@Localizer["EditAttribute"]"
+            aria-label="@Localizer["EditAttribute"]">
+            <i class="bi bi-pencil-fill" aria-hidden="true"></i>
         </button>
 
         <button asp-action="DeleteAttributes"
@@ -84,15 +59,16 @@
                 id="btnDelete"
                 class="btn btn-danger btn-sm"
                 disabled
-                title="Delete attribute(s)">
-            <i class="bi bi-dash-square-fill"></i>
+                title="@Localizer["DeleteAttributes"]"
+                aria-label="@Localizer["DeleteAttributes"]">
+            <i class="bi bi-dash-square-fill" aria-hidden="true"></i>
         </button>
 
     </div>
 
     <form method="post" id="mainForm">
         <div class="um-table-wrapper">
-            <div class="um-scroll-area">
+            <div class="table-responsive um-scroll-area">
                 <table class="table table-striped-columns um-table text-center">
                     <thead>
                     <tr>
@@ -101,12 +77,12 @@
                                    type="checkbox"
                                    name="selectAll"
                                    id="selectAll"
-                                   aria-label="Select All">
+                                   aria-label="@Localizer["SelectAll"]">
                         </th>
-                        <th scope="col">Title</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Type</th>
-                        <th scope="col">Category</th>
+                        <th scope="col">@Localizer["Title"]</th>
+                        <th scope="col">@Localizer["Description"]</th>
+                        <th scope="col">@Localizer["Type"]</th>
+                        <th scope="col">@Localizer["Category"]</th>
                     </tr>
                     </thead>
 
@@ -134,14 +110,14 @@
                     {
                         <tr>
                             <td colspan="5" class="text-center">
-                                <p class="h3 my-3">No attributes yet</p>
+                                <p class="h3 my-3">@Localizer["NoAttributesYet"]</p>
                             </td>
                         </tr>
                     }
 
                     <tr id="noSearchResults" style="display: none;">
                         <td colspan="5" class="text-center">
-                            <p class="h3 my-3">No attributes found</p>
+                            <p class="h3 my-3">@Localizer["NoAttributesFound"]</p>
                         </td>
                     </tr>
 
@@ -150,6 +126,22 @@
             </div>
         </div>
     </form>
+    @{
+        var attributeSearch = ViewContext.HttpContext.Request.Query["name"].ToString();
+        var attributeAction = string.IsNullOrWhiteSpace(attributeSearch) ? "Index" : "SearchAttribute";
+        var attributeRouteValues = string.IsNullOrWhiteSpace(attributeSearch)
+            ? new Dictionary<string, string>()
+            : new Dictionary<string, string> { ["name"] = attributeSearch };
+    }
+    @await Html.PartialAsync("_Pagination", new ResumeSystemManagement.Web.ViewModels.PaginationViewModel
+    {
+        CurrentPage = Model.CurrentPage,
+        TotalPages = Model.TotalPages,
+        TotalCount = Model.TotalCount,
+        Controller = "AttributeLibrary",
+        Action = attributeAction,
+        RouteValues = attributeRouteValues
+    })
 </div>
 
 @await Html.PartialAsync("_CreateAttribute", Model.CreateAttributeDto)

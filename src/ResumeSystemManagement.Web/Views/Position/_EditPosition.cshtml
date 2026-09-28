@@ -1,4 +1,6 @@
-@model ResumeSystemManagement.Application.DTOs.Position.EditPositionDto
+@using Microsoft.AspNetCore.Mvc.Localization
+@model ResumeSystemManagement.Application.DTOs.Positions.EditPositionDto
+@inject IViewLocalizer Localizer
 
 <div class="modal fade" id="editPositionModal" tabindex="-1"
      aria-labelledby="editPositionModalLabel" aria-hidden="true">
@@ -7,9 +9,9 @@
 
             <div class="modal-header border-bottom px-4 py-3">
                 <h5 class="modal-title fw-semibold" id="editPositionModalLabel">
-                    Edit Position
+                    @Localizer["EditPosition"]
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["Close"]"></button>
             </div>
 
             <form asp-action="EditPosition" method="post" novalidate id="editPositionForm">
@@ -25,54 +27,60 @@
                     
                     <div class="mb-3">
                         <label asp-for="Title" class="form-label fw-medium">
-                            Title <span class="text-danger">*</span>
+                            @Localizer["Title"] <span class="text-danger">*</span>
                         </label>
                         <input asp-for="Title"
                                class="form-control"
-                               placeholder="Enter position title"
+                               placeholder="@Localizer["TitlePlaceholder"]"
                                autocomplete="off" />
                         <span asp-validation-for="Title" class="text-danger small"></span>
                     </div>
                     
                     <div class="mb-3">
-                        <label asp-for="Description" class="form-label fw-medium">Description</label>
+                        <label asp-for="Description" class="form-label fw-medium">@Localizer["Description"]</label>
                         <textarea asp-for="Description"
                                   class="form-control"
                                   rows="3"
-                                  placeholder="Brief description (optional)"></textarea>
+                                  placeholder="@Localizer["DescriptionPlaceholder"]"></textarea>
                         <span asp-validation-for="Description" class="text-danger small"></span>
                     </div>
                     
                     <div class="mb-3">
                         <label asp-for="MaxProject" class="form-label fw-medium">
-                            Max projects <span class="text-danger">*</span>
+                            @Localizer["MaxProjects"] <span class="text-danger">*</span>
                         </label>
                         <input asp-for="MaxProject"
                                type="number"
                                min="0"
                                step="1"
                                class="form-control"
-                               placeholder="Maximum number of projects" />
-                        <div class="form-text ms-1">Maximum number of projects allowed for this position.</div>
+                               placeholder="@Localizer["MaxProjectsPlaceholder"]" />
+                        <div class="form-text ms-1">@Localizer["MaxProjectsHelp"]</div>
                         <span asp-validation-for="MaxProject" class="text-danger small"></span>
                     </div>
                     
                     <div class="mb-3">
-                        <label asp-for="Level" class="form-label fw-medium">Level</label>
+                        <label asp-for="Level" class="form-label fw-medium">@Localizer["Level"]</label>
                         <select asp-for="Level"
-                                asp-items="Html.GetEnumSelectList<ResumeSystemManagement.Core.Enums.PositionLevel>()"
                                 class="form-select">
+                            @foreach (var level in Enum.GetValues<ResumeSystemManagement.Core.Enums.PositionLevel>())
+                            {
+                                <option value="@level">@Localizer[$"PositionLevel_{level}"]</option>
+                            }
                         </select>
                         <span asp-validation-for="Title" class="text-danger small"></span>
                     </div>
                     
                     <div class="mb-1">
-                        <label asp-for="Permissions" class="form-label fw-medium">Permissions</label>
+                        <label asp-for="Permissions" class="form-label fw-medium">@Localizer["Permissions"]</label>
                         <select asp-for="Permissions"
-                                asp-items="Html.GetEnumSelectList<ResumeSystemManagement.Core.Enums.PositionPermissions>()"
                                 class="form-select">
+                            @foreach (var permission in Enum.GetValues<ResumeSystemManagement.Core.Enums.PositionPermissions>())
+                            {
+                                <option value="@permission">@Localizer[$"PositionPermission_{permission}"]</option>
+                            }
                         </select>
-                        <div class="form-text ms-1">Controls who can see and use this position.</div>
+                        <div class="form-text ms-1">@Localizer["PermissionsHelp"]</div>
                         <span asp-validation-for="Permissions" class="text-danger small"></span>
                     </div>
 
@@ -80,9 +88,9 @@
 
                 <div class="modal-footer border-top px-4 py-3">
                     <button type="button" class="btn btn-outline-secondary"
-                            data-bs-dismiss="modal">Cancel</button>
+                            data-bs-dismiss="modal">@Localizer["Cancel"]</button>
                     <button type="submit" class="btn btn-primary px-4">
-                        <i class="bi bi-check-lg me-1"></i> Save
+                        <i class="bi bi-check-lg me-1"></i> @Localizer["Save"]
                     </button>
                 </div>
             </form>

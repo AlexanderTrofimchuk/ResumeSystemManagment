@@ -17,7 +17,7 @@ public class Position(string title, string shortDescription, string createdBy,Da
     public string CreatedBy { get; private set; } = createdBy;
     public PublishStatus PublishStatus { get; private set; } = PublishStatus.Draft;
     public DateTime CreateAt { get; init; } = DateTime.UtcNow;
-    public DateTime? ModifiedAt { get; private set; } = null; 
+    public DateTime? ModifiedAt { get; private set; }
     public DateTime? ClosedAt { get; private set; } = closedAt;
 
     public List<Resume> Resumes { get; } = new();

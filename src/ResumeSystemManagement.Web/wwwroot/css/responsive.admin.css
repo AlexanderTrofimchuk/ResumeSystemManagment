@@ -1,0 +1,63 @@
+.admin-user-management {
+    width: 100%;
+    max-width: 1400px;
+    margin-inline: auto;
+}
+
+.admin-user-management .um-toolbar {
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.admin-user-management .um-table-wrapper,
+.admin-user-management .um-scroll-area {
+    width: 100%;
+    min-width: 0;
+}
+
+.admin-user-management .um-table {
+    width: 100%;
+    min-width: 640px;
+    margin-bottom: 0;
+}
+
+.admin-user-management .um-table th,
+.admin-user-management .um-table td {
+    vertical-align: middle;
+}
+
+.admin-user-management .um-toolbar .btn {
+    min-width: 2.25rem;
+    min-height: 2.25rem;
+}
+
+@media (max-width: 575.98px) {
+    .admin-user-management {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .admin-user-management .um-toolbar {
+        gap: 0.5rem !important;
+    }
+
+    .admin-user-management .um-table {
+        font-size: 0.8rem;
+    }
+
+    .admin-user-management .um-table th,
+    .admin-user-management .um-table td {
+        padding: 0.5rem;
+        overflow-wrap: anywhere;
+    }
+
+    .admin-user-management .pagination {
+        gap: 0.125rem;
+    }
+
+    .admin-user-management .page-link {
+        min-width: 2rem;
+        padding: 0.375rem 0.5rem;
+        text-align: center;
+    }
+}

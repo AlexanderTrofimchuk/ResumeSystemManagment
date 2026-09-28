@@ -1,8 +1,10 @@
+@using Microsoft.AspNetCore.Mvc.Localization
 @using ResumeSystemManagement.Core.Enums
-@model ResumeSystemManagement.Application.DTOs.PositionTemplate.PositionTemplateDTo
+@model ResumeSystemManagement.Application.DTOs.PositionTemplate.PositionTemplateDto
+@inject IViewLocalizer Localizer
 
 @{
-    ViewData["Title"] = "Position Template";
+    ViewData["Title"] = Localizer["PageTitle"];
 
     var typeIcons = new Dictionary<string, string>
     {
@@ -19,73 +21,66 @@
 
 @section Styles
 {
-  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
-
-  <style>
-    .library-panel { position: sticky; top: 1rem; }
-    .lib-list      { max-height: 420px; overflow-y: auto; }
-    .lib-item.already-added { opacity: .4; pointer-events: none; }
-    .section-toggle.collapsed { transform: rotate(-90deg); }
-    .order-btns { display: flex; flex-direction: column; }
-  </style>
+  <link rel="stylesheet" href="~/css/responsive.position-template.css" asp-append-version="true"/>
 }
 
 <!-- Topbar -->
-<nav class="navbar navbar-light bg-white border-bottom px-3 py-2">
-  <div class="d-flex align-items-center gap-3">
+<nav class="navbar navbar-light bg-white border-bottom px-3 py-2 template-topbar position-template-topbar"
+     aria-label="@Localizer["PositionEditor"]">
+  <div class="d-flex align-items-center gap-3 template-breadcrumb">
     <span class="navbar-brand fw-bold mb-0">
-      <i class="bi bi-file-earmark-person me-2 text-primary"></i>Position Editor
+      <i class="bi bi-file-earmark-person me-2 text-primary"></i>@Localizer["PositionEditor"]
     </span>
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb mb-0 small">
-        <li class="breadcrumb-item"><a href="#" class="text-muted text-decoration-none">Positions</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Position" asp-action="Index" class="text-muted text-decoration-none">@Localizer["Positions"]</a></li>
         <li class="breadcrumb-item active">@Model.PositionTitle</li>
       </ol>
     </nav>
   </div>
-  <div class="d-flex gap-2">
+  <div class="d-flex gap-2 template-actions">
     
     <span class="badge @(Model.PublishStatus == PublishStatus.Publish
                          ? "bg-success"
-                         : "bg-secondary")">Status
-      @(Model.PublishStatus == PublishStatus.Publish ? "Published" : "Draft")
+                         : "bg-secondary")">@Localizer["Status"]
+      @(Model.PublishStatus == PublishStatus.Publish ? Localizer["Published"] : Localizer["Draft"])
     </span>
 
-    <a class="btn btn-sm btn-primary"
+    <button class="btn btn-sm btn-primary"
        asp-action="PublishPosition"
        asp-controller="PositionTemplate"
        asp-route-id="@Model.PositionId"
        disabled="@(Model.PublishStatus == PublishStatus.Publish)">
       <i class="bi bi-check2 me-1"></i>
-      @(Model.PublishStatus == PublishStatus.Publish ? "Published" : "Publish")
-    </a>
-    <a class="btn btn-sm btn-primary"
+      @(Model.PublishStatus == PublishStatus.Publish ? Localizer["Published"] : Localizer["Publish"])
+    </button>
+    <button class="btn btn-sm btn-primary"
        asp-action="DraftPosition"
        asp-controller="PositionTemplate"
        asp-route-id="@Model.PositionId"
        disabled="@(Model.PublishStatus == PublishStatus.Draft)">
       <i class="bi bi-check2 me-1"></i>
-      Move to Draft
-    </a>
+      @Localizer["MoveToDraft"]
+    </button>
   </div>
 </nav>
 
 <!-- Layout -->
-<div class="container-fluid p-3">
+<div class="container-fluid p-3 position-template-page">
   <div class="row g-3 align-items-start">
 
     <!-- LEFT: Library -->
-    <div class="col-md-4 col-lg-3">
+    <div class="col-md-5 col-lg-3">
       <div class="card library-panel">
         <div class="card-header bg-light fw-semibold small text-uppercase text-secondary">
-          <i class="bi bi-collection me-2"></i>Attribute Library
+          <i class="bi bi-collection me-2"></i>@Localizer["AttributeLibrary"]
         </div>
 
         <!-- Search -->
         <div class="card-body p-2 border-bottom">
           <div class="input-group input-group-sm">
             <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
-            <input type="text" class="form-control border-start-0" id="libSearch" placeholder="Search...">
+            <input type="text" class="form-control border-start-0" id="libSearch" placeholder="@Localizer["Search"]" aria-label="@Localizer["Search"]">
           </div>
         </div>
 
@@ -98,11 +93,11 @@
     </div>
 
     <!-- RIGHT: Template -->
-    <div class="col-md-8 col-lg-9">
+    <div class="col-md-7 col-lg-9">
       <div class="card">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
           <span class="fw-semibold small text-uppercase text-secondary">
-            <i class="bi bi-layout-text-sidebar-reverse me-2"></i>Template Structure
+            <i class="bi bi-layout-text-sidebar-reverse me-2"></i>@Localizer["TemplateStructure"]
           </span>
           <span class="badge bg-primary" id="totalCount">@Model.AttributeInPosition.Sum(ap => ap.AttributeTemplates.Count)</span>
         </div>
@@ -111,71 +106,45 @@
           {
             var items = Model.GetAttributes(sectionPosition);
             var icon  = sectionPosition.GetDisplayIcon();
-            var label = sectionPosition.GetDisplayName();
+            var label = Localizer[$"TemplateSection_{sectionPosition}"];
             var secId = (int)sectionPosition;
 
             <div class="border-bottom" id="sec-@secId">
               <!-- Section header -->
-              <div class="d-flex align-items-center justify-content-between px-3 py-2 bg-light"
-                   style="cursor:pointer" onclick="toggleSection('@secId')">
+              <button class="d-flex align-items-center justify-content-between px-3 py-2 bg-light template-section-header"
+                   onclick="toggleSection('@secId')">
                   <div class="d-flex align-items-center gap-2 fw-semibold small">
                       <i class="bi @icon text-secondary"></i>
                       @label
-                      <span class="badge bg-secondary bg-opacity-25 text-secondary fw-normal"
-                            style="font-size:.65rem">
-                          @(items.Any() ? $"{items.Count} attr." : "empty")
+                      <span class="badge bg-secondary bg-opacity-25 text-secondary fw-normal template-section-count">
+                          @(items.Any() ? Localizer["AttributeCount", items.Count] : Localizer["Empty"])
                       </span>
                   </div>
                   <i class="bi bi-chevron-down text-secondary small section-toggle" id="toggle-@secId"></i>
-              </div>
+              </button>
 
               <!-- Attributes -->
               <div id="list-@secId">
                 @if (!items.Any())
                 {
                   <div class="text-muted small text-center fst-italic py-3">
-                    <i class="bi bi-plus-circle me-1"></i>Add attributes from the library
+                    <i class="bi bi-plus-circle me-1"></i>@Localizer["AddAttributesFromLibrary"]
                   </div>
                 }
                 else
                 {
-                  @for (int i = 0; i < items.Count; i++)
+                  @foreach (var attr in items)
                   {
-                    var attr = items[i];
-                    <div class="d-flex align-items-center gap-2 px-3 py-2 border-bottom bg-white">
-
-                      <!-- Up / Down buttons -->
-                      <div class="order-btns">
-                        <form asp-action="ReorderAttribute" asp-controller="Position" method="post">
-                          <input type="hidden" name="positionId" value="@Model.PositionId"/>
-                          <input type="hidden" name="attributeId" value="@attr.Id"/>
-                          <input type="hidden" name="section"     value="@sectionPosition"/>
-                          <input type="hidden" name="direction"   value="-1"/>
-                          <button class="btn btn-sm btn-outline-secondary border-0 py-0 px-1 lh-1"
-                                  @(i == 0 ? "disabled" : "") title="Move up">
-                            <i class="bi bi-chevron-up" style="font-size:.7rem"></i>
-                          </button>
-                        </form>
-                        <form asp-action="ReorderAttribute" asp-controller="Position" method="post">
-                          <input type="hidden" name="positionId" value="@Model.PositionId"/>
-                          <input type="hidden" name="attributeId" value="@attr.Id"/>
-                          <input type="hidden" name="section"     value=@sectionPosition />
-                          <input type="hidden" name="direction"   value="1"/>
-                          <button class="btn btn-sm btn-outline-secondary border-0 py-0 px-1 lh-1"
-                                  @(i == items.Count - 1 ? "disabled" : "") title="Move down">
-                            <i class="bi bi-chevron-down" style="font-size:.7rem"></i>
-                          </button>
-                        </form>
-                      </div>
-
+                    <div class="d-flex align-items-center gap-2 px-3 py-2 border-bottom bg-white template-attribute-row">
+                      
                       <!-- Name -->
                       <div class="flex-grow-1">
                         <div class="small">@attr.Name</div>
                       </div>
 
                       <!-- Type badge -->
-                      <span class="badge bg-light text-secondary border" style="font-size:.65rem">
-                        <i class="bi @(typeIcons!.GetValueOrDefault(attr.TypeName, "bi-question-circle"))"></i>
+                      <span class="badge bg-light text-secondary border template-type-badge">
+                        <i class="bi @typeIcons!.GetValueOrDefault(attr.TypeName, "bi-question-circle")"></i>
                         @attr.TypeName
                       </span>
 
@@ -185,17 +154,22 @@
                               data-bs-target="#moveSectionModal"
                               data-attr-id="@attr.Id"
                               data-from-section="@sectionPosition"
-                              title="Move to section">
-                        <i class="bi bi-arrows-move"></i>
+                              title="@Localizer["MoveToSection"]"
+                              aria-label="@Localizer["MoveToSection"]">
+                        <i class="bi bi-arrows-move" aria-hidden="true"></i>
                       </button>
 
                       <!-- Remove -->
+
+                      @{
+                        var attr1 = attr;
+                      }
                       <form asp-action="RemoveAttribute" asp-controller="PositionTemplate" method="post">
                         <input type="hidden" name="positionId"  value="@Model.PositionId"/>
-                        <input type="hidden" name="attributeId" value="@attr.Id"/>
+                        <input type="hidden" name="attributeId" value="@attr1.Id"/>
                         <input type="hidden" name="section"     value="@sectionPosition"/>
-                        <button class="btn btn-sm btn-outline-danger border-0 py-0 px-1" title="Remove">
-                          <i class="bi bi-x-lg"></i>
+                        <button class="btn btn-sm btn-outline-danger border-0 py-0 px-1" title="@Localizer["Remove"]" aria-label="@Localizer["Remove"]">
+                          <i class="bi bi-x-lg" aria-hidden="true"></i>
                         </button>
                       </form>
 
@@ -217,7 +191,7 @@
   <div class="modal-dialog modal-sm modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h6 class="modal-title">Add to Section</h6>
+        <h6 class="modal-title">@Localizer["AddToSection"]</h6>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
@@ -232,15 +206,15 @@
                     class="btn btn-outline-secondary w-100 text-start mb-2 d-flex align-items-center gap-2"
                     onclick="selectSection(@((int)sec),'modalSection','addSubmitBtn')">
               <i class="bi @sec.GetDisplayIcon() text-primary"></i>
-              <span>@sec.GetDisplayName()</span>
+              <span>@Localizer[$"TemplateSection_{sec}"]</span>
               <span class="ms-auto text-muted small">
-                @(Model.GetAttributes(sec).Count) attr.
+                @Localizer["AttributeCount", Model.GetAttributes(sec).Count]
               </span>
             </button>
           }
 
           <button type="submit" class="btn btn-primary w-100 mt-1" id="addSubmitBtn" disabled>
-            Add
+            @Localizer["Add"]
           </button>
         </form>
       </div>
@@ -253,7 +227,7 @@
   <div class="modal-dialog modal-sm modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h6 class="modal-title">Move to Section</h6>
+        <h6 class="modal-title">@Localizer["MoveToSection"]</h6>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body" id="moveSectionChoices">
@@ -268,15 +242,15 @@
                     class="btn btn-outline-secondary w-100 text-start mb-2 d-flex align-items-center gap-2"
                     onclick="selectSection(@((int)sec),'moveModalSection','moveSubmitBtn')">
               <i class="bi @sec.GetDisplayIcon() text-primary"></i>
-              <span>@sec.GetDisplayName()</span>
+              <span>@Localizer[$"TemplateSection_{sec}"]</span>
               <span class="ms-auto text-muted small">
-                @(Model.GetAttributes(sec).Count) attr.
+                @Localizer["AttributeCount", Model.GetAttributes(sec).Count]
               </span>
             </button>
           }
 
           <button type="submit" class="btn btn-primary w-100 mt-1" id="moveSubmitBtn" disabled>
-            Move
+            @Localizer["Move"]
           </button>
         </form>
       </div>
@@ -300,15 +274,13 @@
     }
 
     async function loadLibrary(positionId) {
-      const html = await fetch(`/PositionTemplate/GetAttributeLibrary?page=1&pageSize=10&positionId=${positionId}`)
-        .then(r => r.text());
-      document.getElementById('libraryList').innerHTML = html;
+      const response = await fetch(`/PositionTemplate/GetAttributeLibrary?page=1&&positionId=${positionId}`)
+      document.getElementById('libraryList').innerHTML = await response.text();
     }
 
     async function loadTypes() {
-      const html = await fetch(`/PositionTemplate/GetAttributeTypes`)
-        .then(r => r.text());
-      document.getElementById('filterBtns').innerHTML = html;
+      const response = await fetch(`/PositionTemplate/GetAttributeTypes`)
+      document.getElementById('filterBtns').innerHTML = await response.text();
     }
 
     document.addEventListener('DOMContentLoaded', async () => {

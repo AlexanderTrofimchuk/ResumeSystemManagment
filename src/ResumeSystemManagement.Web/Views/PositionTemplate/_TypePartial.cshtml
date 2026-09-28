@@ -1,6 +1,8 @@
-@model List<ResumeSystemManagement.Application.DTOs.Attribute.AttributeTypeDTo>
+@using Microsoft.AspNetCore.Mvc.Localization
+@model List<ResumeSystemManagement.Application.DTOs.Attributes.AttributeTypeDto>
+@inject IViewLocalizer Localizer
 
-<button class="btn btn-primary btn-sm rounded-pill" data-type="all">All</button>
+<button class="btn btn-primary btn-sm rounded-pill" data-type="all">@Localizer["All"]</button>
 @foreach (var type in Model)
 {
     <button class="btn btn-outline-secondary btn-sm rounded-pill" data-type-id="@type.Id" data-type="text">@type.Title</button>

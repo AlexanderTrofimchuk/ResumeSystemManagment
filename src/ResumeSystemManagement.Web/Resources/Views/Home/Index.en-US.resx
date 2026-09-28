@@ -24,6 +24,9 @@
     <data name="Candidates" xml:space="preserve">
         <value>Candidates</value>
     </data>
+    <data name="Dashboard" xml:space="preserve">
+        <value>Dashboard</value>
+    </data>
     <data name="LatestPositions" xml:space="preserve">
         <value>Latest Positions</value>
     </data>

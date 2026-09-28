@@ -21,6 +21,9 @@
     <data name="Candidates" xml:space="preserve">
         <value>Kandidaten</value>
     </data>
+    <data name="Dashboard" xml:space="preserve">
+        <value>Übersicht</value>
+    </data>
     <data name="ColumnCreated" xml:space="preserve">
         <value>Erstellt</value>
     </data>

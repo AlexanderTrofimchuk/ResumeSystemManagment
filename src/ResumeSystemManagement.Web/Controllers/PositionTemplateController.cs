@@ -1,9 +1,9 @@
 ﻿using FluentResults;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ResumeSystemManagement.Application.DTOs.Attribute;
 using ResumeSystemManagement.Application.Interfaces.Attributes;
-using ResumeSystemManagement.Application.Interfaces.Position;
+using ResumeSystemManagement.Application.Interfaces.Positions;
+using ResumeSystemManagement.Application.Mappers;
 using ResumeSystemManagement.Core.Enums;
 using ResumeSystemManagement.Core.ReadModels;
 using ResumeSystemManagement.Web.ViewModels.Enums;
@@ -31,10 +31,10 @@ public class PositionTemplateController(IAttributeTypeService typeService,
 
     [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
     [HttpGet]
-    public async Task<IActionResult> GetAttributeLibrary(int page, int pageSize, int positionId)
+    public async Task<IActionResult> GetAttributeLibrary(int page, int positionId)
     {
         var attributes = await _libraryService.GetAttributesAsync(page);
-        var attributeTemplate = attributes.Value.Attributes.Select(a => a.ToAttributeTemplate());
+        var attributeTemplate = attributes.Value.Attributes.Select(a => a.AttributeDetailToTemplate());
         var addedResult = await _templateService.GetAttributeInPosition(positionId);
         ViewBag.AddedAttributes = addedResult.Value;
         return PartialView("_LibraryPartial",attributeTemplate);
@@ -53,8 +53,8 @@ public class PositionTemplateController(IAttributeTypeService typeService,
     public async Task<IActionResult> AddAttribute(int positionId, int attributeId, TemplateSection section)
     {
         var assignResult = await _templateService.AssignAttributeAsync(positionId, attributeId, section);
-        if (assignResult.IsFailed) return ShowOperationErrors(assignResult);
-        return AlertSuccessExecution(positionId, "Attribute is assigned");
+        return assignResult.IsFailed ? ShowOperationErrors(assignResult) 
+            : AlertSuccessExecution(positionId, "Attribute is assigned");
     }
 
     [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
@@ -62,10 +62,8 @@ public class PositionTemplateController(IAttributeTypeService typeService,
     public async Task<IActionResult> MoveAttribute(int positionId, int attributeId, TemplateSection section)
     {
         var updateResult = await _templateService.UpdateSectionAsync(positionId, attributeId, section);
-        if (updateResult.IsFailed)
-            RedirectWithMessage(GetErrorsMessage(updateResult),
-                MessageColor.Danger, ActionName.Template, ControllerName.PositionTemplate, new { Id = positionId });
-        return AlertSuccessExecution(positionId, "Attribute is moved");
+        return updateResult.IsFailed ? ShowOperationErrors(updateResult) 
+            : AlertSuccessExecution(positionId, "Attribute is moved");
     }
 
     [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
@@ -73,8 +71,8 @@ public class PositionTemplateController(IAttributeTypeService typeService,
     public async Task<IActionResult> RemoveAttribute(int positionId, int attributeId)
     {
         var deleteResult = await _templateService.DeleteAttributeAsync(positionId, attributeId);
-        if (deleteResult.IsFailed)  return ShowOperationErrors(deleteResult);
-        return AlertSuccessExecution(positionId, "Attribute is deleted from template");
+        return deleteResult.IsFailed ? ShowOperationErrors(deleteResult) 
+            : AlertSuccessExecution(positionId, "Attribute is deleted from template");
     }
 
     [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
@@ -82,8 +80,8 @@ public class PositionTemplateController(IAttributeTypeService typeService,
     public async Task<IActionResult> PublishPosition(int id)
     {
         var publishResult = await _positionService.PublishPosition(id);
-        if (publishResult.IsFailed)  return ShowOperationErrors(publishResult);
-        return AlertSuccessExecution(id, "Position was published");
+        return publishResult.IsFailed ? ShowOperationErrors(publishResult) 
+            : AlertSuccessExecution(id, "Position was published");
     }
     
     [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
@@ -91,8 +89,8 @@ public class PositionTemplateController(IAttributeTypeService typeService,
     public async Task<IActionResult> DraftPosition(int id)
     {
         var publishResult = await _positionService.DraftPosition(id);
-        if (publishResult.IsFailed)  return ShowOperationErrors(publishResult);
-        return AlertSuccessExecution(id, "Position was published");
+        return publishResult.IsFailed ? ShowOperationErrors(publishResult) 
+            : AlertSuccessExecution(id, "Position was published");
     }
 
     private IActionResult AlertSuccessExecution(int id, string successMessage)

@@ -36,7 +36,7 @@ function reindex(list) {
         if (hidden) hidden.name = `DropdownOptions[${i}].Id`;
         if (text) {
             text.name        = `DropdownOptions[${i}].Value`;
-            text.placeholder = `Вариант ${i + 1}`;
+            text.placeholder = list.dataset.optionPlaceholder.replace('{0}', i + 1);
         }
     });
 }
@@ -49,11 +49,13 @@ function addOption(list) {
             <input type="hidden" name="DropdownOptions[${i}].Id" value="0" />
             <input type="text" class="form-control"
                    name="DropdownOptions[${i}].Value"
-                   placeholder="Вариант ${i + 1}"
                    autocomplete="off" />
-            <button type="button" class="btn btn-outline-danger remove-edit-option" title="Удалить">
+            <button type="button" class="btn btn-outline-danger remove-edit-option">
                 <i class="bi bi-trash"></i>
             </button>`;
+    row.querySelector('input[type="text"]').placeholder =
+        list.dataset.optionPlaceholder.replace('{0}', i + 1);
+    row.querySelector('button').title = list.dataset.removeOption;
     list.appendChild(row);
     reindex(list);
 }

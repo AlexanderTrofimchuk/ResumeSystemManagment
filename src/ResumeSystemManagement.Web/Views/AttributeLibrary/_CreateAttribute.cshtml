@@ -1,7 +1,9 @@
-@model ResumeSystemManagement.Application.DTOs.Attribute.CreateAttributeDto
+@using Microsoft.AspNetCore.Mvc.Localization
+@model ResumeSystemManagement.Application.DTOs.Attributes.CreateAttributeDto
+@inject IViewLocalizer Localizer
 
 @{
-    ViewData["Title"] = "Create Attribute";
+    ViewData["Title"] = Localizer["PageTitle"];
 }
 
 <div class="modal fade" id="createAttributeModal" tabindex="-1"
@@ -11,9 +13,9 @@
 
             <div class="modal-header border-bottom px-4 py-3">
                 <h5 class="modal-title fw-semibold" id="createAttributeModalLabel">
-                    New Attribute
+                    @Localizer["NewAttribute"]
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Localizer["Close"]"></button>
             </div>
 
             <form asp-action="CreateAttribute" method="post" novalidate id="createAttributeForm">
@@ -26,12 +28,12 @@
                         <!-- Category -->
                         <div class="col-sm-6">
                             <label asp-for="CategoryId" class="form-label fw-medium">
-                                Category <span class="text-danger">*</span>
+                                @Localizer["Category"] <span class="text-danger">*</span>
                             </label>
                             <select asp-for="CategoryId"
                                     asp-items="ViewBag.Categories"
                                     class="form-select">
-                                <option value="">— select —</option>
+                                <option value="">@Localizer["SelectOption"]</option>
                             </select>
                             <span asp-validation-for="CategoryId" class="text-danger small"></span>
                         </div>
@@ -39,12 +41,12 @@
                         <!-- Type -->
                         <div class="col-sm-6">
                             <label asp-for="TypeId" class="form-label fw-medium">
-                                Type <span class="text-danger">*</span>
+                                @Localizer["Type"] <span class="text-danger">*</span>
                             </label>
                             <select asp-for="TypeId"
                                     asp-items="ViewBag.Types"
                                     class="form-select">
-                                <option value="">— select —</option>
+                                <option value="">@Localizer["SelectOption"]</option>
                             </select>
                             <span asp-validation-for="TypeId" class="text-danger small"></span>
                         </div>
@@ -53,45 +55,47 @@
                     <!-- Title -->
                     <div class="mb-3">
                         <label asp-for="Title" class="form-label fw-medium">
-                            Title <span class="text-danger">*</span>
+                            @Localizer["Title"] <span class="text-danger">*</span>
                         </label>
                         <input asp-for="Title"
                                class="form-control"
-                               placeholder="Enter attribute title"
+                               placeholder="@Localizer["TitlePlaceholder"]"
                                autocomplete="off" />
                         <span asp-validation-for="Title" class="text-danger small"></span>
                     </div>
 
                     <!-- Description -->
                     <div class="mb-3">
-                        <label asp-for="Description" class="form-label fw-medium">Description</label>
+                        <label asp-for="Description" class="form-label fw-medium">@Localizer["Description"]</label>
                         <textarea asp-for="Description"
                                   class="form-control"
                                   rows="3"
-                                  placeholder="Brief description (optional)"></textarea>
+                                  placeholder="@Localizer["DescriptionPlaceholder"]"></textarea>
                         <span asp-validation-for="Description" class="text-danger small"></span>
                     </div>
 
                     <!-- Dropdown Options (visible only when Type = Dropdown) -->
                     <div class="mb-3 mt-3" id="dropdownOptionsSection" style="display:none;">
-                        <label class="form-label fw-medium">
-                            Options <span class="text-danger">*</span>
-                        </label>
-                        <div id="dropdownOptionsList" class="d-flex flex-column gap-2 mb-2">
+                        <div class="form-label fw-medium">
+                            @Localizer["Options"] <span class="text-danger">*</span>
+                        </div>
+                        <div id="dropdownOptionsList" class="d-flex flex-column gap-2 mb-2"
+                             data-option-placeholder="@Localizer["OptionPlaceholder"]"
+                             data-remove-option="@Localizer["Remove"]">
                         </div>
                         <button type="button" class="btn btn-outline-secondary btn-sm" id="addDropdownOption">
-                            <i class="bi bi-plus-lg me-1"></i> Add option
+                            <i class="bi bi-plus-lg me-1"></i> @Localizer["AddOption"]
                         </button>
-                        <div class="form-text">Add at least one option for the dropdown list.</div>
+                        <div class="form-text">@Localizer["AtLeastOneOption"]</div>
                     </div>
 
                 </div>
 
                 <div class="modal-footer border-top px-4 py-3">
                     <button type="button" class="btn btn-outline-secondary"
-                            data-bs-dismiss="modal">Cancel</button>
+                            data-bs-dismiss="modal">@Localizer["Cancel"]</button>
                     <button type="submit" class="btn btn-primary px-4">
-                        <i class="bi bi-check-lg me-1"></i> Create
+                        <i class="bi bi-check-lg me-1"></i> @Localizer["Create"]
                     </button>
                 </div>
             </form>
@@ -110,7 +114,7 @@
     const addBtn     = document.getElementById('addDropdownOption');
 
     function isDropdown() {
-        return typeSelect && typeSelect.value == DROPDOWN_TYPE_ID;
+        return typeSelect && typeSelect.value === DROPDOWN_TYPE_ID;
     }
 
     function toggleSection() {
@@ -129,21 +133,25 @@
         row.innerHTML = `
             <input type="text"
                    class="form-control"
-                   name="DropDownOptions[${idx}]"
-                   placeholder="Option ${idx + 1}"
+                   name="DropdownOptions[${idx}]"
                    value="${value ? value.replace(/"/g, '&quot;') : ''}"
                    autocomplete="off" />
-            <button type="button" class="btn btn-outline-danger remove-option" title="Remove">
+            <button type="button" class="btn btn-outline-danger remove-option">
                 <i class="bi bi-trash"></i>
             </button>`;
+        row.querySelector('input').placeholder = list.dataset.optionPlaceholder.replace('{0}', idx + 1);
+        row.querySelector('input').setAttribute('aria-label', row.querySelector('input').placeholder);
+        row.querySelector('button').title = list.dataset.removeOption;
+        row.querySelector('button').setAttribute('aria-label', list.dataset.removeOption);
         list.appendChild(row);
         reindex();
     }
 
     function reindex() {
         list.querySelectorAll('input[type="text"]').forEach((input, i) => {
-            input.name        = `DropDownOptions[${i}]`;
-            input.placeholder = `Option ${i + 1}`;
+            input.name        = `DropdownOptions[${i}]`;
+            input.placeholder = list.dataset.optionPlaceholder.replace('{0}', i + 1);
+            input.setAttribute('aria-label', input.placeholder);
         });
     }
 

@@ -1,45 +1,17 @@
-﻿<style>
-    /* Position library: keep the table visible at every screen width. */
-    .um-container {
-        display: block !important;
-        width: 100%;
-        max-width: 1400px;
-        margin-left: auto !important;
-        margin-right: auto !important;
-    }
-
-    .um-toolbar {
-        width: 100%;
-    }
-
-    .um-table-wrapper {
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        width: 100%;
-    }
-
-    .um-scroll-area {
-        display: block !important;
-        width: 100%;
-        overflow-x: auto;
-        overflow-y: visible;
-    }
-
-    .um-table {
-        display: table !important;
-        width: 100%;
-        min-width: 900px;
-    }
-</style>
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 
 @using ResumeSystemManagement.Core.ReadModels
-@model ResumeSystemManagement.Application.DTOs.Position.PositionDetails
+@model ResumeSystemManagement.Application.DTOs.Positions.PositionDetails
 @{
-    ViewData["Title"] = "Position Library";
+    ViewData["Title"] = Localizer["PageTitle"];
 }
 
-<div class="container mx-auto justify-content-center align-items-center mt-2 robot-mono-font um-container">
+@section Styles {
+    <link rel="stylesheet" href="~/css/responsive.position.css" asp-append-version="true"/>
+}
+
+<div class="container mx-auto justify-content-center align-items-center mt-2 robot-mono-font um-container position-library-page">
 
     <div class="toolbar d-flex align-items-center gap-2 p-2 mb-3 border rounded bg-light shadow-sm um-toolbar">
 
@@ -51,13 +23,14 @@
             <input type="text"
                    name="name"
                    class="form-control form-control-sm"
-                   placeholder="Search by title or description..."
-                   aria-label="Search positions"
+                   placeholder="@Localizer["SearchPlaceholder"]"
+                   aria-label="@Localizer["SearchPositions"]"
                    value="@Context.Request.Query["name"]">
 
             <button type="submit"
                     class="btn btn-outline-secondary btn-sm flex-shrink-0"
-                    title="Search">
+                    title="@Localizer["Search"]"
+                    aria-label="@Localizer["Search"]">
                 <i class="bi bi-search"></i>
             </button>
 
@@ -68,10 +41,11 @@
             <button
                 id="btnCreate"
                 class="btn btn-outline-primary btn-sm"
-                title="Create position"
+                title="@Localizer["CreatePosition"]"
+                aria-label="@Localizer["CreatePosition"]"
                 data-bs-toggle="modal"
                 data-bs-target="#createPositionModal">
-                <span class="btn-text"><i class="bi bi-plus-square-fill"></i></span>
+                <span class="btn-text"><i class="bi bi-plus-square-fill" aria-hidden="true"></i></span>
             </button>
             
             <button asp-action="DuplicatePosition"
@@ -80,16 +54,18 @@
                     id="btnDuplicate"
                     class="btn btn-outline-warning btn-sm"
                     disabled
-                    title="Duplicate position">
-                <i class="bi bi-copy"></i>
+                    title="@Localizer["DuplicatePosition"]"
+                    aria-label="@Localizer["DuplicatePosition"]">
+                <i class="bi bi-copy" aria-hidden="true"></i>
             </button>
             
             <button
                 id="btnEdit"
                 class="btn btn-outline-secondary btn-sm"
                 disabled
-                title="Edit position">
-                <i class="bi bi-pencil-fill"></i>
+                title="@Localizer["EditPosition"]"
+                aria-label="@Localizer["EditPosition"]">
+                <i class="bi bi-pencil-fill" aria-hidden="true"></i>
             </button>
             
             <button asp-controller="Position"
@@ -99,8 +75,9 @@
                     id="btnTemplate"
                     class="btn btn-outline-info btn-sm"
                     disabled
-                    title="Open template">
-                <i class="bi bi-file-earmark-text"></i>
+                    title="@Localizer["OpenTemplate"]"
+                    aria-label="@Localizer["OpenTemplate"]">
+                <i class="bi bi-file-earmark-text" aria-hidden="true"></i>
             </button>
 
             <button asp-action="DeletePositions"
@@ -109,8 +86,9 @@
                     id="btnDelete"
                     class="btn btn-outline-danger btn-sm"
                     disabled
-                    title="Delete position/positions">
-                <i class="bi bi-dash-square-fill"></i>
+                    title="@Localizer["DeletePositions"]"
+                    aria-label="@Localizer["DeletePositions"]">
+                <i class="bi bi-dash-square-fill" aria-hidden="true"></i>
             </button>
         }
 
@@ -118,7 +96,7 @@
 
     <form method="post" id="mainForm">
         <div class="um-table-wrapper">
-            <div class="um-scroll-area">
+            <div class="table-responsive um-scroll-area">
                 <table class="table table-striped-columns um-table text-center">
                     <thead>
                     <tr>
@@ -127,16 +105,16 @@
                                    type="checkbox"
                                    name="selectAll"
                                    id="selectAll"
-                                   aria-label="Select All">
+                                   aria-label="@Localizer["SelectAll"]">
                         </th>
-                        <th scope="col">Title</th>
-                        <th scope="col">Short Description</th>
-                        <th scope="col">Level</th>
-                        <th scope="col">Permissions</th>
-                        <th scope="col">Publish Status</th>
-                        <th scope="col">Max Projects</th>
-                        <th scope="col">Created On</th>
-                        <th scope="col">Closed On</th>
+                        <th scope="col">@Localizer["Title"]</th>
+                        <th scope="col">@Localizer["ShortDescription"]</th>
+                        <th scope="col">@Localizer["Level"]</th>
+                        <th scope="col">@Localizer["Permissions"]</th>
+                        <th scope="col">@Localizer["PublishStatus"]</th>
+                        <th scope="col">@Localizer["MaxProjects"]</th>
+                        <th scope="col">@Localizer["CreatedOn"]</th>
+                        <th scope="col">@Localizer["ClosedOn"]</th>
                     </tr>
                     </thead>
 
@@ -158,9 +136,9 @@
                                     <a asp-action="GetPositionDetail" asp-controller="Position" asp-route-positionId=@item.Id>@item.Title</a>
                                 </td>
                                 <td>@item.Description</td>
-                                <td>@item.Level</td>
-                                <td class="position-permissions">@item.Permissions</td>
-                                <td >@item.Status</td>
+                                <td>@Localizer[$"PositionLevel_{item.Level}"]</td>
+                                <td class="position-permissions">@Localizer[$"PositionPermission_{item.Permissions}"]</td>
+                                <td>@Localizer[$"PublishStatus_{item.Status}"]</td>
                                 <td>@item.MaxProjects</td>
                                 <td>@item.CreatedOn.ToString("yyyy-MM-dd")</td>
                                 <td>@item.ClosedAt?.ToString("yyyy-MM-dd")</td>
@@ -171,14 +149,14 @@
                     {
                         <tr>
                             <td colspan="9" class="text-center">
-                                <p class="h3 my-3">There are no positions</p>
+                                <p class="h3 my-3">@Localizer["NoPositions"]</p>
                             </td>
                         </tr>
                     }
 
                     <tr id="noSearchResults" style="display: none;">
                         <td colspan="9" class="text-center">
-                            <p class="h3 my-3">No positions found</p>
+                            <p class="h3 my-3">@Localizer["NoPositionsFound"]</p>
                         </td>
                     </tr>
 
@@ -187,6 +165,25 @@
             </div>
         </div>
     </form>
+
+    @{
+        var positionRouteValues = new Dictionary<string, string>();
+        var positionSearch = ViewContext.HttpContext.Request.Query["name"].ToString();
+        var positionAction = string.IsNullOrWhiteSpace(positionSearch) ? "Index" : "SearchPosition";
+        if (!string.IsNullOrWhiteSpace(positionSearch))
+        {
+            positionRouteValues["name"] = positionSearch;
+        }
+    }
+    @await Html.PartialAsync("_Pagination", new ResumeSystemManagement.Web.ViewModels.PaginationViewModel
+    {
+        CurrentPage = Model.CurrentPage,
+        TotalPages = Model.TotalPages,
+        TotalCount = Model.TotalCount,
+        Controller = "Position",
+        Action = positionAction,
+        RouteValues = positionRouteValues
+    })
 </div>
 
 @await Html.PartialAsync("_CreatePosition", Model.CreatePositionDto)

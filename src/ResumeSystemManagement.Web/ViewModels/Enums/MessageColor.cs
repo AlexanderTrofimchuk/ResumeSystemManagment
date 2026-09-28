@@ -3,6 +3,5 @@
 public enum MessageColor
 {
     Danger,
-    Success,
-    Warning,
+    Success
 }

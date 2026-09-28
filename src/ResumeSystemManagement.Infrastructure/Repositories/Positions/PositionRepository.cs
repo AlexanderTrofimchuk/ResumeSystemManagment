@@ -19,14 +19,40 @@ public class PositionRepository(ApplicationDbContext context) : IPositionReposit
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
-    public Task<List<Position>> GetAllByNameAsync(string name)
+    public Task<List<Position>> GetAllByNameAsync(string name, int pageNumber, bool includeUnpublished)
     {
-        return _context.Positions
-            .Where(p => EF.Functions.ILike(p.Title,$"{name}%"))
+        return GetNameSearchQuery(name, includeUnpublished)
+            .OrderBy(p => p.Id)
+            .Skip((pageNumber - 1) * PaginationConstants.DefaultPageSize)
+            .Take(PaginationConstants.DefaultPageSize)
             .ToListAsync();
     }
 
+    public Task<int> GetCountByNameAsync(string name, bool includeUnpublished)
+    {
+        return GetNameSearchQuery(name, includeUnpublished).CountAsync();
+    }
+
+    private IQueryable<Position> GetNameSearchQuery(string name, bool includeUnpublished)
+    {
+        var query = _context.Positions
+            .Where(p => EF.Functions.ILike(p.Title, $"{name}%"));
+        if (!includeUnpublished)
+        {
+            query = query.Where(p =>
+                p.PublishStatus == PublishStatus.Publish &&
+                p.Permissions == PositionPermissions.Public);
+        }
+
+        return query;
+    }
+    
     public Task<int> GetCountAsync()
+    {
+        return _context.Positions.CountAsync();
+    }
+    
+    public Task<int> GetPublishCountAsync()
     {
         return _context.Positions.CountAsync(
             p => p.PublishStatus == PublishStatus.Publish && p.Permissions == PositionPermissions.Public);
@@ -82,10 +108,21 @@ public class PositionRepository(ApplicationDbContext context) : IPositionReposit
         await _context.SaveChangesAsync();
     }
 
-    public Task<List<Position>> GetAllAsync(int pageNumber, int pageSize)
+    public Task<List<Position>> GetPublishPositionAsync(int pageNumber)
     {
-        return _context.Positions.Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
+        return _context.Positions
+            .Where(p => p.PublishStatus == PublishStatus.Publish && p.Permissions == PositionPermissions.Public)
+            .OrderByDescending(p => p.Id)
+            .Skip((pageNumber - 1) * PaginationConstants.DefaultPageSize)
+            .Take(PaginationConstants.DefaultPageSize)
+            .ToListAsync();
+    }
+    public Task<List<Position>> GetAllAsync(int pageNumber)
+    {
+        return _context.Positions
+            .OrderBy(p => p.Id)
+            .Skip((pageNumber - 1) * PaginationConstants.DefaultPageSize)
+            .Take(PaginationConstants.DefaultPageSize)
             .ToListAsync();
     }
 

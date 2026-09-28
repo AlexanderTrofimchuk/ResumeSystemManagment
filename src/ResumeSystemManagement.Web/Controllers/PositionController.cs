@@ -1,8 +1,8 @@
 ﻿using FluentResults;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ResumeSystemManagement.Application.DTOs.Position;
-using ResumeSystemManagement.Application.Interfaces.Position;
+using ResumeSystemManagement.Application.DTOs.Positions;
+using ResumeSystemManagement.Application.Interfaces.Positions;
 using ResumeSystemManagement.Core.ReadModels;
 using ResumeSystemManagement.Web.ViewModels.Enums;
 
@@ -11,12 +11,13 @@ namespace ResumeSystemManagement.Web.Controllers;
 public class PositionController(IPositionService positionService): BaseController
 {
     private readonly IPositionService _positionService = positionService;
-    public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
+    public async Task<IActionResult> Index(int page = 1)
     {
-        var positons = await _positionService.GetAllPositions(page, pageSize);
+        page = Math.Max(page, 1);
+        var positons = await _positionService.GetAllPositions(page);
         return View(positons.Value);
     }
-
+    
     [HttpGet]
     public async Task<IActionResult> GetPositionDetail(int positionId)
     {
@@ -25,10 +26,16 @@ public class PositionController(IPositionService positionService): BaseControlle
         return View("PositionDetail",positionResult.Value);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> SearchPosition(string name)
+    [HttpGet]
+    public async Task<IActionResult> SearchPosition(string name, int page = 1)
     {
-        var searchResult = await _positionService.GetAllPositionsByName(name);
+        page = Math.Max(page, 1);
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return RedirectToAction(nameof(Index), new { page });
+        }
+
+        var searchResult = await _positionService.GetAllPositionsByName(name, page);
         if (searchResult.IsFailed)  return AlertErrors(searchResult.ToResult());
         return  View("Index", searchResult.Value);
     }
