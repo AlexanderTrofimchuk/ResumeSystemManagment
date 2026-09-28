@@ -76,7 +76,8 @@ public class PositionTemplateController(IAttributeTypeService typeService,
     }
 
     [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
-    [HttpGet]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> PublishPosition(int id)
     {
         var publishResult = await _positionService.PublishPosition(id);
@@ -85,7 +86,8 @@ public class PositionTemplateController(IAttributeTypeService typeService,
     }
     
     [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
-    [HttpGet]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> DraftPosition(int id)
     {
         var publishResult = await _positionService.DraftPosition(id);

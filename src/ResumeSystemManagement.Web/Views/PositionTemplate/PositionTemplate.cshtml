@@ -46,22 +46,20 @@
       @(Model.PublishStatus == PublishStatus.Publish ? Localizer["Published"] : Localizer["Draft"])
     </span>
 
-    <button class="btn btn-sm btn-primary"
-       asp-action="PublishPosition"
-       asp-controller="PositionTemplate"
-       asp-route-id="@Model.PositionId"
-       disabled="@(Model.PublishStatus == PublishStatus.Publish)">
-      <i class="bi bi-check2 me-1"></i>
-      @(Model.PublishStatus == PublishStatus.Publish ? Localizer["Published"] : Localizer["Publish"])
-    </button>
-    <button class="btn btn-sm btn-primary"
-       asp-action="DraftPosition"
-       asp-controller="PositionTemplate"
-       asp-route-id="@Model.PositionId"
-       disabled="@(Model.PublishStatus == PublishStatus.Draft)">
-      <i class="bi bi-check2 me-1"></i>
-      @Localizer["MoveToDraft"]
-    </button>
+    <form asp-action="PublishPosition" asp-controller="PositionTemplate" asp-route-id="@Model.PositionId" method="post">
+      <button type="submit" class="btn btn-sm btn-primary"
+              disabled="@(Model.PublishStatus == PublishStatus.Publish)">
+        <i class="bi bi-check2 me-1"></i>
+        @(Model.PublishStatus == PublishStatus.Publish ? Localizer["Published"] : Localizer["Publish"])
+      </button>
+    </form>
+    <form asp-action="DraftPosition" asp-controller="PositionTemplate" asp-route-id="@Model.PositionId" method="post">
+      <button type="submit" class="btn btn-sm btn-primary"
+              disabled="@(Model.PublishStatus == PublishStatus.Draft)">
+        <i class="bi bi-check2 me-1"></i>
+        @Localizer["MoveToDraft"]
+      </button>
+    </form>
   </div>
 </nav>
 
