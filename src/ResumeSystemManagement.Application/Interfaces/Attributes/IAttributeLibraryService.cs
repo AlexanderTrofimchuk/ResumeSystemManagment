@@ -9,6 +9,7 @@ public interface IAttributeLibraryService
     Task<Result<AttributeLibrary>> GetAttributeLibrary(int attributeId);
     Task<Result<EditAttributeDto>> GetEditAttributeAsync(int id);
     Task<Result<AttributeDetails>> GetAttributesByNameAsync(string name, int page);
+    Task<Result<AttributeDetails>> GetAttributesByNameType(string name, int typeId, int page = 1);
     Task<Result<AttributeDetails>> GetAttributesAsync(int page);
     Task<Result<int>> CreateAttributeAsync(CreateAttributeDto dto);
     Task<Result<bool>> AddDropdownOptions(int id, CreateAttributeDto dto);

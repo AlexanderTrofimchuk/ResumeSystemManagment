@@ -26,6 +26,17 @@ public class AttributeLibraryRepository(ApplicationDbContext context) : IAttribu
         return _context.AttributeLibraries.Where(a => a.CategoryId == categoryId).ToListAsync();
     }
 
+    public Task<List<AttributeDetail>> GetByNameTypeAsync(string name, int page ,int typeId)
+    {
+        return _context.AttributeLibraries
+            .Where(a => !a.IsBuiltIn && EF.Functions.ILike(a.Title, $"{name}%") && a.TypeId == typeId)
+            .OrderBy(a => a.Id)
+            .Skip((page - 1) * PaginationConstants.DefaultPageSize)
+            .Take(PaginationConstants.DefaultPageSize)
+            .Select(a => a.ToAttributeDetail())
+            .ToListAsync();
+    }
+
     public Task<int> GetTotalCountAsync()
     {
         return _context.AttributeLibraries.CountAsync(a => !a.IsBuiltIn);

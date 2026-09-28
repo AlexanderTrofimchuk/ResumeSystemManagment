@@ -41,6 +41,14 @@ public class PositionTemplateController(IAttributeTypeService typeService,
     }
 
     [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
+    [HttpPost]
+    public async Task<IActionResult> SearchAttribute(string name, int typeId, int page = 1)
+    {
+        var attributes = await _libraryService.GetAttributesByNameType(name,typeId, page);
+        return PartialView("_LibraryPartial", attributes.Value);
+    }
+
+    [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
     [HttpGet]
     public async Task<IActionResult> GetAttributeTypes()
     {
