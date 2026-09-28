@@ -1,6 +1,8 @@
-﻿@model ResumeSystemManagement.Web.ViewModels.RegistrationViewModel
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@model ResumeSystemManagement.Web.ViewModels.RegistrationViewModel
+@inject IViewLocalizer Localizer
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = Localizer["PageTitle"];
 }
 
 @section Styles {
@@ -9,34 +11,34 @@
 
 <div class="container-fluid p-0 robot-mono-font">
     <div class="d-flex flex-column justify-content-center align-items-center position-relative login-center">
-            <div class="reg-form-box shadow p-4 mb-5 bg-body-tertiary rounded">
-                <h2 class="mb-4 reg-heading text-center">Sign up</h2>
-                <form asp-antiforgery="true" asp-action="RegisterUser" method="post" class="reg-form px-5" novalidate>
+            <div class="reg-form-box shadow p-3 mb-5 bg-body-tertiary rounded">
+                <h2 class="mb-3 reg-heading text-center">@Localizer["SignUpHeading"]</h2>
+                <form asp-antiforgery="true" asp-action="RegisterUser" method="post" class="reg-form px-4" novalidate>
                     <div class="mb-3">
-                        <label asp-for="FullName" class="form-label"><b>Full name</b></label>
+                        <label asp-for="FullName" class="form-label"><b>@Localizer["FullNameLabel"]</b></label>
                         <input asp-for="FullName"
                                type="text"
-                               class="form-control border-black reg-input"
-                               placeholder="Enter fullname">
+                               class="form-control form-control-sm border-black reg-input"
+                               placeholder="@Localizer["FullNamePlaceholder"]">
                         <span asp-validation-for="FullName" class="text-danger" style="font-size: 0.875em;"></span>
                     </div>
                     <div class="mb-2">
-                        <label asp-for="Email" class="form-label mb-1"><b>Email address</b></label>
+                        <label asp-for="Email" class="form-label mb-1"><b>@Localizer["EmailLabel"]</b></label>
                         <input asp-for="Email"
                                type="text"
                                class="form-control form-control-sm border-black reg-input"
-                               placeholder="Enter email">
+                               placeholder="@Localizer["EmailPlaceholder"]">
                         <span asp-validation-for="Email" class="text-danger" style="font-size: 0.875em;"></span>
                     </div>
                     <div class="mb-3">
-                        <label asp-for="Password" class="form-label"><b>Password</b></label>
+                        <label asp-for="Password" class="form-label"><b>@Localizer["PasswordLabel"]</b></label>
                         <div class="input-group">
                             <input asp-for="Password"
                                    type="password"
-                                   class="form-control border-black reg-input"
-                                   placeholder="Enter password"
+                                   class="form-control form-control-sm border-black reg-input"
+                                   placeholder="@Localizer["PasswordPlaceholder"]"
                                    maxlength="12">
-                            <button class="btn btn-outline-secondary"
+                            <button class="btn btn-outline-secondary btn-sm"
                                     type="button"
                                     id="togglePassword">
                                 <i class="bi bi-eye" id="iconPassword"></i>
@@ -45,14 +47,14 @@
                         <span asp-validation-for="Password" class="text-danger" style="font-size: 0.875em;"></span>
                     </div>
                     <div class="mb-3">
-                        <label asp-for="ConfirmPassword" class="form-label"><b>Confirm Password</b></label>
+                        <label asp-for="ConfirmPassword" class="form-label"><b>@Localizer["ConfirmPasswordLabel"]</b></label>
                         <div class="input-group">
                             <input asp-for="ConfirmPassword"
                                    type="password"
-                                   class="form-control border-black reg-input"
-                                   placeholder="Confirm password"
+                                   class="form-control form-control-sm border-black reg-input"
+                                   placeholder="@Localizer["ConfirmPasswordPlaceholder"]"
                                    maxlength="12">
-                            <button class="btn btn-outline-secondary"
+                            <button class="btn btn-outline-secondary btn-sm"
                                     type="button"
                                     id="toggleConfirmPassword">
                                 <i class="bi bi-eye" id="iconConfirmPassword"></i>
@@ -64,34 +66,23 @@
                     <div class="d-flex justify-content-center">
                         <button type="submit"
                                 class="btn btn-primary robot-mono-font reg-btn-submit px-4">
-                            Sign up
+                            @Localizer["SignUpButton"]
                         </button>
                     </div>
                 </form>
                 <p class="reg-footer-text mt-3 mb-0">
-                    Already have an account?
-                    <a asp-action="LoginPage" asp-controller="Account">Sign in</a>
+                    @Localizer["HaveAccountText"]
+                    <a asp-action="LoginPage" asp-controller="Account">@Localizer["SignInLink"]</a>
                 </p>
             </div>
         </div>
 </div>
 
 @section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="~/js/site.js"></script>
     <script>
         changePasswordIcon('Password', 'toggleIcon', 'togglePassword');
         changePasswordIcon('ConfirmPassword', 'iconConfirmPassword', 'toggleConfirmPassword');
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-            crossorigin="anonymous"
-            integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"
-            crossorigin="anonymous"
-            integrity="sha512-rstIgDs0xPgmG6RX1Aba4KV5cWJbAMcvRCVmglpam9SoHZiUCyQVDdH2LPlxoHtrv17XWblE/V/PP+Tr04hbtA==">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"
-            crossorigin="anonymous"
-            integrity="sha512-xq+Vm8jC94ynOikewaQXMEkJIOBp7iArs3IhFWSWdRT3Pq8wFz46p+ZDFAR7kHnSFf+zUv52B3prRYnbDRdgog==">
-    </script>   
 }

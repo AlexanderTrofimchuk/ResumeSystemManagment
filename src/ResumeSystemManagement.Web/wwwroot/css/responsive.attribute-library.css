@@ -1,0 +1,63 @@
+.attribute-library-page {
+    width: 100%;
+    max-width: 1400px;
+    margin-inline: auto;
+}
+
+.attribute-library-page .um-toolbar {
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.attribute-library-page .um-table-wrapper,
+.attribute-library-page .um-scroll-area {
+    width: 100%;
+    min-width: 0;
+}
+
+.attribute-library-page .um-table {
+    width: 100%;
+    min-width: 700px;
+    margin-bottom: 0;
+}
+
+.attribute-library-page .um-table th,
+.attribute-library-page .um-table td {
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+}
+
+.attribute-library-page .um-toolbar .btn {
+    min-width: 2.25rem;
+    min-height: 2.25rem;
+}
+
+@media (max-width: 767.98px) {
+    .attribute-library-page {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .attribute-library-page .um-toolbar {
+        gap: 0.5rem !important;
+    }
+
+    .attribute-library-page .um-toolbar > form {
+        flex: 1 1 100%;
+    }
+
+    .attribute-library-page .um-table {
+        font-size: 0.85rem;
+    }
+
+    .attribute-library-page .um-table th,
+    .attribute-library-page .um-table td {
+        padding: 0.5rem;
+    }
+}
+
+@media (max-width: 359.98px) {
+    .attribute-library-page .um-toolbar > button {
+        flex: 1 1 auto;
+    }
+}

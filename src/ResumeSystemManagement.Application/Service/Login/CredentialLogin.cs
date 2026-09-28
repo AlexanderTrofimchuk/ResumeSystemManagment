@@ -1,7 +1,7 @@
 ﻿using FluentResults;
 using FluentResults.Extensions;
 using ResumeSystemManagement.Application.Interfaces.Auth;
-using ResumeSystemManagement.Application.Interfaces.Logins;
+using ResumeSystemManagement.Application.Interfaces.Login;
 using ResumeSystemManagement.Core.Entities;
 using ResumeSystemManagement.Core.Interfaces.Repositories.UserRepository;
 using ResumeSystemManagement.Core.Interfaces.Service.Login;

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+    <resheader name="version"><value>1.3</value></resheader>
+    <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+    <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+    <data name="PageTitle" xml:space="preserve"><value>Benutzerverwaltung</value></data>
+    <data name="ChangeRole" xml:space="preserve"><value>Rolle ändern</value></data>
+    <data name="BlockSelectedUser" xml:space="preserve"><value>Ausgewählten Benutzer sperren</value></data>
+    <data name="UnblockSelectedUser" xml:space="preserve"><value>Sperre des ausgewählten Benutzers aufheben</value></data>
+    <data name="DeleteSelectedUser" xml:space="preserve"><value>Ausgewählten Benutzer löschen</value></data>
+    <data name="SelectAll" xml:space="preserve"><value>Alle auswählen</value></data>
+    <data name="Name" xml:space="preserve"><value>Name</value></data>
+    <data name="Email" xml:space="preserve"><value>E-Mail</value></data>
+    <data name="Blocked" xml:space="preserve"><value>Gesperrt</value></data>
+    <data name="Role" xml:space="preserve"><value>Rolle</value></data>
+    <data name="NoUsersFound" xml:space="preserve"><value>Keine Benutzer gefunden</value></data>
+    <data name="UserListPagination" xml:space="preserve"><value>Seitennavigation der Benutzerliste</value></data>
+    <data name="First" xml:space="preserve"><value>Erste</value></data>
+    <data name="Previous" xml:space="preserve"><value>Zurück</value></data>
+    <data name="Next" xml:space="preserve"><value>Weiter</value></data>
+    <data name="Last" xml:space="preserve"><value>Letzte</value></data>
+    <data name="PageSummary" xml:space="preserve"><value>Seite {0} von {1}</value></data>
+    <data name="TotalUsers" xml:space="preserve"><value>Benutzer insgesamt: {0}</value></data>
+</root>

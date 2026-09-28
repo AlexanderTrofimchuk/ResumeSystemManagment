@@ -11,7 +11,7 @@ using ResumeSystemManagement.Infrastructure.IdentityEntities;
 using ResumeSystemManagement.Infrastructure.Interfaces;
 using ResumeSystemManagement.Infrastructure.Repositories.Attributes;
 using ResumeSystemManagement.Infrastructure.Repositories.Positions;
-using ResumeSystemManagement.Infrastructure.Repositories.User;
+using ResumeSystemManagement.Infrastructure.Repositories.Users;
 using ResumeSystemManagement.Infrastructure.Service;
 
 namespace ResumeSystemManagement.Infrastructure;

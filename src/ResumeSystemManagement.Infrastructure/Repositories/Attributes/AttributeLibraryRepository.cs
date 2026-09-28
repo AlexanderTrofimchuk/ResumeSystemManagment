@@ -6,7 +6,7 @@ using ResumeSystemManagement.Core.Exceptions;
 using ResumeSystemManagement.Core.Interfaces.Repositories.AttributeRepository;
 using ResumeSystemManagement.Core.ReadModels;
 using ResumeSystemManagement.Infrastructure.Context;
-using ResumeSystemManagement.Infrastructure.Mappers;
+using ResumeSystemManagement.Application.Mappers;
 
 namespace ResumeSystemManagement.Infrastructure.Repositories.Attributes;
 
@@ -26,17 +26,42 @@ public class AttributeLibraryRepository(ApplicationDbContext context) : IAttribu
         return _context.AttributeLibraries.Where(a => a.CategoryId == categoryId).ToListAsync();
     }
 
-    public Task<List<AttributeDetail>> GetByNameAsync(string name)
+    public Task<List<AttributeDetail>> GetByNameTypeAsync(string name, int page ,int typeId)
     {
-        return _context.AttributeLibraries.AsNoTracking()
-            .Include(t => t.AttributeType)
-            .Include(c => c.AttributeCategory)
-            .Where(a => a.Title.ToLower() == name.ToLower())
+        return _context.AttributeLibraries
+            .Where(a => !a.IsBuiltIn && EF.Functions.ILike(a.Title, $"{name}%") && a.TypeId == typeId)
+            .OrderBy(a => a.Id)
+            .Skip((page - 1) * PaginationConstants.DefaultPageSize)
+            .Take(PaginationConstants.DefaultPageSize)
             .Select(a => a.ToAttributeDetail())
             .ToListAsync();
     }
 
-    public Task<List<AttributeDetail>> GetAttributesAsync(int pageSize, int page)
+    public Task<int> GetTotalCountAsync()
+    {
+        return _context.AttributeLibraries.CountAsync(a => !a.IsBuiltIn);
+    }
+
+    public Task<int> GetByNameCountAsync(string name)
+    {
+        return _context.AttributeLibraries.CountAsync(a =>
+            !a.IsBuiltIn && a.Title.ToLower() == name.ToLower());
+    }
+
+    public Task<List<AttributeDetail>> GetByNameAsync(string name, int page)
+    {
+        return _context.AttributeLibraries.AsNoTracking()
+            .Include(t => t.AttributeType)
+            .Include(c => c.AttributeCategory)
+            .Where(a => !a.IsBuiltIn && a.Title.ToLower() == name.ToLower())
+            .OrderBy(a => a.Id)
+            .Skip((page - 1) * PaginationConstants.DefaultPageSize)
+            .Take(PaginationConstants.DefaultPageSize)
+            .Select(a => a.ToAttributeDetail())
+            .ToListAsync();
+    }
+
+    public Task<List<AttributeDetail>> GetAttributesAsync(int page)
     {
         return _context.AttributeLibraries
             .AsNoTracking()
@@ -44,7 +69,8 @@ public class AttributeLibraryRepository(ApplicationDbContext context) : IAttribu
             .Include(c => c.AttributeCategory)
             .Where(a => !a.IsBuiltIn)
             .OrderBy(x => x.Id)
-            .Skip((page - 1) * pageSize).Take(pageSize)
+            .Skip((page - 1) * PaginationConstants.DefaultPageSize)
+            .Take(PaginationConstants.DefaultPageSize)
             .Select(a => a.ToAttributeDetail())
             .ToListAsync();
     }

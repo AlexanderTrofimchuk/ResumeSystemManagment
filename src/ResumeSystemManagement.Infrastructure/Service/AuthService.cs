@@ -26,7 +26,7 @@ public class AuthService(IHttpContextAccessor accessor): IAuthService
             { new Claim(ClaimTypes.NameIdentifier, id), 
                 new Claim(ClaimTypes.Email, email),
                 new Claim(ClaimTypes.Role, role),
-                new Claim("AspNet.Identity.SecurityStamp", securityStamp)
+                new Claim("AspNet.Identity.SecurityStamp", securityStamp ?? string.Empty),
             };
         var identity = new ClaimsIdentity(claims, IdentityConstants.ApplicationScheme);
         return new ClaimsPrincipal(identity);

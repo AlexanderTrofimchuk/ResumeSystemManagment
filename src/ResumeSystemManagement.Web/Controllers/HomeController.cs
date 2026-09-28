@@ -5,13 +5,13 @@ using ResumeSystemManagement.Web.ViewModels;
 
 namespace ResumeSystemManagement.Web.Controllers;
 
-public class HomeController(IStatisticService statisticService) : Controller
+public class HomeController(IStatisticsService statisticsService) : Controller
 {
-    private readonly IStatisticService _statisticService = statisticService;
+    private readonly IStatisticsService _statisticsService = statisticsService;
 
     public async Task<IActionResult> Index()
     {
-        var statistics = await _statisticService.GetStatisticsAsync();
+        var statistics = await _statisticsService.GetStatisticsAsync();
         return View(statistics);
     }
 

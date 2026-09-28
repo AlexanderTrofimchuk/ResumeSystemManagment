@@ -20,6 +20,7 @@
 
     <ItemGroup>
       <PackageReference Include="dotenv.net" Version="4.0.2" />
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.Localization" Version="2.3.13" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.20">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -30,6 +31,34 @@
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Views\Profile\Profile.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Profile\_AttributeField.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Resources\Views\Home\Index.en-US.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Index.en-US.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\Views\Home\Index.de-DE.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Index.de-DE.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Resources\Views\Home\Index.en-US.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Index.en-US.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Resources\Views\Home\Index.de-DE.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Index.de-DE.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Resources\Views\Account\" />
     </ItemGroup>
 
 </Project>

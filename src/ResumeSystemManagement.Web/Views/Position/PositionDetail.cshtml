@@ -1,36 +1,26 @@
+@using Microsoft.AspNetCore.Mvc.Localization
 @using ResumeSystemManagement.Core.Enums
 @using ResumeSystemManagement.Core.ReadModels
-@model ResumeSystemManagement.Application.DTOs.Position.PositionDetailForUser
+@model ResumeSystemManagement.Application.DTOs.Positions.PositionDetailForUser
+@inject IViewLocalizer Localizer
 
 @{
     ViewData["Title"] = Model.PositionTitle;
-    bool isCandidate = User.IsInRole(RoleNames.Candidate);
+    var isCandidate = User.IsInRole(RoleNames.Candidate);
 }
 
 @section Styles {
-  <style>
-    .section-header {
-      background-color: var(--bs-gray-100);
-      border-bottom: 1px solid var(--bs-border-color);
-    }
-    .attr-row:last-child {
-      border-bottom: none !important;
-    }
-    .section-block {
-      border: 1px solid var(--bs-border-color);
-      border-radius: .375rem;
-      overflow: hidden;
-    }
-  </style>
+  <link rel="stylesheet" href="~/css/responsive.position.css" asp-append-version="true"/>
 }
 
 <!-- Topbar -->
-<nav class="navbar bg-body-tertiary border-bottom px-3 py-2">
+<nav class="navbar bg-body-tertiary border-bottom px-3 py-2 position-detail-nav position-detail-page"
+     aria-label="Position detail navigation">
   <div class="d-flex align-items-center gap-3">
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb mb-0 small">
         <li class="breadcrumb-item">
-          <a asp-controller="Position" asp-action="Index" class="text-muted text-decoration-none">Positions</a>
+          <a asp-controller="Position" asp-action="Index" class="text-muted text-decoration-none">@Localizer["Positions"]</a>
         </li>
         <li class="breadcrumb-item active fw-semibold">@Model.PositionTitle</li>
       </ol>
@@ -39,31 +29,31 @@
 
   @if (isCandidate)
   {
-    <div class="d-flex gap-2">
-      <a asp-controller="Resume" asp-action="Create" asp-route-positionId="@Model.PositionId"
+    <div class="d-flex gap-2" style="display: none">
+      <a asp-route-positionId="@Model.PositionId"
          class="btn btn-sm btn-primary">
-        <i class="bi bi-file-earmark-plus me-1"></i>Create CV
+        <i class="bi bi-file-earmark-plus me-1"></i>@Localizer["CreateCv"]
       </a>
-      <a asp-controller="Resume" asp-action="Open" asp-route-positionId="@Model.PositionId"
+      <a  asp-route-positionId="@Model.PositionId"
          class="btn btn-sm btn-outline-secondary">
-        <i class="bi bi-file-earmark-text me-1"></i>Open CV
+        <i class="bi bi-file-earmark-text me-1"></i>@Localizer["OpenCv"]
       </a>
     </div>
   }
 </nav>
-<div class="container-fluid py-4 px-4" style="max-width: 780px;">
+<div class="container-fluid py-4 px-4 position-detail-content position-detail-page">
   
   <h1 class="fs-3 fw-semibold mb-3">@Model.PositionTitle</h1>
   
   <p class="text-secondary mb-4" style="line-height: 1.7;">@Model.Desciption</p>
   <div class="d-flex align-items-center gap-2 mb-4">
     <i class="bi bi-folder-check text-secondary"></i> 
-    <span class="small text-secondary"> Required projects: </span> 
+    <span class="small text-secondary"> @Localizer["RequiredProjects"] </span> 
     <span class="fw-semibold"> @Model.RequiredProjectCount </span>
   </div>
   
   <p class="text-uppercase text-muted small fw-semibold mb-3" style="letter-spacing: .06em;">
-    What to include in your CV
+    @Localizer["WhatToIncludeInCv"]
   </p>
 
   @foreach (var section in Enum.GetValues<TemplateSection>())
@@ -72,7 +62,7 @@
     if (!items.Any()) { continue; }
 
     var icon  = section.GetDisplayIcon();
-    var label = section.GetDisplayName();
+    var label = Localizer[$"TemplateSection_{section}"];
 
     <div class="section-block mb-3">
 

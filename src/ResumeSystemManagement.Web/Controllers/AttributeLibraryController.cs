@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentResults;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using ResumeSystemManagement.Application.DTOs.Attribute;
+using ResumeSystemManagement.Application.DTOs.Attributes;
 using ResumeSystemManagement.Application.Interfaces.Attributes;
 using ResumeSystemManagement.Core.ReadModels;
 using ResumeSystemManagement.Web.ViewModels.Enums;
@@ -20,24 +21,28 @@ public class AttributeLibraryController(
     private readonly IAttributeCategoryService _categoryService = categoryService;
 
     [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
-    public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
+    public async Task<IActionResult> Index(int page = 1)
     {
-        var attributes = await _libraryService.GetAttributesAsync(pageSize, page);
-        if (attributes.IsFailed)
-            return ReturnCurrentException(attributes.Errors.Select(e => e.Message).ToList(),
-                ActionName.Index);
+        page = Math.Max(page, 1);
+        var attributes = await _libraryService.GetAttributesAsync(page);
+        if (attributes.IsFailed) return AlertOperationErrors(attributes.ToResult());
         await PopulateDropdowns();
         return View(attributes.Value);
     }
 
     [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
     [HttpGet]
-    public async Task<IActionResult> SearchAttribute(string name)
+    public async Task<IActionResult> SearchAttribute(string name, int page = 1)
     {
-        var attributes = await _libraryService.GetAttributesByNameAsync(name);
-        if (attributes.IsFailed)
-            return ReturnCurrentException(attributes.Errors.Select(e => e.Message).ToList(),
-                ActionName.Index);
+        page = Math.Max(page, 1);
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return RedirectToAction(nameof(Index), new { page });
+        }
+
+        var attributes = await _libraryService.GetAttributesByNameAsync(name, page);
+        if (attributes.IsFailed) return AlertOperationErrors(attributes.ToResult());
+        await PopulateDropdowns();
         return View("Index", attributes.Value);
     }
 
@@ -46,9 +51,8 @@ public class AttributeLibraryController(
     public async Task<IActionResult> CreateAttribute(CreateAttributeDto dto)
     {
         var idCreated = await _libraryService.CreateAttributeAsync(dto);
-        if (idCreated.IsFailed) return ReturnCurrentException(
-            idCreated.Errors.Select(e => e.Message).ToList(), ActionName.Index);
-        await AddDropDownOptions(dto, idCreated.Value);
+        if (idCreated.IsFailed) return AlertOperationErrors(idCreated.ToResult());
+        await AddDropdownOptions(dto, idCreated.Value);
         return RedirectWithMessage(["Attributes created"], 
             MessageColor.Success,ActionName.Index, ControllerName.AttributeLibrary);
     }
@@ -58,21 +62,17 @@ public class AttributeLibraryController(
     public async Task<IActionResult> EditAttributeForm(int id)
     {
         var attribute = await _libraryService.GetEditAttributeAsync(id);
-        if (attribute.IsFailed)
-            return ReturnCurrentException(attribute.Errors.Select(e => e.Message).ToList(),
-                ActionName.Index);
+        if (attribute.IsFailed) return AlertOperationErrors(attribute.ToResult());
         await PopulateDropdowns();
         return PartialView("_EditAttribute", attribute.Value);
     }
 
     [Authorize(Roles = $"{RoleNames.Recruiter},{RoleNames.Administrator}")]
     [HttpPost]
-    public async Task<IActionResult> EditAttribute(EditAttributeDTo dto)
+    public async Task<IActionResult> EditAttribute(EditAttributeDto dto)
     {
         var result = await _libraryService.EditAttributeAsync(dto);
-        if (result.IsFailed)
-            return ReturnCurrentException(result.Errors.Select(e => e.Message).ToList(),
-                ActionName.Index);
+        if (result.IsFailed) return AlertOperationErrors(result);
         return RedirectWithMessage(["Attribute updated"],
             MessageColor.Success, ActionName.Index, ControllerName.AttributeLibrary);
     }
@@ -86,17 +86,20 @@ public class AttributeLibraryController(
                 ActionName.Index);
 
         var result = await _libraryService.BulkDeleteAttributesAsync(model.SelectIds);
-        if (result.IsFailed)
-            return ReturnCurrentException(result.Errors.Select(e => e.Message).ToList(),
-                ActionName.Index);
+        if (result.IsFailed) return AlertOperationErrors(result);
         return RedirectWithMessage(["Attributes deleted"],
             MessageColor.Success, ActionName.Index, ControllerName.AttributeLibrary);
     }
 
-    private async Task AddDropDownOptions(CreateAttributeDto dto, int id)
+    private IActionResult AlertOperationErrors(Result result)
     {
-        if (dto.DropDownOptions != null && dto.DropDownOptions.Count != 0) {
-            var isAdded = await _libraryService.AddDropDownOptions(id, dto);
+        return ReturnCurrentException(GetErrorsMessage(result), ActionName.Index);
+    }
+
+    private async Task AddDropdownOptions(CreateAttributeDto dto, int id)
+    {
+        if (dto.DropdownOptions != null && dto.DropdownOptions.Count != 0) {
+            var isAdded = await _libraryService.AddDropdownOptions(id, dto);
             if (isAdded.IsFailed)
             {
                 ReturnCurrentException(

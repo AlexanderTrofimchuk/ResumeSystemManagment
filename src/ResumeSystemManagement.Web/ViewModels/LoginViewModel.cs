@@ -4,14 +4,14 @@ namespace ResumeSystemManagement.Web.ViewModels;
 
 public class LoginViewModel
 {
-    [Required]
-    [EmailAddress(ErrorMessage = "Invalid email address.")] 
-    [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "Invalid pattern.")]
+    [Required(ErrorMessage = "EmailRequired")]
+    [EmailAddress(ErrorMessage = "EmailInvalid")]
+    [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "EmailPatternInvalid")]
     public string Email { get; set; } = null!;
 
-    [Required]
+    [Required(ErrorMessage = "PasswordRequired")]
     [DataType(DataType.Password)]
-    [StringLength(12, ErrorMessage = "Password must be no more than 12 characters")]
+    [StringLength(12, ErrorMessage = "PasswordMaxLength")]
     public string Password { get; set; } = null!;
     
     public ChangePasswordViewModel? ChangePassword { get; set; }

@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using FluentResults;
 using Microsoft.AspNetCore.Mvc;
-using ResumeSystemManagement.Application.Interfaces.Logins;
+using ResumeSystemManagement.Application.Interfaces.Login;
 using ResumeSystemManagement.Infrastructure.Interfaces;
 using ResumeSystemManagement.Web.ViewModels.Enums;
 
@@ -48,13 +48,11 @@ public class OAuthController(IExternalLoginService loginService, IExternalAuthPr
         (Func<Task<ClaimsPrincipal?>> principalAction,Func<ClaimsPrincipal,string, Task<Result>> login, string provider)
     {
         var principal = await principalAction();
-        if (principal is null)
-            return RedirectWithMessage(["Access is denied"], MessageColor.Danger, 
-                ActionName.LoginPage, ControllerName.Account);
+        if (principal is null) return RedirectWithMessage(["Access is denied"], 
+                MessageColor.Danger,ActionName.LoginPage, ControllerName.Account);
         var result = await login(principal, provider);
-        if (result.IsFailed) 
-            return RedirectWithMessage(result.Errors.Select(e => e.Message).ToList()
-                , MessageColor.Danger, ActionName.LoginPage, ControllerName.Account);
+        if (result.IsFailed) return RedirectWithMessage(GetErrorsMessage(result),
+                MessageColor.Danger, ActionName.LoginPage, ControllerName.Account);
         return RedirectToAction(nameof(ActionName.Index), nameof(ControllerName.Home));
     }
 }

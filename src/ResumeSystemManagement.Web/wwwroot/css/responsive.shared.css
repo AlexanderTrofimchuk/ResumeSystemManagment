@@ -2,6 +2,17 @@
     min-height: 100vh;
 }
 
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    min-width: 320px;
+}
+
 .split-image {
     width: 100%;
     height: 100%;
@@ -12,6 +23,87 @@
 .input-group .btn {
     display: flex;
     align-items: center;
+}
+
+.position-detail-content {
+    max-width: 780px;
+    margin-inline: auto;
+}
+
+.modal-dialog {
+    width: calc(100% - 1rem);
+}
+
+.modal-dialog:not(.modal-sm) {
+    max-width: 500px;
+}
+
+.modal-content {
+    max-height: calc(100vh - 1rem);
+}
+
+.modal-body {
+    overflow-y: auto;
+}
+
+@media (max-width: 991.98px) {
+    #navbarSupportedContent {
+        padding: 0.5rem 0;
+    }
+
+    #navbarSupportedContent .navbar-nav {
+        align-items: stretch;
+    }
+
+    #navbarSupportedContent .nav-link {
+        padding: 0.625rem 0.25rem;
+    }
+
+    .um-toolbar {
+        flex-wrap: wrap;
+    }
+
+    .um-toolbar > form {
+        flex: 1 1 16rem;
+        min-width: 0;
+    }
+
+    .um-table th,
+    .um-table td {
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .position-detail-nav {
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .position-detail-nav > .d-flex {
+        flex-wrap: wrap;
+    }
+
+    .template-topbar {
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .template-breadcrumb {
+        flex-wrap: wrap;
+        min-width: 0;
+    }
+
+    .template-breadcrumb .navbar-brand {
+        white-space: normal;
+    }
+
+    .template-actions {
+        flex-wrap: wrap;
+    }
+
+    .dashboard-page .card-header {
+        padding: 1rem !important;
+    }
 }
 
 @media (max-width: 767.98px) {
@@ -29,14 +121,315 @@
     .login-form-box,
     .reg-form-box {
         max-width: 100%;
+        margin-bottom: 1rem !important;
+    }
+
+    .login-form,
+    .reg-form {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .login-center {
+        min-height: calc(100svh - 56px);
+        padding: 1rem 0.75rem;
+    }
+
+    .login-input,
+    .reg-input {
+        font-size: 1rem !important;
+    }
+
+    .um-container {
+        height: auto;
+        min-height: calc(100svh - 56px);
+        padding: 0.5rem !important;
+        overflow: visible;
+    }
+
+    .um-toolbar > form {
+        flex-basis: 100%;
+    }
+
+    .position-detail-nav {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .position-detail-nav > .d-flex {
+        width: 100%;
+    }
+
+    .position-detail-nav > .d-flex .btn {
+        flex: 1 1 auto;
+    }
+
+    .position-detail-content {
+        max-width: 100%;
+        padding: 1.25rem 1rem !important;
+    }
+
+    .dashboard-page {
+        padding: 1rem 0.75rem !important;
+    }
+
+    .dashboard-page .card-body {
+        padding: 1rem !important;
+    }
+
+    .dashboard-page .card-header > .d-flex {
+        align-items: flex-start !important;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .dashboard-page .card-header .btn {
+        flex-shrink: 0;
+    }
+
+    .dashboard-page .table th,
+    .dashboard-page .table td {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .error-page {
+        padding: 1rem 0.75rem !important;
+        min-height: calc(100svh - 56px) !important;
+    }
+
+    .error-page .card-body {
+        padding: 1.5rem !important;
+    }
+
+    .error-page .card-footer {
+        padding: 0 1.5rem 1.5rem !important;
+    }
+
+    .error-page .card-body > .d-flex {
+        flex-wrap: wrap;
+    }
+
+    .error-page .card-body > .d-flex .btn {
+        flex: 1 1 10rem;
+    }
+
+    .modal-dialog {
+        width: auto;
+        margin: 0.5rem;
+    }
+
+    .modal-dialog-centered {
+        min-height: calc(100% - 1rem);
+    }
+
+    .modal-content {
+        max-height: calc(100vh - 1rem);
+    }
+
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    .modal-footer {
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .modal-footer > .btn {
+        flex: 1 1 auto;
+    }
+
+    .lib-list {
+        max-height: min(45vh, 420px);
+    }
+
+    #filterBtns {
+        max-height: 8rem;
+        overflow-y: auto;
+    }
+
+    .list-group-item {
+        min-width: 0;
+    }
+
+    .lib-item > .flex-grow-1 {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .lib-item .badge {
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .toolbar > form {
+        min-width: 0;
+    }
+
+    .um-table {
+        font-size: 0.8rem;
+    }
+
+    .um-table th,
+    .um-table td {
+        padding: 0.45rem 0.5rem;
+    }
+
+    .pagination {
+        gap: 0.125rem;
+    }
+
+    .page-link {
+        padding: 0.375rem 0.55rem;
+    }
+
+    .template-topbar > .template-actions {
+        width: 100%;
+    }
+
+    .template-topbar > .template-actions .btn {
+        min-width: 0;
+    }
+
+    .template-topbar .badge {
+        white-space: normal;
+        text-align: center;
+    }
+
+    .template-attribute-row > form {
+        flex-shrink: 0;
+    }
+
+    .template-attribute-row > .badge {
+        flex-basis: auto;
+        max-width: 45%;
+        overflow-wrap: anywhere;
+    }
+
+    .template-attribute-row > .btn,
+    .template-attribute-row > form .btn {
+        min-width: 2rem;
+        min-height: 2rem;
+    }
+
+    .modal .row > [class*="col-"] {
+        min-width: 0;
+    }
+
+    .input-group > .form-control {
+        min-width: 0;
+    }
+
+    .dashboard-page .statistics-value {
+        font-size: clamp(1.5rem, 8vw, 2rem);
+    }
+
+    .template-topbar {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+
+    .template-topbar .breadcrumb {
+        flex-wrap: wrap;
+        overflow-wrap: anywhere;
+    }
+
+    .template-actions .btn {
+        flex: 1 1 auto;
+    }
+
+    .template-attribute-row {
+        flex-wrap: wrap;
+    }
+
+    .template-attribute-row > .flex-grow-1 {
+        flex-basis: calc(100% - 3rem);
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .dashboard-page .card-header {
+        padding: 0.875rem !important;
+    }
+
+    .dashboard-page .card-header .btn {
+        width: 100%;
+    }
+
+    .dashboard-page .table {
+        font-size: 0.875rem;
+    }
+
+    .position-detail-nav .breadcrumb {
+        flex-wrap: wrap;
+        overflow-wrap: anywhere;
+    }
+
+    .template-actions .badge {
+        flex: 1 1 100%;
+    }
+
+    .toolbar > button {
+        flex: 0 0 auto;
+    }
+
+    .um-toolbar > form {
+        flex: 1 1 100%;
+    }
+
+    .modal-dialog {
+        margin: 0.25rem;
+    }
+
+    .modal-content {
+        max-height: calc(100vh - 0.5rem);
+    }
+
+    .modal-footer > .btn {
+        min-width: 7rem;
     }
 }
 
 @media (max-width: 359.98px) {
+    .dashboard-page .card-body,
+    .dashboard-page .card-header {
+        padding: 0.75rem !important;
+    }
+
+    .error-page .card-body {
+        padding: 1rem !important;
+    }
+
+    .error-page .card-footer {
+        padding: 0 1rem 1rem !important;
+    }
+
     .login-left,
     .reg-left {
         padding-left: 0.75rem;
         padding-right: 0.75rem;
+    }
+
+    .login-form-box,
+    .reg-form-box {
+        padding: 1rem !important;
+    }
+
+    .template-topbar > .template-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .template-topbar > .template-actions > * {
+        width: 100%;
     }
 }
 

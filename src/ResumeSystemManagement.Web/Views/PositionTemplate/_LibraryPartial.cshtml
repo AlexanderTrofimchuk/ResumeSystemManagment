@@ -1,4 +1,6 @@
-@model IEnumerable<ResumeSystemManagement.Application.DTOs.Attribute.AttributeTemplate>
+@using Microsoft.AspNetCore.Mvc.Localization
+@model IEnumerable<ResumeSystemManagement.Application.DTOs.Attributes.AttributeTemplate>
+@inject IViewLocalizer Localizer
 
 @{
     var typeIcons = new Dictionary<string, string>
@@ -25,16 +27,17 @@
     <div class="list-group-item list-group-item-action d-flex align-items-center gap-2 py-2 lib-item @AlreadyAdded(item.Id)">
         <div class="flex-grow-1">
             <span class="small">@item.Name</span>
-            <span class="badge bg-light text-secondary border ms-1" style="font-size:.65rem">
-                <i class="bi @(typeIcons.GetValueOrDefault(item.TypeName, "bi-question-circle"))"></i> @item.TypeName
+            <span class="badge bg-light text-secondary border ms-1 template-type-badge">
+                <i class="bi @(typeIcons!.GetValueOrDefault(item.TypeName, "bi-question-circle"))"></i> @item.TypeName
             </span>
         </div>
         <button class="btn btn-sm btn-outline-primary border-0 py-0 px-1"
                 data-bs-toggle="modal"
                 data-bs-target="#addToSectionModal"
                 data-attr-id="@item.Id"
-                title="Add to section">
-            <i class="bi bi-plus-circle"></i>
+                title="@Localizer["AddToSection"]"
+                aria-label="@Localizer["AddToSection"]">
+            <i class="bi bi-plus-circle" aria-hidden="true"></i>
         </button>
     </div>
 }

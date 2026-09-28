@@ -1,4 +1,6 @@
 @model List<string>
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 
 <div class="modal fade" id="changeRoleModal" tabindex="-1"
      aria-labelledby="changeRoleModalLabel" aria-hidden="true">
@@ -7,16 +9,16 @@
 
             <div class="modal-header">
                 <h5 class="modal-title" id="changeRoleModalLabel">
-                    <i class="bi bi-person-gear me-2"></i>Change Role
+                    <i class="bi bi-person-gear me-2"></i>@Localizer["ChangeRole"]
                 </h5>
                 <button type="button" class="btn-close"
-                        data-bs-dismiss="modal" aria-label="Close"></button>
+                        data-bs-dismiss="modal" aria-label="@Localizer["Close"]"></button>
             </div>
 
             <form method="post" asp-action="ChangeRole" asp-controller="Admin" id="changeRoleForm">
                 <div class="modal-body">
                     <p class="text-muted small mb-3">
-                        Select a role to assign to the selected users:
+                        @Localizer["SelectRole"]
                     </p>
 
                     @foreach (var role in Model)
@@ -39,11 +41,11 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary btn-sm"
                             data-bs-dismiss="modal">
-                        <i class="bi bi-x-lg me-1"></i>Cancel
+                        <i class="bi bi-x-lg me-1"></i>@Localizer["Cancel"]
                     </button>
                     <button type="submit" class="btn btn-primary btn-sm"
                             id="btnConfirmRole">
-                        <i class="bi bi-check-lg me-1"></i>Apply
+                        <i class="bi bi-check-lg me-1"></i>@Localizer["Apply"]
                     </button>
                 </div>
             </form>
