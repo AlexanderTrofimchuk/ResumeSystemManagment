@@ -249,7 +249,7 @@ public class UserRepository(UserManager<AppUser> userManager, ApplicationDbConte
     public async Task<HashSet<string>> GetAdminEmails()
     {
         var admins = await _userManager.GetUsersInRoleAsync(RoleNames.Administrator);
-        return admins.Select(a => a.Email).ToHashSet();
+        return admins.Select(a => a.Email).ToHashSet()!;
     }
 
     public async Task<string?> GetRoles(string userId)

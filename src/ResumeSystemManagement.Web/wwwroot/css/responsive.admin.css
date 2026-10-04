@@ -1,7 +1,11 @@
 .admin-user-management {
+    display: block;
     width: 100%;
     max-width: 1400px;
+    height: auto;
+    min-height: calc(100vh - 56px);
     margin-inline: auto;
+    overflow: visible;
 }
 
 .admin-user-management .um-toolbar {
@@ -11,8 +15,14 @@
 
 .admin-user-management .um-table-wrapper,
 .admin-user-management .um-scroll-area {
+    display: block;
     width: 100%;
     min-width: 0;
+}
+
+.admin-user-management .um-scroll-area {
+    overflow-x: auto;
+    overflow-y: visible;
 }
 
 .admin-user-management .um-table {

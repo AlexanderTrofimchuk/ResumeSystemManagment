@@ -105,9 +105,9 @@ public static class InfrastructureServiceExtensions
 
     private static void AddDropbox(this IServiceCollection services)
     {
-        var dropboxAccessToken = Environment.GetEnvironmentVariable("DROPBOX_APP_TOKEN");
-        var dropboxAppKey = Environment.GetEnvironmentVariable("DROPBOX_APP_KEY");
-        var dropboxAppSecret = Environment.GetEnvironmentVariable("DROPBOX_APP_SECRET");
-        services.AddSingleton(dbx => new DropboxClient(dropboxAccessToken));
+        var refreshToken = Environment.GetEnvironmentVariable("DROPBOX_REFRESH_TOKEN")!;
+        var appKey = Environment.GetEnvironmentVariable("DROPBOX_APP_KEY")!;
+        var appSecret = Environment.GetEnvironmentVariable("DROPBOX_APP_SECRET")!;
+        services.AddSingleton(_ => new DropboxClient(refreshToken,appKey, appSecret));
     }
 }

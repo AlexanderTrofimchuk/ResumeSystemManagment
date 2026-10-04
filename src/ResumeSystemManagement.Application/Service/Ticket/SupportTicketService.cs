@@ -7,7 +7,6 @@ using ResumeSystemManagement.Application.Interfaces.Ticket;
 using ResumeSystemManagement.Application.Mappers;
 using ResumeSystemManagement.Core.Interfaces.Repositories.PositionRepository;
 using ResumeSystemManagement.Core.Interfaces.Repositories.UserRepository;
-using ResumeSystemManagement.Infrastructure.Serialization.JsonEntity;
 
 namespace ResumeSystemManagement.Application.Service.Ticket;
 
@@ -21,6 +20,7 @@ public class SupportTicketService(
     private readonly IUserContext _userContext = userContext;
     private readonly IUserRepository _userRepository = userRepository;
     private readonly IFileStorage _storage = storage;
+    private static readonly string FileName = $"ticket_{DateTime.UtcNow:yyyyMMdd_HHmmss}.json";
 
     public async Task<Result> CreateTicketAsync(SupportTicket ticket)
     {
@@ -30,8 +30,8 @@ public class SupportTicketService(
         if (userNameResult.IsFailed) return userNameResult.ToResult();
         var jsonEntity = ticket.MapToJson(userNameResult.Value,
             positionTitle, admins);
-        var json = SerializeTicket(jsonEntity);
-        return await Result.Try(() => _storage.SaveFileAsync($"ticket_{userNameResult.Value}.json", json));
+        var json = JsonSerializer.Serialize(jsonEntity);
+        return await Result.Try(() => _storage.SaveFileAsync(FileName, json));
     }
 
     private async Task<string?> GetPositionName(SupportTicket ticket)
@@ -51,10 +51,5 @@ public class SupportTicketService(
         if (username == string.Empty)
             return Result.Fail("User not found");
         return Result.Ok(username);
-    }
-
-    private static string SerializeTicket(SupportTicketJson ticket)
-    {
-        return JsonSerializer.Serialize(ticket);
     }
 }

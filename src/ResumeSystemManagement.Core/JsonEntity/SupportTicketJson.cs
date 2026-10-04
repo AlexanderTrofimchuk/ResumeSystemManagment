@@ -1,13 +1,11 @@
-﻿using ResumeSystemManagement.Core.Enums;
-
-namespace ResumeSystemManagement.Infrastructure.Serialization.JsonEntity;
+﻿namespace ResumeSystemManagement.Core.JsonEntity;
 
 public class SupportTicketJson
 {
     public string ReportedBy { get; set; } = null!;
     public string? PositionName { get; set; }
     public string Summary { get; set; } = null!;
-    public TicketPriority Priority { get; set; }
+    public string Priority { get; set; } = null!;
     public HashSet<string> AdminEmails { get; set; } = new();
     public string? Link { get; set; }
 }

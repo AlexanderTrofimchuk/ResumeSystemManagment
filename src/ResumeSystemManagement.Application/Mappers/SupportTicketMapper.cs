@@ -1,5 +1,5 @@
 ﻿using ResumeSystemManagement.Application.DTOs.Ticket;
-using ResumeSystemManagement.Infrastructure.Serialization.JsonEntity;
+using ResumeSystemManagement.Core.JsonEntity;
 
 namespace ResumeSystemManagement.Application.Mappers;
 
@@ -12,7 +12,7 @@ public static class SupportTicketMapper
             ReportedBy = userId,
             PositionName = positionName,
             Summary = ticket.Summary,
-            Priority = ticket.Priority,
+            Priority = ticket.Priority.ToString(),
             AdminEmails = adminEmails,
             Link = ticket.Link
         };

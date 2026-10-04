@@ -92,15 +92,15 @@
 </div>
 
 <partial name="_Notification"/>
-<footer>
-    @if(User.Identity!.IsAuthenticated)
-    {
-        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#supportTicketModal">
+@if (User.Identity!.IsAuthenticated)
+{
+    <div class="app-help-container">
+        <button class="btn btn-outline-primary app-help-button" data-bs-toggle="modal" data-bs-target="#supportTicketModal">
             Help
         </button>
-        <partial name="_SupportTicketModal" model="new ResumeSystemManagement.Application.DTOs.Ticket.SupportTicket()"/>
-    }
-</footer>
+    </div>
+    <partial name="_SupportTicketModal" model="new ResumeSystemManagement.Application.DTOs.Ticket.SupportTicket()"/>
+}
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
