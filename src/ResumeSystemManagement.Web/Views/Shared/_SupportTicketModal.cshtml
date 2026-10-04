@@ -1,0 +1,42 @@
+@using Microsoft.AspNetCore.Http.Extensions
+@model ResumeSystemManagement.Application.DTOs.Ticket.SupportTicket
+@{
+    var url = Context.Request.Path;
+}
+
+<div class="modal fade" id="supportTicketModal" tabindex="-1"
+     aria-labelledby="supportTicketModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="supportTicketModalLabel">Help</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form asp-action="CreateTicket" asp-controller="SupportTicket">
+                <div class="modal-body">
+                    <input hidden="hidden" asp-for="Link" value="@url"/>
+                    <input hidden="hidden" asp-for="PositionId" value="@Context.Request.Query["positionId"]"/>
+                    <div class="mb-3">
+                        <label asp-for="Summary" class="form-label">Summary</label>
+                        <textarea asp-for="Summary" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Priority" class="form-label fw-medium">Priority</label>
+                        <select asp-for="Priority" class="form-select">
+                            @foreach (var priority in Enum.GetValues<ResumeSystemManagement.Core.Enums.TicketPriority>())
+                            {
+                                <option value="@priority">@priority</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

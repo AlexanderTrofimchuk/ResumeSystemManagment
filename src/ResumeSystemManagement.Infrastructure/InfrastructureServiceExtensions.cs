@@ -1,8 +1,10 @@
+using Dropbox.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ResumeSystemManagement.Application.Interfaces.Auth;
+using ResumeSystemManagement.Application.Interfaces.FileStorage;
 using ResumeSystemManagement.Core.Interfaces.Repositories.AttributeRepository;
 using ResumeSystemManagement.Core.Interfaces.Repositories.PositionRepository;
 using ResumeSystemManagement.Core.Interfaces.Repositories.UserRepository;
@@ -13,6 +15,7 @@ using ResumeSystemManagement.Infrastructure.Repositories.Attributes;
 using ResumeSystemManagement.Infrastructure.Repositories.Positions;
 using ResumeSystemManagement.Infrastructure.Repositories.Users;
 using ResumeSystemManagement.Infrastructure.Service;
+using ResumeSystemManagement.Infrastructure.Storage;
 
 namespace ResumeSystemManagement.Infrastructure;
 
@@ -36,6 +39,7 @@ public static class InfrastructureServiceExtensions
         });
         
         services.AddCookieOption();
+        services.AddDropbox();
         services.AddExternalAuthentication();
         services.AddHttpContextAccessor();
         services.AddScoped<IUserRepository,UserRepository>();
@@ -46,7 +50,9 @@ public static class InfrastructureServiceExtensions
         services.AddScoped<IPositionTemplateRepository, PositionTemplateRepository>();
         services.AddScoped<IUserContext, UserContext>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IFileStorage, DropboxStorage>();
         services.AddScoped<IExternalAuthProvider, ExternalAuthProvider>();
+        services.AddScoped<ICandidateAttributeRepository, CandidateAttributeRepository>();
         return services;
     }
     
@@ -95,5 +101,13 @@ public static class InfrastructureServiceExtensions
         {
             options.ValidationInterval = TimeSpan.FromMinutes(30);
         });
+    }
+
+    private static void AddDropbox(this IServiceCollection services)
+    {
+        var dropboxAccessToken = Environment.GetEnvironmentVariable("DROPBOX_APP_TOKEN");
+        var dropboxAppKey = Environment.GetEnvironmentVariable("DROPBOX_APP_KEY");
+        var dropboxAppSecret = Environment.GetEnvironmentVariable("DROPBOX_APP_SECRET");
+        services.AddSingleton(dbx => new DropboxClient(dropboxAccessToken));
     }
 }

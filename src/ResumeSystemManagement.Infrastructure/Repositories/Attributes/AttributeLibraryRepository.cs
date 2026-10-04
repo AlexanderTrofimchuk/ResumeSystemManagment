@@ -18,6 +18,7 @@ public class AttributeLibraryRepository(ApplicationDbContext context) : IAttribu
     {
         return _context.AttributeLibraries
             .Include(av => av.AttributeValueForLists)
+            .Include(a => a.AttributeType)
             .FirstOrDefaultAsync(a => a.Id == id);
     }
 

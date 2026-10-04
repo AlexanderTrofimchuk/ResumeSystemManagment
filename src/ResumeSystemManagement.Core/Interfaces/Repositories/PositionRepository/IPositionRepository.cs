@@ -9,6 +9,7 @@ public interface IPositionRepository
     Task<int> GetCountByNameAsync(string name, bool includeUnpublished);
     Task<int> GetCountAsync();
     Task<int> GetPublishCountAsync();
+    Task<string?> GetNAmeByIdAsync(int id);
     Task<List<Position>> GetPublishPositionAsync(int pageNumber);
     Task<List<Position>> GetAllAsync(int pageNumber);
     int GetCountResume(int positionId);

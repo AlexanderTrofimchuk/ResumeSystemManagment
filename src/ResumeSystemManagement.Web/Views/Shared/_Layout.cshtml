@@ -74,7 +74,7 @@
                     @if (User.Identity!.IsAuthenticated)
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-dark" id="profile">@Localizer["Profile"]</a>
+                            <a class="nav-link text-dark" id="profile" asp-action="Profile" asp-controller="Profile">@Localizer["Profile"]</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" id="logout" asp-action="Logout" asp-controller="Account">@Localizer["Logout"]</a>
@@ -92,7 +92,15 @@
 </div>
 
 <partial name="_Notification"/>
-
+<footer>
+    @if(User.Identity!.IsAuthenticated)
+    {
+        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#supportTicketModal">
+            Help
+        </button>
+        <partial name="_SupportTicketModal" model="new ResumeSystemManagement.Application.DTOs.Ticket.SupportTicket()"/>
+    }
+</footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>

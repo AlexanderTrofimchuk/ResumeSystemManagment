@@ -8,10 +8,12 @@ public interface IUserRepository
 {
     Task<int> GetUsersCount();
     Task<HashSet<string>> GetAdminIdes();
+    Task<HashSet<string>> GetAdminEmails();
     Task<string?> GetRoles(string userId);
     Task<UserInfo?> GetUserById(string id);
     Task<int> GetCountCandidate();
     Task<int> GetCountRecruter();
+    Task<string> GetNameWithRole(string userId);
     Task<UserInfo?> GetUserByEmail(string email);
     Task<bool> UserIsBlocked(string userId);
     Task<List<UserInfo>>  GetAllAsync(int pageNumber);

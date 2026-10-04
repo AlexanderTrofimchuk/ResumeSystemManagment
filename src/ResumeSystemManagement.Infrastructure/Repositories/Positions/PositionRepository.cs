@@ -58,6 +58,12 @@ public class PositionRepository(ApplicationDbContext context) : IPositionReposit
             p => p.PublishStatus == PublishStatus.Publish && p.Permissions == PositionPermissions.Public);
     }
 
+    public async Task<string?> GetNAmeByIdAsync(int id)
+    {
+        return await _context.Positions.Where(p => p.Id == id)
+            .Select(p => p.Title).FirstOrDefaultAsync();
+    }
+
     public int GetCountResume(int positionId)
     {
         return _context.Resumes.Count(r => r.PositionId == positionId);
