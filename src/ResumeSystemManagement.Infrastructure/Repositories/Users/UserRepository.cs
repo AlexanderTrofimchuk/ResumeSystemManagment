@@ -38,6 +38,12 @@ public class UserRepository(UserManager<AppUser> userManager, ApplicationDbConte
             .CountAsync(ur => ur.RoleId == roleId!.Id);
     }
 
+    public async Task<string> GetNameWithRole(string userId)
+    {
+        var user = await GetUserById(userId);
+        return user is not null ? $"{user.FullName} ({user.Role})" : string.Empty;
+    }
+
     public Task<int> GetUsersCount()
     {
         return _userManager.Users.CountAsync();
@@ -238,6 +244,12 @@ public class UserRepository(UserManager<AppUser> userManager, ApplicationDbConte
         
         await _context.Users.Where(u => userIds.Contains(u.Id))
             .ExecuteDeleteAsync();
+    }
+
+    public async Task<HashSet<string>> GetAdminEmails()
+    {
+        var admins = await _userManager.GetUsersInRoleAsync(RoleNames.Administrator);
+        return admins.Select(a => a.Email).ToHashSet()!;
     }
 
     public async Task<string?> GetRoles(string userId)

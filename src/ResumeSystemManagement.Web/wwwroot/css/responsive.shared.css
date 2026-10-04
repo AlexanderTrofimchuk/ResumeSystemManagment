@@ -137,7 +137,12 @@ body {
 
     .login-input,
     .reg-input {
-        font-size: 1rem !important;
+        font-size: 1.125rem !important;
+    }
+
+    .login-btn-submit,
+    .reg-btn-submit {
+        min-height: 3rem;
     }
 
     .um-container {
@@ -448,7 +453,7 @@ body {
 
     .login-form-box,
     .reg-form-box {
-        max-width: 380px;
+        max-width: 420px;
     }
 }
 

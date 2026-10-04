@@ -1,0 +1,146 @@
+﻿@model ResumeSystemManagement.Application.DTOs.Attributes.UserAttributeValue
+
+<div class="mb-3">
+    @if (Model.TypeName == "Image")
+    {
+        <div class="form-label mb-1">@Model.Title</div>
+    }
+    else
+    {
+        <label class="form-label mb-1" for="attr_@Model.AttributeId">@Model.Title</label>
+    }
+
+    @switch (Model.TypeName)
+    {
+        case "String":
+            <input type="text"
+                   id="attr_@Model.AttributeId"
+                   name="Attributes[@Model.AttributeId]"
+                   value="@Model.Value"
+                   class="form-control"
+                   data-attribute-id="@Model.AttributeId"
+                   data-record-id="@Model.Id"
+                   data-user-id="@Model.UserId"
+                   data-title="@Model.Title"
+                   data-type-name="@Model.TypeName"
+                   data-version="@Model.Version"/>
+            break;
+
+        case "Text":
+            <textarea id="attr_@Model.AttributeId"
+                  name="Attributes[@Model.AttributeId]"
+                  class="form-control text-editor"
+                  data-attribute-id="@Model.AttributeId"
+                  data-record-id="@Model.Id"
+                  data-user-id="@Model.UserId"
+                  data-title="@Model.Title"
+                  data-type-name="@Model.TypeName"
+                  data-version="@Model.Version"
+                  >@Model.Value</textarea>
+            break;
+
+        case "Numeric":
+            <input type="number"
+                   id="attr_@Model.AttributeId"
+                   name="Attributes[@Model.AttributeId]"
+                   value="@Model.Value"
+                   class="form-control"
+                   data-attribute-id="@Model.AttributeId"
+                   data-record-id="@Model.Id"
+                   data-user-id="@Model.UserId"
+                   data-title="@Model.Title"
+                   data-type-name="@Model.TypeName"
+                   data-version="@Model.Version"/>
+            break;
+
+        case "Date":
+            <input type="text"
+                   id="attr_@Model.AttributeId"
+                   name="Attributes[@Model.AttributeId]"
+                   value="@Model.Value"
+                   class="form-control date-picker"
+                   data-attribute-id="@Model.AttributeId"
+                   data-record-id="@Model.Id"
+                   data-user-id="@Model.UserId"
+                   data-title="@Model.Title"
+                   data-type-name="@Model.TypeName"
+                   data-version="@Model.Version"/>
+            break;
+
+        case "Period":
+            <input type="text"
+                   id="attr_@Model.AttributeId"
+                   name="Attributes[@Model.AttributeId]"
+                   value="@Model.Value"
+                   class="form-control period-picker"
+                   data-attribute-id="@Model.AttributeId"
+                   data-record-id="@Model.Id"
+                   data-user-id="@Model.UserId"
+                   data-title="@Model.Title"
+                   data-type-name="@Model.TypeName"
+                   data-version="@Model.Version"/>
+            break;
+
+        case "Boolean":
+            <input type="checkbox"
+                   id="attr_@Model.AttributeId"
+                   name="Attributes[@Model.AttributeId]"
+                   value="true"
+                   class="form-check-input"
+                   @(Model.Value == "true" ? "checked" : "")
+                   data-attribute-id="@Model.AttributeId"
+                   data-record-id="@Model.Id"
+                   data-user-id="@Model.UserId"
+                   data-title="@Model.Title"
+                   data-type-name="@Model.TypeName"
+                   data-version="@Model.Version"/>
+            break;
+
+        case "OneOfMany":
+            <select id="attr_@Model.AttributeId"
+                    name="Attributes[@Model.AttributeId]"
+                    class="form-select"
+                    data-attribute-id="@Model.AttributeId"
+                    data-record-id="@Model.Id"
+                    data-user-id="@Model.UserId"
+                    data-title="@Model.Title"
+                    data-type-name="@Model.TypeName"
+                    data-version="@Model.Version">
+
+                @foreach (var value in Model.DropdownOptions!)
+                {
+                    <option value="@value.Id"
+                            selected="@(Model.Value == value.Id.ToString())">
+                        @value.Value
+                    </option>
+                }
+
+            </select>
+            break;
+
+        case "Image":
+            <div class="d-flex align-items-center gap-2">
+                @if (!string.IsNullOrEmpty(Model.Value))
+                {
+                    <img src="@Model.Value"
+                         id="attr_@Model.AttributeId"
+                         class="rounded-circle border"
+                         style="width:48px;height:48px;object-fit:cover"
+                         alt="Photo"/>
+                }
+                else
+                {
+                    <span id="attr_@Model.AttributeId"
+                          class="rounded-circle border bg-light d-flex align-items-center justify-content-center text-secondary"
+                          style="width:48px;height:48px;font-size:1.4rem">
+                        <i class="bi bi-person"></i>
+                    </span>
+                }
+                <label class="btn btn-sm btn-outline-secondary mb-0">
+                    <i class="bi bi-upload"></i> Change
+                    <input type="file" name="photo" accept="image/*" class="d-none"/>
+                </label>
+            </div>
+            break;
+    }
+</div>

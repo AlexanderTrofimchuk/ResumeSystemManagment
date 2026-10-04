@@ -26,5 +26,12 @@ public class BaseController: Controller
         return View(action.ToString(), model);
     }
 
+    public IActionResult ResirectByUrl(List<string> messages, MessageColor color, string url)
+    {
+        TempData["ToastMessages"] = JsonSerializer.Serialize(messages);
+        TempData["ToastType"] = color.ToString().ToLower();
+        return Redirect(url);
+    }
+
     public List<string> GetErrorsMessage(Result result) => result.Errors.Select(e => e.Message).ToList();
 }

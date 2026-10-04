@@ -1,7 +1,11 @@
 .attribute-library-page {
+    display: block;
     width: 100%;
     max-width: 1400px;
+    height: auto;
+    min-height: calc(100vh - 56px);
     margin-inline: auto;
+    overflow: visible;
 }
 
 .attribute-library-page .um-toolbar {
@@ -11,8 +15,14 @@
 
 .attribute-library-page .um-table-wrapper,
 .attribute-library-page .um-scroll-area {
+    display: block;
     width: 100%;
     min-width: 0;
+}
+
+.attribute-library-page .um-scroll-area {
+    overflow-x: auto;
+    overflow-y: visible;
 }
 
 .attribute-library-page .um-table {

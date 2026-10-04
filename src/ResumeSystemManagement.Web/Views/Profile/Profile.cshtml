@@ -1,0 +1,337 @@
+@model ResumeSystemManagement.Application.DTOs.User.ProfileDetail
+@{
+    ViewData["Title"] = "Profile";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+}
+
+<div class="container-xl py-4">
+
+    <!-- ── Me ─────────────────────────────────────────────────── -->
+    <div class="card mb-4" id="section-me">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="mb-0 d-flex align-items-center gap-2">
+                <i class="bi bi-person-fill text-primary"></i> Me
+            </h5>
+        </div>
+        <div class="card-body">
+                @if (Model.MeSectorAttributes.Any())
+                {
+                    foreach (var attr in Model.MeSectorAttributes)
+                    {
+                       @await Html.PartialAsync("_AttributeField", attr)
+                    }
+                }
+        </div>
+    </div>
+
+    <!-- ── Info ───────────────────────────────────────────────── -->
+    <div class="card mb-4" id="section-info">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="mb-0 d-flex align-items-center gap-2">
+                <i class="bi bi-info-circle-fill text-primary"></i> Info
+            </h5>
+            <button class="btn btn-sm btn-primary"
+                    id="openAddAttributeModal">
+                <i class="bi bi-plus-lg"></i> Add attribute
+            </button>
+        </div>
+        <div class="card-body">
+            <div id="infoAttributes">
+            @if(Model.InfoSectorAttributes.Any())
+            {
+                foreach (var attr in Model.InfoSectorAttributes)
+                {
+                    @await Html.PartialAsync("_AttributeField", attr)
+                }
+            }
+            else
+            {
+                <div id="infoEmptyState" class="text-center py-5 text-secondary">
+                    <i class="bi bi-collection fs-2 d-block mb-2"></i>
+                    <p class="mb-0 small">No attributes added yet.<br />Click <strong>Add attribute</strong> to pick from the library.</p>
+                </div>
+            }
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Projects ───────────────────────────────────────────── -->
+    <div class="card mb-4" id="section-projects">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="mb-0 d-flex align-items-center gap-2">
+                <i class="bi bi-kanban-fill text-primary"></i> Projects
+            </h5>
+            <button class="btn btn-sm btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalAddProject">
+                <i class="bi bi-plus-lg"></i> Add project
+            </button>
+        </div>
+        <div class="card-body">
+
+            <div class="mb-3">
+                <div class="input-group" style="max-width:300px">
+                    <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" class="form-control table-search" placeholder="Search projects…" data-table="projectsTable" />
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="projectsTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width:40px"><input type="checkbox" class="form-check-input" /></th>
+                            <th>Name</th>
+                            <th>Period</th>
+                            <th>Tags</th>
+                            <th style="width:130px"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-secondary">
+                                <i class="bi bi-kanban fs-3 d-block mb-2"></i>
+                                <span class="small">No projects yet. Add your first one!</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<div id="addAttributeModalContainer"></div>
+
+<!-- ── Modal: Add / Edit Project ─────────────────────────────── -->
+<div class="modal fade" id="modalAddProject" tabindex="-1" aria-labelledby="modalAddProjectLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAddProjectLabel">
+                    <i class="bi bi-kanban me-1 text-primary"></i> Add project
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-control" placeholder="e.g. CRM Migration" />
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                        <label class="form-label">Start date</label>
+                        <input type="month" class="form-control" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label">End date</label>
+                        <input type="month" class="form-control" />
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">
+                        Description
+                        <span class="text-muted fw-normal small">(Markdown supported)</span>
+                    </label>
+                    <textarea class="form-control font-monospace" rows="5" placeholder="Describe the project…"></textarea>
+                </div>
+                <div class="mb-1">
+                    <label class="form-label">Technology tags</label>
+                    <div class="form-control d-flex flex-wrap gap-1 align-items-center"
+                         id="tagContainer"
+                         style="min-height:42px;cursor:text"
+                         onclick="document.getElementById('tagInput').focus()">
+                        <input id="tagInput" type="text"
+                               class="border-0 flex-grow-1"
+                               placeholder="Add tag…"
+                               style="outline:none;min-width:80px;font-size:.875rem"
+                               list="tagSuggestions" />
+                        <datalist id="tagSuggestions">
+                            <option value="Python" />
+                            <option value="Django" />
+                            <option value="React" />
+                            <option value="TypeScript" />
+                            <option value="SQL" />
+                            <option value="Docker" />
+                            <option value="Kubernetes" />
+                            <option value="C#" />
+                            <option value=".NET" />
+                            <option value="PostgreSQL" />
+                        </datalist>
+                    </div>
+                    <div class="form-text">Press <kbd>Enter</kbd> or <kbd>,</kbd> to add a tag.</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary">
+                    <i class="bi bi-check2 me-1"></i> Save project
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        let isSaving = false;
+        let hasPendingChanges = false;
+
+        async function autoSaveMeSector() {
+            if (isSaving || !hasPendingChanges) return;
+            isSaving = true;
+            hasPendingChanges = false;
+
+            const attributes = getAttributes(); 
+            
+            try {
+                const response = await fetch('@Url.ActionLink("MeSectorSave","Profile")', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(attributes)
+                });
+                if (!response.ok) {
+                    hasPendingChanges = true;
+                    console.error(`Profile save failed (${response.status}).`);
+                }
+            } catch (error) {
+                hasPendingChanges = true;
+                console.error('Profile save request failed.', error);
+            } finally {
+                isSaving = false;
+            }
+        }
+
+        function scheduleAutoSave() {
+            hasPendingChanges = true;
+        }
+
+        function initializeAttributeField(container) {
+            container.querySelectorAll('.text-editor').forEach(element => {
+                new EasyMDE({ element });
+            });
+            container.querySelectorAll('.date-picker').forEach(element => {
+                flatpickr(element, { dateFormat: 'Y-m-d' });
+            });
+            container.querySelectorAll('.period-picker').forEach(element => {
+                flatpickr(element, { mode: 'range', dateFormat: 'Y-m-d' });
+            });
+        }
+
+        document.querySelectorAll('#section-me [data-attribute-id]').forEach(element => {
+            element.addEventListener('input', scheduleAutoSave);
+            element.addEventListener('change', scheduleAutoSave);
+        });
+
+        setInterval(autoSaveMeSector, 7000);
+        
+        function getAttributes() {
+            return [...document.querySelectorAll(
+                "#section-me [data-attribute-id]"
+            )].map(element => ({
+                id: element.dataset.recordId,
+                userId: element.dataset.userId,
+                attributeId: Number(element.dataset.attributeId),
+                title: element.dataset.title,
+                typeName: element.dataset.typeName,
+                value: element.type === 'checkbox' ? String(element.checked) : element.value,
+                dropdownOptions: null,
+                version: Number(element.dataset.version)
+            }));
+        }
+        
+        document.getElementById('openAddAttributeModal').addEventListener('click', async () => {
+            const container = document.getElementById('addAttributeModalContainer');
+
+            try {
+                let modalElement = container.querySelector('#modalAddAttribute');
+                if (!modalElement) {
+                    const response = await fetch('@Url.ActionLink("GetAttributeLibrary", "Profile", new { page = 1 })');
+                    if (!response.ok) {
+                        throw new Error(`Loading the attribute library failed (${response.status}).`);
+                    }
+
+                    container.innerHTML = await response.text();
+                    modalElement = container.querySelector('#modalAddAttribute');
+                    if (!modalElement) {
+                        throw new Error('The attribute modal was not returned by the server.');
+                    }
+                }
+
+                const existingIds = new Set(
+                    [...document.querySelectorAll('#infoAttributes [data-attribute-id]')]
+                        .map(element => element.dataset.attributeId)
+                );
+                modalElement.querySelectorAll('.attribute-option').forEach(option => {
+                    option.disabled = existingIds.has(option.value);
+                });
+
+                const addSelectedButton = modalElement.querySelector('#addSelectedAttributes');
+                if (!addSelectedButton.dataset.handlerAttached) {
+                    addSelectedButton.addEventListener('click', addSelectedAttributes);
+                    addSelectedButton.dataset.handlerAttached = 'true';
+                }
+
+                bootstrap.Modal.getOrCreateInstance(modalElement).show();
+            } catch (error) {
+                console.error('Could not open the add-attribute modal.', error);
+                window.alert('Could not load the attribute library. Please try again.');
+            }
+        });
+
+        async function addSelectedAttributes(event) {
+            const button = event.currentTarget;
+            const modal = button.closest('#modalAddAttribute');
+            const selected = [...modal.querySelectorAll('.attribute-option:checked')];
+            const fieldContainer = document.getElementById('infoAttributes');
+            const newOptions = selected.filter(option => !option.disabled);
+
+            if (newOptions.length === 0) {
+                window.alert('Select at least one attribute that has not already been added.');
+                return;
+            }
+
+            button.disabled = true;
+            try {
+                const fields = await Promise.all(newOptions.map(async option => {
+                    const url = new URL('@Url.ActionLink("GetAttributeField", "Profile")', window.location.origin);
+                    url.searchParams.set('id', option.value);
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`Loading attribute ${option.value} failed (${response.status}).`);
+                    }
+                    return { option, html: await response.text() };
+                }));
+
+                document.getElementById('infoEmptyState')?.remove();
+                for (const field of fields) {
+                    const template = document.createElement('template');
+                    template.innerHTML = field.html.trim();
+                    const fieldElement = template.content.firstElementChild;
+                    if (!fieldElement) {
+                        throw new Error('The attribute field was not returned by the server.');
+                    }
+
+                    fieldContainer.append(fieldElement);
+                    initializeAttributeField(fieldElement);
+                    field.option.checked = false;
+                    field.option.disabled = true;
+                }
+                bootstrap.Modal.getOrCreateInstance(modal).hide();
+            } catch (error) {
+                console.error('Could not add the selected attributes.', error);
+                window.alert('Could not add the selected attributes. Please try again.');
+            } finally {
+                button.disabled = false;
+            }
+        }
+    </script>
+}

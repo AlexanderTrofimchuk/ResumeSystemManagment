@@ -1,9 +1,9 @@
 .login-app-title   { font-size: clamp(1.6rem,  4vw,   3rem); }
-.login-heading     { font-size: clamp(1.25rem, 2vw, 1.75rem); }
+.login-heading     { font-size: clamp(1.5rem, 2.5vw, 2rem); }
 .login-form        { font-size: 1rem; }
-.login-input       { font-size: 1rem !important; }
+.login-input       { font-size: 1.125rem !important; }
 .login-forgot      { font-size: 0.875rem; }
-.login-btn-submit  { font-size: 1rem; }
+.login-btn-submit  { font-size: 1.125rem; padding-block: 0.65rem; }
 .login-footer-text { font-size: 0.875rem; }
 
 .login-center {
@@ -12,5 +12,6 @@
 
 .login-form-box {
     width: 100%;
-    max-width: 320px;
+    max-width: 520px;
+    padding: 2rem !important;
 }
