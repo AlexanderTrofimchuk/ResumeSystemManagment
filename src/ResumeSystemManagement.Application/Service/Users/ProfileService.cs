@@ -19,7 +19,7 @@ public class ProfileService(
 
     public async Task<ProfileDetail> GetProfileDetails(string userId)
     {
-        var meSectorAttributes = await _candidateAttributeRepository.GetCandidateAttributeValuesBuildIn(userId);
+        var meSectorAttributes = await _candidateAttributeRepository.GetBuildInAttribute(userId);
         var infoSectorAttributes = await _candidateAttributeRepository.GetCandidateAttributeValues(userId);
         return new ProfileDetail
         {

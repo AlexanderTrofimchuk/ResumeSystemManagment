@@ -1,0 +1,62 @@
+@model ResumeSystemManagement.Application.DTOs.SalesForce.CreateAccountSalesForce
+
+<div class="modal fade" id="createSalesForceModal" tabindex="-1"
+     aria-labelledby="createSalesForceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <form asp-controller="SalesForce" asp-action="CreateAccount" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createSalesForceModalLabel">
+                        <i class="bi bi-cloud-plus me-1 text-primary"></i> Create Salesforce account
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+
+                    <h6 class="mb-3">Account</h6>
+                    <div class="mb-3">
+                        <label asp-for="Account.Name" class="form-label">Account name</label>
+                        <input asp-for="Account.Name" class="form-control" autocomplete="organization" />
+                        <span asp-validation-for="Account.Name" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-4">
+                        <label asp-for="Account.WebSite" class="form-label">Website</label>
+                        <input asp-for="Account.WebSite" class="form-control" type="url" placeholder="https://example.com" />
+                        <span asp-validation-for="Account.WebSite" class="text-danger small"></span>
+                    </div>
+
+                    <h6 class="mb-3">Contact</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Contact.FirstName" class="form-label">First name</label>
+                            <input asp-for="Contact.FirstName" class="form-control" autocomplete="given-name" />
+                            <span asp-validation-for="Contact.FirstName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Contact.LastName" class="form-label">Last name</label>
+                            <input asp-for="Contact.LastName" class="form-control" autocomplete="family-name" />
+                            <span asp-validation-for="Contact.LastName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Contact.Email" class="form-label">Email</label>
+                            <input asp-for="Contact.Email" class="form-control" type="email" autocomplete="email" />
+                            <span asp-validation-for="Contact.Email" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Contact.Phone" class="form-label">Phone</label>
+                            <input asp-for="Contact.Phone" class="form-control" type="tel" autocomplete="tel" />
+                            <span asp-validation-for="Contact.Phone" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg me-1"></i> Create account
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

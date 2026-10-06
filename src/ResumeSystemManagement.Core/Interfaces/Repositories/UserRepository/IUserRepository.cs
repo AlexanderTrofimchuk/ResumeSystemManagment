@@ -21,6 +21,8 @@ public interface IUserRepository
     Task<Result<UserInfo>> CreateCandidate(string userName, string email, string password);
     Task<Result<UserInfo>> CreateExternalUser(string email, ClaimsPrincipal userPrincipal, string provider);
     Task<Result<UserInfo>> CreateUserLogin(string provider, ClaimsPrincipal claimsPrincipal, string email);
+    Task<Result> SetSalesForceAccount(string userId, string accountId, string contactId);
+    Task<bool> HasSalesForceAccount(string userId);
     Task<Result<UserInfo>> AssignRole(string userId, string role);
     Task<bool> HasExternalLogin(string provider, string providerKey);
     Task ChangeUsersRole(List<string> userIds, string newRole);
