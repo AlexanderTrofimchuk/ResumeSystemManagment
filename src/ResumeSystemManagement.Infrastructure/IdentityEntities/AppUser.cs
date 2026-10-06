@@ -8,6 +8,10 @@ public class AppUser: IdentityUser
 {
     [MaxLength(150)]
     public string FullName { get; set; } = null!;
+    [MaxLength(50)]
+    public string SalesForceAccountId { get; set; } =string.Empty;
+    [MaxLength(50)]
+    public string SalesForceContactId { get; set; } =string.Empty;
     public uint ProfileVersion {get; set;}
 
     public List<Position> Positions { get; } = new();

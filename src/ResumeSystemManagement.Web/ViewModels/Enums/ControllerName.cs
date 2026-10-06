@@ -7,5 +7,6 @@ public enum ControllerName
     AttributeLibrary,
     Position,
     PositionTemplate,
-    Admin
+    Admin,
+    Profile,
 }

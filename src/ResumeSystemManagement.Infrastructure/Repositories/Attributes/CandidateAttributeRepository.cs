@@ -19,7 +19,7 @@ public class CandidateAttributeRepository(ApplicationDbContext context, IAttribu
             .ToListAsync();
     }
 
-    public Task<List<CandidateAttributeValue>> GetCandidateAttributeValuesBuildIn(string userId)
+    public Task<List<CandidateAttributeValue>> GetBuildInAttribute(string userId)
     {
         return _context.CandidateAttributeValues
             .Include(a => a.Attribute)

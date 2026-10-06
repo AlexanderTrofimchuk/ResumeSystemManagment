@@ -9,7 +9,10 @@
 }
 
 <div class="container-xl py-4">
-
+    <button type="button" class="btn btn-primary mb-3" id="openCreateSalesForceForm">
+        <i class="bi bi-cloud-plus me-1"></i> Create Salesforce account
+    </button>
+    <div id="createSalesForceFormContainer"></div>
     <!-- ── Me ─────────────────────────────────────────────────── -->
     <div class="card mb-4" id="section-me">
         <div class="card-header d-flex align-items-center justify-content-between">
@@ -143,11 +146,12 @@
                 </div>
                 <div class="mb-1">
                     <label class="form-label">Technology tags</label>
-                    <div class="form-control d-flex flex-wrap gap-1 align-items-center"
+                    <button class="form-control d-flex flex-wrap gap-1 align-items-center"
                          id="tagContainer"
                          style="min-height:42px;cursor:text"
                          onclick="document.getElementById('tagInput').focus()">
-                        <input id="tagInput" type="text"
+                        <input id="tagInput"
+                               type="text"
                                class="border-0 flex-grow-1"
                                placeholder="Add tag…"
                                style="outline:none;min-width:80px;font-size:.875rem"
@@ -164,7 +168,7 @@
                             <option value=".NET" />
                             <option value="PostgreSQL" />
                         </datalist>
-                    </div>
+                    </button>
                     <div class="form-text">Press <kbd>Enter</kbd> or <kbd>,</kbd> to add a tag.</div>
                 </div>
             </div>
@@ -232,6 +236,28 @@
         });
 
         setInterval(autoSaveMeSector, 7000);
+
+        document.getElementById('openCreateSalesForceForm').addEventListener('click', async () => {
+            const container = document.getElementById('createSalesForceFormContainer');
+
+            try {
+                const response = await fetch('@Url.Action("CreateForm", "Profile")');
+                if (!response.ok) {
+                    throw new Error(`Loading the Salesforce form failed (${response.status}).`);
+                }
+
+                container.innerHTML = await response.text();
+                const modal = container.querySelector('#createSalesForceModal');
+                if (!modal) {
+                    throw new Error('The Salesforce form was not returned by the server.');
+                }
+
+                bootstrap.Modal.getOrCreateInstance(modal).show();
+            } catch (error) {
+                console.error('Could not open the Salesforce form.', error);
+                window.alert('Could not load the Salesforce form. Please try again.');
+            }
+        });
         
         function getAttributes() {
             return [...document.querySelectorAll(

@@ -1,23 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ResumeSystemManagement.Application.DTOs.Attributes;
 using ResumeSystemManagement.Application.Interfaces.Auth;
+using ResumeSystemManagement.Application.Interfaces.SalesForce;
 using ResumeSystemManagement.Application.Interfaces.Users;
 
 namespace ResumeSystemManagement.Web.Controllers;
 
 public class ProfileController(
     IProfileService profileService,
-    IUserContext userContext) : BaseController
+    IUserContext userContext,
+    ISalesForceService salesForceService) : BaseController
 {
     private readonly IProfileService _profileService = profileService;
     private readonly IUserContext _userContext = userContext;
+    private readonly ISalesForceService _salesForceService = salesForceService;
 
+    [Authorize]
     public async Task<IActionResult> Profile()
     {
         var profileDetails = await _profileService.GetProfileDetails(_userContext.UserId.ToString());
         return View(profileDetails);
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> GetAttributeLibrary(int page = 1)
     {
@@ -25,6 +31,7 @@ public class ProfileController(
         return PartialView("_AddAttribute",attributes);
     }    
 
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> GetAttributeField(int id)
     {
@@ -35,6 +42,7 @@ public class ProfileController(
         return PartialView("_AttributeField", attribute);
     }
     
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> MeSectorSave([FromBody] List<UserAttributeValue>? sectorValues)
     {
@@ -46,5 +54,13 @@ public class ProfileController(
                 { message = "Failed to update sector values.", 
                     errors = resultUpdate.Errors.Select(e => e.Message) });
         return Ok(new { received = sectorValues.Count });
+    }
+
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> CreateForm()
+    {
+        var model = await _salesForceService.GetInfoForForm(_userContext.UserId.ToString());
+        return PartialView("_CreateSalesForceForm", model);
     }
 }

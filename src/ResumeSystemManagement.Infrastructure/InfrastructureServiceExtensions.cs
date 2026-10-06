@@ -8,11 +8,13 @@ using ResumeSystemManagement.Application.Interfaces.FileStorage;
 using ResumeSystemManagement.Core.Interfaces.Repositories.AttributeRepository;
 using ResumeSystemManagement.Core.Interfaces.Repositories.PositionRepository;
 using ResumeSystemManagement.Core.Interfaces.Repositories.UserRepository;
+using ResumeSystemManagement.Core.Interfaces.Service.SalesForce;
 using ResumeSystemManagement.Infrastructure.Context;
 using ResumeSystemManagement.Infrastructure.IdentityEntities;
 using ResumeSystemManagement.Infrastructure.Interfaces;
 using ResumeSystemManagement.Infrastructure.Repositories.Attributes;
 using ResumeSystemManagement.Infrastructure.Repositories.Positions;
+using ResumeSystemManagement.Infrastructure.Repositories.SalesForce;
 using ResumeSystemManagement.Infrastructure.Repositories.Users;
 using ResumeSystemManagement.Infrastructure.Service;
 using ResumeSystemManagement.Infrastructure.Storage;
@@ -53,6 +55,7 @@ public static class InfrastructureServiceExtensions
         services.AddScoped<IFileStorage, DropboxStorage>();
         services.AddScoped<IExternalAuthProvider, ExternalAuthProvider>();
         services.AddScoped<ICandidateAttributeRepository, CandidateAttributeRepository>();
+        services.AddHttpClient<ISalesForceRepository, SalesForceRepository>();
         return services;
     }
     

@@ -123,6 +123,34 @@ public class UserRepository(UserManager<AppUser> userManager, ApplicationDbConte
         return loginsResult.Succeeded ? Result.Ok(user.ToUser()) : Result.Fail(loginsResult.Errors.Select(e => e.Description));
     }
 
+    public async Task<Result> SetSalesForceAccount(string userId, string accountId, string contactId)
+    {
+        var user = await GetAppUserById(userId);
+        if (user == null) return Result.Fail("User not found");
+        user.SalesForceAccountId = accountId;
+        user.SalesForceContactId = contactId;
+        try
+        {
+            await _context.SaveChangesAsync();
+            return Result.Ok();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            return Result.Fail("You have SalesForce Account, please reload page");
+        }
+        catch (Exception)
+        {
+            return Result.Fail("An error occurred while updating the SalesForce account information.");
+        }
+    }
+
+    public async Task<bool> HasSalesForceAccount(string userId)
+    {
+        var user = await GetAppUserById(userId);
+        if (user == null) return false;
+        return !string.IsNullOrEmpty(user.SalesForceAccountId) && !string.IsNullOrEmpty(user.SalesForceContactId);
+    }
+
     private async Task<Result<UserInfo>> CreateUser(string userName, string email, string password)
     {
         var newUser = await CreateAppUser(email, userName, password);

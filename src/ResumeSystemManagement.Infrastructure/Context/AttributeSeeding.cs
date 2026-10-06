@@ -71,10 +71,12 @@ public static class AttributeSeeding
         var personalInformation = context.Set<AttributeCategory>().FirstOrDefault(ac => ac.Title == "Personal Information")!.Id;
 
         AttributeLibrary[] buildInAttribute = [
-            Create("First Name",stringId,personalInformation),
-            Create("Last Name", stringId,personalInformation),
-            Create("Location", stringId,personalInformation),
-            Create("Image",imageId,personalInformation)
+            Create("First Name", stringId, personalInformation),
+            Create("Last Name", stringId, personalInformation),
+            Create("Location", stringId, personalInformation),
+            Create("Personal Photo", imageId, personalInformation),
+            Create("Email", stringId, personalInformation),
+            Create("Phone", stringId, personalInformation)
         ];
 
         var existingTitles = context.Set<AttributeLibrary>()

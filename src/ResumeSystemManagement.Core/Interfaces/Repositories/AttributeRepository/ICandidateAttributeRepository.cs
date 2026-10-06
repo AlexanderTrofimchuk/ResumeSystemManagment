@@ -5,7 +5,7 @@ namespace ResumeSystemManagement.Core.Interfaces.Repositories.AttributeRepositor
 public interface ICandidateAttributeRepository
 {
     Task<List<CandidateAttributeValue>> GetCandidateAttributeValues(string userId);
-    Task<List<CandidateAttributeValue>> GetCandidateAttributeValuesBuildIn(string userId);
+    Task<List<CandidateAttributeValue>> GetBuildInAttribute(string userId);
     Task InitialBuildInAttributes(string userId, string username);
     Task CreateCandidateAttributeValue(CandidateAttributeValue candidateAttributeValue);
     Task UpdateCandidateAttributeValue(List<CandidateAttributeValue> candidateAttributes);
