@@ -1,4 +1,5 @@
 using Dropbox.Api;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -40,10 +41,21 @@ public static class InfrastructureServiceExtensions
             options.User.RequireUniqueEmail = true;
         });
         
+        services.AddDataProtection()
+            .PersistKeysToDbContext<ApplicationDbContext>()
+            .SetApplicationName("ResumeSystemManagement");
+        
         services.AddCookieOption();
         services.AddDropbox();
         services.AddExternalAuthentication();
         services.AddHttpContextAccessor();
+        AddScopedServiceAndRepository(services);
+        services.AddHttpClient<ISalesForceRepository, SalesForceRepository>();
+        return services;
+    }
+
+    private static void AddScopedServiceAndRepository(IServiceCollection services)
+    {
         services.AddScoped<IUserRepository,UserRepository>();
         services.AddScoped<IAttributeLibraryRepository, AttributeLibraryRepository>();
         services.AddScoped<IAttributeCategoryRepository, AttributeCategoryRepository>();
@@ -55,10 +67,8 @@ public static class InfrastructureServiceExtensions
         services.AddScoped<IFileStorage, DropboxStorage>();
         services.AddScoped<IExternalAuthProvider, ExternalAuthProvider>();
         services.AddScoped<ICandidateAttributeRepository, CandidateAttributeRepository>();
-        services.AddHttpClient<ISalesForceRepository, SalesForceRepository>();
-        return services;
     }
-    
+
     public static async Task InitializeDatabase(this IServiceProvider serviceProvider)
     {
         Console.WriteLine("Initializing database and roles...");
@@ -90,8 +100,8 @@ public static class InfrastructureServiceExtensions
     {
         services.ConfigureApplicationCookie(options =>
         {
-            options.LoginPath = "/Account/Login";
-            options.AccessDeniedPath = "/Account/Login";
+            options.LoginPath = "/Account/LoginPage";
+            options.AccessDeniedPath = "/Home/Index";
             options.Cookie.SameSite = SameSiteMode.None;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             options.Cookie.HttpOnly = true;

@@ -20,7 +20,7 @@ public class ProfileService(
     public async Task<ProfileDetail> GetProfileDetails(string userId)
     {
         var meSectorAttributes = await _candidateAttributeRepository.GetBuildInAttribute(userId);
-        var infoSectorAttributes = await _candidateAttributeRepository.GetCandidateAttributeValues(userId);
+        var infoSectorAttributes = await _candidateAttributeRepository.GetAttributeValues(userId);
         return new ProfileDetail
         {
             MeSectorAttributes = [.. meSectorAttributes.Select(a => a.ToUserAttributeValue(_userContext.UserId.ToString()))],
@@ -32,9 +32,29 @@ public class ProfileService(
     {
         var candidateAttributes = sectorValues
             .Select(sv => sv.MapToCandidateAttributeValue()).ToList();
-        return Result.Try(() => _candidateAttributeRepository.UpdateCandidateAttributeValue(candidateAttributes));
+        return Result.Try(() => _candidateAttributeRepository.UpdateAttributeValue(candidateAttributes));
     }
-    
+
+    public Task<Result> UpdateInfoSector(List<UserAttributeValue> sectorValues)
+    {
+        var candidateAttributes = sectorValues
+            .Select(sv => sv.MapToCandidateAttributeValue()).ToList();
+        return Result.Try(() => _candidateAttributeRepository.UpdateInfoAttributeValues(
+            candidateAttributes, _userContext.UserId.ToString()));
+    }
+
+    public async Task<Result<bool>> AddAttribute(AttributeTemplate attribute)
+    {
+        var attributeValue = attribute.ToAttributeValue(_userContext.UserId.ToString());
+        return await Result.Try(() => _candidateAttributeRepository.CreateAttributeValue(attributeValue));
+    }
+
+    public Task<Result<bool>> DeleteAttributeInfo(List<int> ids)
+    {
+        return Result.Try(() => _candidateAttributeRepository.DeleteAttributeValues(
+            ids, _userContext.UserId.ToString()));
+    }
+
     public async Task<List<AttributeTemplate>> GetAttributeTemplate(int page)
     {
         var attributes = await _libraryRepository.GetAttributesAsync(page);

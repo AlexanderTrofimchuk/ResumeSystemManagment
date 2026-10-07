@@ -36,14 +36,28 @@ public class SalesForceService(ISalesForceRepository salesForceRepository, ICand
     public async Task<Result> CreateAccountAndContact(CreateAccountSalesForce accountInfo)
     {
         var jsonAccount = SerializeJson(accountInfo.Account);
-        var accountId = await _salesForceRepository.CreateSalesForceAccount(jsonAccount);
+        var accountId = await _salesForceRepository.CreateAccount(jsonAccount);
         if (accountId.IsFailed) return accountId.ToResult();
         accountInfo.Contact.AccountId = accountId.Value;
         var jsonContact = SerializeJson(accountInfo.Contact);
-        var contactId = await _salesForceRepository.CreateSalesForceContact(jsonContact);
+        var contactId = await ContactIsCreate(jsonContact, accountId);
         if (contactId.IsFailed) return contactId.ToResult();
-        
         return await CreateSalesForceAccount(_userContext.UserId.ToString(), contactId.Value, accountId.Value);
+    }
+
+    private async Task<Result<string>> ContactIsCreate(string jsonContact, Result<string> accountId)
+    {
+        var contactId = await _salesForceRepository.CreateContact(jsonContact);
+        if (contactId.IsFailed)
+        {
+            var accountDeleteResult = await _salesForceRepository.DeleteAccount(accountId.Value);
+            if (accountDeleteResult.IsFailed)
+                return Result.Fail<string>(contactId.Errors)
+                    .WithError($"Failed to roll back Account (Id: {accountId}) after Contact creation failure. " +
+                               "Manual cleanup required.");
+        }
+
+        return contactId;
     }
 
     public Task<bool> HasAccountAndContact()
@@ -51,7 +65,7 @@ public class SalesForceService(ISalesForceRepository salesForceRepository, ICand
         return _userRepository.HasSalesForceAccount(_userContext.UserId.ToString());
     }
 
-    private Task <Result> CreateSalesForceAccount(string userId, string contactId, string accountId)
+    private Task<Result> CreateSalesForceAccount(string userId, string contactId, string accountId)
     {
         return _userRepository.SetSalesForceAccount(userId, accountId, contactId);
     }

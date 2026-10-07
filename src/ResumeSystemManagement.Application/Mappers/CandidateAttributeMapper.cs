@@ -28,4 +28,10 @@ public static class CandidateAttributeMapper
             };
         return candidateValue;
     }
+    
+    
+    public static CandidateAttributeValue ToAttributeValue(this AttributeTemplate attribute, string userId)
+    {
+        return new(userId,attribute.Id,string.Empty);
+    }
 }

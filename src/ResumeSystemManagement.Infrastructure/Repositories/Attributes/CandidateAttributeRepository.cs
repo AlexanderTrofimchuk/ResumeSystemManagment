@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using ResumeSystemManagement.Core.Entities;
+using ResumeSystemManagement.Core.Exceptions;
 using ResumeSystemManagement.Core.Interfaces.Repositories.AttributeRepository;
 using ResumeSystemManagement.Infrastructure.Context;
 
@@ -10,11 +12,13 @@ public class CandidateAttributeRepository(ApplicationDbContext context, IAttribu
     private readonly ApplicationDbContext _context = context;
     private readonly IAttributeLibraryRepository _attributeLibraryRepository = attributeLibraryRepository;
 
-    public Task<List<CandidateAttributeValue>> GetCandidateAttributeValues(string userId)
+    public Task<List<CandidateAttributeValue>> GetAttributeValues(string userId)
     {
         return _context.CandidateAttributeValues
             .Include(a => a.Attribute)
             .ThenInclude(at => at.AttributeType)
+            .Include(a => a.Attribute)
+            .ThenInclude(al => al.AttributeValueForLists)
             .Where(cav => cav.UserId == userId && !cav.Attribute.IsBuiltIn)
             .ToListAsync();
     }
@@ -28,6 +32,13 @@ public class CandidateAttributeRepository(ApplicationDbContext context, IAttribu
             .ToListAsync();
     }
 
+    private Task<string?> GetTitleAttribute(int attributeId)
+    {
+        return _context.AttributeLibraries.Where(a => a.Id == attributeId)
+            .Select(a => a.Title)
+            .FirstOrDefaultAsync();
+    }
+    
     public async Task InitialBuildInAttributes(string userId, string username)
     {
         var (initFullname, candidateAttribute) = await GetPopulateInitAttributes(userId, username);
@@ -49,13 +60,22 @@ public class CandidateAttributeRepository(ApplicationDbContext context, IAttribu
         return (initFullname, candidateAttribute);
     }
 
-    public Task CreateCandidateAttributeValue(CandidateAttributeValue candidateAttributeValue)
+    public async Task<bool> CreateAttributeValue(CandidateAttributeValue candidateAttributeValue)
     {
-        _context.CandidateAttributeValues.AddAsync(candidateAttributeValue);
-        return _context.SaveChangesAsync();
+        await _context.CandidateAttributeValues.AddAsync(candidateAttributeValue);
+        try
+        {
+            return await _context.SaveChangesAsync() > 0;
+        }
+        catch (DbUpdateException e)when 
+            (e.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation })
+        {
+            var title = await GetTitleAttribute(candidateAttributeValue.AttributeId);
+            throw new DuplicateRecordException(title ?? string.Empty);
+        }
     }
 
-    public Task UpdateCandidateAttributeValue(List<CandidateAttributeValue> candidateAttributes)
+    public Task UpdateAttributeValue(List<CandidateAttributeValue> candidateAttributes)
     {
         try
         {
@@ -66,5 +86,51 @@ public class CandidateAttributeRepository(ApplicationDbContext context, IAttribu
         {
             throw new OperationCanceledException("The candidate attribute values were modified by another user. Please reload the data and try again.");
         }
+    }
+
+    public async Task UpdateInfoAttributeValues(List<CandidateAttributeValue> candidateAttributes, string userId)
+    {
+        var ids = candidateAttributes.Select(value => value.Id).Distinct().ToList();
+        if (ids.Count != candidateAttributes.Count)
+            throw new InvalidOperationException("Duplicate profile attribute values were submitted.");
+
+        var existingValues = await _context.CandidateAttributeValues
+            .Include(value => value.Attribute)
+            .Where(value =>
+                ids.Contains(value.Id) &&
+                value.UserId == userId &&
+                !value.Attribute.IsBuiltIn)
+            .ToListAsync();
+
+        if (existingValues.Count != candidateAttributes.Count)
+            throw new InvalidOperationException("One or more profile attributes could not be updated.");
+
+        var valuesById = candidateAttributes.ToDictionary(value => value.Id, value => value.Value);
+        foreach (var existingValue in existingValues)
+            existingValue.UpdateValue(valuesById[existingValue.Id]);
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<bool> DeleteAttributeValues(List<int> ids, string userId)
+    {
+        var uniqueIds = ids.Distinct().ToList();
+        if (uniqueIds.Count != ids.Count)
+            return false;
+
+        var attributeValues = await _context.CandidateAttributeValues
+            .Include(value => value.Attribute)
+            .Where(value =>
+                uniqueIds.Contains(value.Id) &&
+                value.UserId == userId &&
+                !value.Attribute.IsBuiltIn)
+            .ToListAsync();
+
+        if (attributeValues.Count != uniqueIds.Count)
+            return false;
+
+        _context.CandidateAttributeValues.RemoveRange(attributeValues);
+        await _context.SaveChangesAsync();
+        return true;
     }
 }

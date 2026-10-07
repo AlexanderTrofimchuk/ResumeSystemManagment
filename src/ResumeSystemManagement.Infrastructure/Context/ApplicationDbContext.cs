@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ using ResumeSystemManagement.Infrastructure.IdentityEntities;
 
 namespace ResumeSystemManagement.Infrastructure.Context;
 
-public class ApplicationDbContext(IConfiguration config):IdentityDbContext<AppUser, IdentityRole,string>
+public class ApplicationDbContext(IConfiguration config):IdentityDbContext<AppUser, IdentityRole,string>,IDataProtectionKeyContext
 {
     private readonly IConfiguration _config = config;
 
@@ -26,6 +27,7 @@ public class ApplicationDbContext(IConfiguration config):IdentityDbContext<AppUs
             });
     }
     
+    public virtual DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
     public virtual DbSet<Resume> Resumes { get; set; }
     public virtual DbSet<Position> Positions { get; set;}
     public virtual DbSet<UserProject> UserProjects { get; set; }

@@ -20,7 +20,6 @@ public class SupportTicketService(
     private readonly IUserContext _userContext = userContext;
     private readonly IUserRepository _userRepository = userRepository;
     private readonly IFileStorage _storage = storage;
-    private static readonly string FileName = $"ticket_{DateTime.UtcNow:yyyyMMdd_HHmmss}.json";
 
     public async Task<Result> CreateTicketAsync(SupportTicket ticket)
     {
@@ -31,7 +30,8 @@ public class SupportTicketService(
         var jsonEntity = ticket.MapToJson(userNameResult.Value,
             positionTitle, admins);
         var json = JsonSerializer.Serialize(jsonEntity);
-        return await Result.Try(() => _storage.SaveFileAsync(FileName, json));
+        return await Result.Try(() =>
+            _storage.SaveFileAsync($"ticket_{DateTime.UtcNow:yyyyMMdd_HHmmss}.json", json));
     }
 
     private async Task<string?> GetPositionName(SupportTicket ticket)

@@ -16,18 +16,24 @@ public class SalesForceRepository(HttpClient client) : ISalesForceRepository
     private const string ApiVersion = "v67.0";
     
     private static string SObject(string model) => $"{ApiUrl}/services/data/{ApiVersion}/sobjects/{model}";
+    private static string SObjectWithId(string model, string id) => $"{ApiUrl}/services/data/{ApiVersion}/sobjects/{model}/{id}";
     private string BearerToken => $"Bearer {_accessToken}";
 
-    public async Task<Result<string>> CreateSalesForceAccount(string jsonAccount)
+    public async Task<Result<string>> CreateAccount(string jsonAccount)
     {
         return await CreateRecord("Account", jsonAccount, "Failed to create Salesforce account.");
     }
     
-    public async Task<Result<string>> CreateSalesForceContact(string jsonContact)
+    public async Task<Result<string>> CreateContact(string jsonContact)
     {
         return await CreateRecord("Contact", jsonContact, "Failed to create Salesforce contact.");
     }
-    
+
+    public async Task<Result> DeleteAccount(string accountId)
+    {
+        return await DeleteRecord("Account", accountId, "Failed to delete Salesforce account.");
+    }
+
     private async Task<Result<string>> CreateRecord(string model, string json, string failedMessage, bool retried = false)
     {
         await InitializeAccessToken();
@@ -47,6 +53,21 @@ public class SalesForceRepository(HttpClient client) : ISalesForceRepository
         return Result.Ok(created!.Id!);
     }
     
+    private async Task<Result> DeleteRecord(string model, string id, string failedMessage, bool retried = false)
+    {
+        await InitializeAccessToken();
+
+        var response = await SendDelete(SObjectWithId(model, id));
+
+        if (response.StatusCode == HttpStatusCode.Unauthorized && !retried)
+        {
+            _accessToken = string.Empty;
+            return await DeleteRecord(model, id, failedMessage, retried: true);
+        }
+
+        return !response.IsSuccessStatusCode ? Result.Fail(failedMessage) : Result.Ok();
+    }
+    
     private static async Task<SalesforceCreateResponse?> SalesforceCreateResponse(HttpResponseMessage response)
     {
         var responseContent = await response.Content.ReadAsStringAsync();
@@ -59,6 +80,12 @@ public class SalesForceRepository(HttpClient client) : ISalesForceRepository
         var request = new HttpRequestMessage(HttpMethod.Post, url);
         request.Headers.Add("Authorization", BearerToken);
         request.Content = new StringContent(jsonContact, Encoding.UTF8, "application/json");
+        return await _client.SendAsync(request);
+    }
+    private async Task<HttpResponseMessage> SendDelete(string url)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Delete, url);
+        request.Headers.Add("Authorization", BearerToken);
         return await _client.SendAsync(request);
     }
 

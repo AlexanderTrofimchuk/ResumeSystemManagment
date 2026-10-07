@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true"></xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>1.3</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="PageTitle" xml:space="preserve"><value>Profil</value></data>
+  <data name="CreateSalesforceAccount" xml:space="preserve"><value>Salesforce-Konto erstellen</value></data>
+  <data name="Me" xml:space="preserve"><value>Über mich</value></data>
+  <data name="Info" xml:space="preserve"><value>Informationen</value></data>
+  <data name="AddAttribute" xml:space="preserve"><value>Attribut hinzufügen</value></data>
+  <data name="NoAttributesYet" xml:space="preserve"><value>Es wurden noch keine Attribute hinzugefügt.</value></data>
+  <data name="ClickToPickAttributes" xml:space="preserve"><value>Klicken Sie auf „Attribut hinzufügen“, um eines aus der Bibliothek auszuwählen.</value></data>
+  <data name="Projects" xml:space="preserve"><value>Projekte</value></data>
+  <data name="AddProject" xml:space="preserve"><value>Projekt hinzufügen</value></data>
+  <data name="SearchProjects" xml:space="preserve"><value>Projekte suchen...</value></data>
+  <data name="Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Period" xml:space="preserve"><value>Zeitraum</value></data>
+  <data name="Tags" xml:space="preserve"><value>Tags</value></data>
+  <data name="NoProjectsYet" xml:space="preserve"><value>Noch keine Projekte vorhanden. Fügen Sie Ihr erstes Projekt hinzu!</value></data>
+  <data name="ProjectNamePlaceholder" xml:space="preserve"><value>z. B. CRM-Migration</value></data>
+  <data name="StartDate" xml:space="preserve"><value>Startdatum</value></data>
+  <data name="EndDate" xml:space="preserve"><value>Enddatum</value></data>
+  <data name="Description" xml:space="preserve"><value>Beschreibung</value></data>
+  <data name="MarkdownSupported" xml:space="preserve"><value>(Markdown wird unterstützt)</value></data>
+  <data name="ProjectDescriptionPlaceholder" xml:space="preserve"><value>Beschreiben Sie das Projekt...</value></data>
+  <data name="TechnologyTags" xml:space="preserve"><value>Technologie-Tags</value></data>
+  <data name="AddTag" xml:space="preserve"><value>Tag hinzufügen...</value></data>
+  <data name="AddTagHelp" xml:space="preserve"><value>Drücken Sie Enter oder , um ein Tag hinzuzufügen.</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="SaveProject" xml:space="preserve"><value>Projekt speichern</value></data>
+  <data name="ProfileSaveFailed" xml:space="preserve"><value>Profil konnte nicht gespeichert werden</value></data>
+  <data name="LoadSalesforceFailed" xml:space="preserve"><value>Das Salesforce-Formular konnte nicht geladen werden. Bitte versuchen Sie es erneut.</value></data>
+  <data name="SelectAttribute" xml:space="preserve"><value>Wählen Sie mindestens ein Attribut aus, das noch nicht hinzugefügt wurde.</value></data>
+  <data name="AddAttributesFailed" xml:space="preserve"><value>Die ausgewählten Attribute konnten nicht hinzugefügt werden. Bitte versuchen Sie es erneut.</value></data>
+  <data name="DeleteAttribute" xml:space="preserve"><value>Attribut löschen</value></data>
+  <data name="ConfirmDeleteAttribute" xml:space="preserve"><value>Möchten Sie dieses Attribut wirklich löschen?</value></data>
+  <data name="DeleteAttributeFailed" xml:space="preserve"><value>Die ausgewählten Attribute konnten nicht gelöscht werden. Bitte versuchen Sie es erneut.</value></data>
+  <data name="DeleteSelectedAttributes" xml:space="preserve"><value>Ausgewählte löschen</value></data>
+  <data name="ConfirmDeleteSelectedAttributes" xml:space="preserve"><value>Möchten Sie die ausgewählten Attribute wirklich löschen?</value></data>
+  <data name="SelectInfoAttribute" xml:space="preserve"><value>Dieses Profilattribut auswählen</value></data>
+</root>

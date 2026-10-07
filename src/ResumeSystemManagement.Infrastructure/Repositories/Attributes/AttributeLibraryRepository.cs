@@ -85,7 +85,7 @@ public class AttributeLibraryRepository(ApplicationDbContext context) : IAttribu
     public async Task<int> CreateAttributeAsync(AttributeLibrary attribute)
     {
         var existing = await _context.AttributeLibraries.FirstOrDefaultAsync(al => al.Title.ToLower() == attribute.Title.ToLower());
-        if (existing is null) throw new  ArgumentException("attribute title already exists");
+        if (existing is not null) throw new  ArgumentException("attribute title already exists");
         try
         {
             await _context.AttributeLibraries.AddAsync(attribute); 

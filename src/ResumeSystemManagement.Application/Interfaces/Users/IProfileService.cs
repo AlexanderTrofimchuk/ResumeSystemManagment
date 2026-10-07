@@ -10,4 +10,7 @@ public interface IProfileService
     Task<List<AttributeTemplate>> GetAttributeTemplate(int page);
     Task<UserAttributeValue?> GetAttributeValueTemplate(int attributeId, string userId);
     Task<Result> UpdateMeSector(List<UserAttributeValue> sectorValues);
+    Task<Result> UpdateInfoSector(List<UserAttributeValue> sectorValues);
+    Task<Result<bool>> AddAttribute(AttributeTemplate attribute);
+    Task<Result<bool>> DeleteAttributeInfo(List<int> ids);
 }

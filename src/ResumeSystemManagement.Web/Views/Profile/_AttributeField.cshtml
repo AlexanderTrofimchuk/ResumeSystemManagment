@@ -1,4 +1,6 @@
-﻿@model ResumeSystemManagement.Application.DTOs.Attributes.UserAttributeValue
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@model ResumeSystemManagement.Application.DTOs.Attributes.UserAttributeValue
+@inject IViewLocalizer Localizer
 
 <div class="mb-3">
     @if (Model.TypeName == "Image")
@@ -95,8 +97,8 @@
                    data-type-name="@Model.TypeName"
                    data-version="@Model.Version"/>
             break;
-
-        case "OneOfMany":
+            
+        case "One of many":
             <select id="attr_@Model.AttributeId"
                     name="Attributes[@Model.AttributeId]"
                     class="form-select"
@@ -126,7 +128,7 @@
                          id="attr_@Model.AttributeId"
                          class="rounded-circle border"
                          style="width:48px;height:48px;object-fit:cover"
-                         alt="Photo"/>
+                         alt="@Localizer["Photo"]"/>
                 }
                 else
                 {
@@ -137,7 +139,7 @@
                     </span>
                 }
                 <label class="btn btn-sm btn-outline-secondary mb-0">
-                    <i class="bi bi-upload"></i> Change
+                    <i class="bi bi-upload"></i> @Localizer["Change"]
                     <input type="file" name="photo" accept="image/*" class="d-none"/>
                 </label>
             </div>

@@ -9,4 +9,6 @@ public class CandidateAttributeValue(string userId,int attributeId,string value)
     public uint Version { get; set; }
     
     public AttributeLibrary Attribute { get; set; } = null!;
+
+    public void UpdateValue(string value) => Value = value;
 }

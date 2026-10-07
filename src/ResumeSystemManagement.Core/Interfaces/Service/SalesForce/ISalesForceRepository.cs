@@ -4,6 +4,7 @@ namespace ResumeSystemManagement.Core.Interfaces.Service.SalesForce;
 
 public interface ISalesForceRepository
 {
-    Task<Result<string>> CreateSalesForceAccount(string jsonAccount);
-    Task<Result<string>> CreateSalesForceContact(string jsonContact);
+    Task<Result<string>> CreateAccount(string jsonAccount);
+    Task<Result<string>> CreateContact(string jsonContact);
+    Task<Result> DeleteAccount(string accountId);
 }
